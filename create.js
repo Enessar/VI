@@ -242,3 +242,69 @@ function createLineChart(data) {
     .attr("transform", "rotate(-90)")
     .text("Budget");
 }
+
+function createBoxPlot(data) {
+  // Select the #boxPlot element and append an SVG to it
+  const svg = d3
+    .select("#boxPlot")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+  
+    var data_sorted = data.rating.sort(d3.ascending)
+    var q1 = d3.quantile(data_sorted, .25)
+    var median = d3.quantile(data_sorted, .5)
+    var q3 = d3.quantile(data_sorted, .75)
+    var interQuantileRange = q3 - q1
+    var min = q1 - 1.5 * interQuantileRange
+    var max = q1 + 1.5 * interQuantileRange
+    
+   // Create x and y scales for the box plot       
+  //const xScale = d3.scaleBand()
+  //    .domain(data.map((d) => d.oscar_year)
+  //    .range([0, width])
+  //    .padding(0.2);
+
+  const yScale = d3.scaleLinear()
+      .domain([0, d3.max(ratings) + 1])
+      .range([height, 0]);
+  svg.call(d3.axisLeft(yScale))
+  var center = 300
+  var width = 100
+      
+  // Show the main vertical line
+  svg
+    .append("line")
+    .attr("x1", center)
+    .attr("x2", center)
+    .attr("y1", yScale(min) )
+    .attr("y2", yScale(max) )
+    .attr("stroke", "black")
+
+
+    
+  // Show the box
+  svg
+    .append("rect")
+    .attr("x", center - width/2)
+    .attr("y", yScale(q3) )
+    .attr("height", (yScale(q1)-y(q3)) )
+    .attr("width", width )
+    .attr("stroke", "black")
+    .style("fill", "#69b3a2")
+
+  // show median, min and max horizontal lines
+  svg
+    .selectAll("toto")
+    .data([min, median, max])
+    .enter()
+    .append("line")
+    .attr("x1", center-width/2)
+    .attr("x2", center+width/2)
+    .attr("y1", function(d){ return(yScale(d))} )
+    .attr("y2", function(d){ return(yScale(d))} )
+    .attr("stroke", "black") 
+}
