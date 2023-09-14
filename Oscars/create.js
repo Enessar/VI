@@ -248,13 +248,14 @@ function createBoxPlot(data) {
   const svg = d3
     .select("#boxPlot")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
+    .attr("width", width + margin.left + margin.right
+     )
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
   
   
-    var data_sorted = data.rating.sort(d3.ascending)
+    var data_sorted = data.sort(d3.ascending)
     var q1 = d3.quantile(data_sorted, .25)
     var median = d3.quantile(data_sorted, .5)
     var q3 = d3.quantile(data_sorted, .75)
@@ -269,11 +270,11 @@ function createBoxPlot(data) {
   //    .padding(0.2);
 
   const yScale = d3.scaleLinear()
-      .domain([0, d3.max(ratings) + 1])
-      .range([height, 0]);
+      .domain([0, d3.max(data, (d) => d.rating) + 1])
+      .range([0, height]);
   svg.call(d3.axisLeft(yScale))
   var center = 300
-  var width = 100
+  var w = 100
       
   // Show the main vertical line
   svg
@@ -289,10 +290,12 @@ function createBoxPlot(data) {
   // Show the box
   svg
     .append("rect")
-    .attr("x", center - width/2)
+    .attr("x", center - w/2)
     .attr("y", yScale(q3) )
-    .attr("height", (yScale(q1)-y(q3)) )
-    .attr("width", width )
+    .attr("height",
+    yScale(q1)-yScale(q3)
+    )
+    .attr("width", w )
     .attr("stroke", "black")
     .style("fill", "#69b3a2")
 
@@ -302,8 +305,8 @@ function createBoxPlot(data) {
     .data([min, median, max])
     .enter()
     .append("line")
-    .attr("x1", center-width/2)
-    .attr("x2", center+width/2)
+    .attr("x1", center-w/2)
+    .attr("x2", center+w/2)
     .attr("y1", function(d){ return(yScale(d))} )
     .attr("y2", function(d){ return(yScale(d))} )
     .attr("stroke", "black") 

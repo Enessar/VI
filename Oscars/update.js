@@ -219,3 +219,7 @@ function updateLineChart(data) {
     .append("title")
     .text((d) => d.title);
 }
+
+function updateBoxPlot(data) {
+  createBoxPlot(data)
+}
