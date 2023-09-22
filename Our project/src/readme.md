@@ -12,7 +12,7 @@
     * All good
 
 # replacement rate:
-Replacement Rate = TFR / NRR
+Replacement Rate = Total Fertility Rate (TFR) / Net Reproduction Rate (NRR)
 * TFR is the average number of children a woman would have in her lifetime, given the current age-specific birth rates. To calculate TFR, you sum up the age-specific fertility rates for all age groups of women of childbearing age. The formula for TFR is: 
 TFR = Σ(Births in Each Age Group) / Total Number of Women in Each Age Group
 
