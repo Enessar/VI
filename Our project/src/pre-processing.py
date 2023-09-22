@@ -1,5 +1,4 @@
-
-
+import pandas as pd
 
 # Cleaning Country_population
 pop_df = pd.read_csv("Our project\src\Initial_data\country_population.csv", encoding='latin1', delimiter=',')
