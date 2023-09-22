@@ -143,10 +143,105 @@ function createScatterPlot(data) {
     .style("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
     .text("Rating");
+  
 }
 
 // Function to create a line chart
 function createLineChart(data) {
+  // // Select the #lineChart element and append an SVG to it
+  // const svg = d3
+  //   .select("#lineChart")
+  //   .append("svg")
+  //   .attr("width", width + margin.left + margin.right)
+  //   .attr("height", height + margin.top + margin.bottom)
+  //   .append("g")
+  //   .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // // Create x and y scales for the line chart
+  // const xScale = d3
+  //   .scaleBand()
+  //   .domain(data.map((d) => d.oscar_year))
+  //   .range([width, 0])
+  //   .padding(1);
+  // const yScale = d3
+  //   .scaleLinear()
+  //   .domain([0, d3.max(data, (d) => d.budget)])
+  //   .range([height, 0]);
+
+  // // Create a line generator to draw the line path
+  // const line = d3
+  //   .line()
+  //   .x((d) => xScale(d.oscar_year))
+  //   .y((d) => yScale(d.budget));
+
+  // // Append the line path to the chart
+  // svg
+  //   .append("path")
+  //   .datum(data)
+  //   .attr("class", "line")
+  //   .attr("d", line)
+  //   .attr("fill", "none")
+  //   .attr("stroke", "steelblue")
+  //   .attr("stroke-width", 2);
+
+  // // Append circles using the data and scales to create data points on the line
+  // svg
+  //   .selectAll(".circle")
+  //   .data(data, (d) => d.title)
+  //   .enter()
+  //   .append("circle")
+  //   .attr("class", "circle data")
+  //   .attr("cx", (d) => xScale(d.oscar_year))
+  //   .attr("cy", (d) => yScale(d.budget))
+  //   .attr("r", 5)
+  //   .attr("fill", "steelblue")
+  //   .attr("stroke", "black")
+  //   .on("mouseover", handleMouseOver)
+  //   .on("mouseout", handleMouseOut)
+  //   .append("title")
+  //   .text((d) => d.title);
+
+  // // Append x and y axes to the line chart
+  // svg
+  //   .append("g")
+  //   .attr("class", "x-axis")
+  //   .attr("transform", `translate(0,${height})`)
+  //   .call(d3.axisBottom(xScale).tickSizeOuter(0));
+
+  // svg
+  //   .selectAll(".x-axis text")
+  //   .attr("transform", "rotate(-45)")
+  //   .style("text-anchor", "end")
+  //   .attr("dx", "-0.8em")
+  //   .attr("dy", "0.15em");
+
+  // svg
+  //   .append("g")
+  //   .attr("class", "y-axis")
+  //   .call(
+  //     d3
+  //       .axisLeft(yScale)
+  //       .tickFormat((d) => d3.format(".1f")(d / 1000000) + "M")
+  //       .tickSizeOuter(0)
+  //   );
+
+  // // Append x and y axis labels
+  // svg
+  //   .append("text")
+  //   .attr("class", "x-axis-label")
+  //   .attr("x", width / 2)
+  //   .attr("y", height + margin.top + 30)
+  //   .style("text-anchor", "middle")
+  //   .text("Oscar Year");
+
+  // svg
+  //   .append("text")
+  //   .attr("class", "y-axis-label")
+  //   .attr("x", -height / 2)
+  //   .attr("y", -margin.left + 30)
+  //   .style("text-anchor", "middle")
+  //   .attr("transform", "rotate(-90)")
+  //   .text("Budget");
   // Select the #lineChart element and append an SVG to it
   const svg = d3
     .select("#lineChart")
@@ -155,6 +250,9 @@ function createLineChart(data) {
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
+  
+  // Define a color scale
+  const colorScale = d3.scaleDiverging("blue", "orange").domain([d3.min(data, (d) => d.rating), d3.max(data, (d) => d.rating)]);
 
   // Create x and y scales for the line chart
   const xScale = d3
@@ -185,20 +283,20 @@ function createLineChart(data) {
 
   // Append circles using the data and scales to create data points on the line
   svg
-    .selectAll(".circle")
-    .data(data, (d) => d.title)
-    .enter()
-    .append("circle")
-    .attr("class", "circle data")
-    .attr("cx", (d) => xScale(d.oscar_year))
-    .attr("cy", (d) => yScale(d.budget))
-    .attr("r", 5)
-    .attr("fill", "steelblue")
-    .attr("stroke", "black")
-    .on("mouseover", handleMouseOver)
-    .on("mouseout", handleMouseOut)
-    .append("title")
-    .text((d) => d.title);
+   .selectAll(".circle")
+   .data(data, (d) => d.title)
+   .enter()
+   .append("circle")
+   .attr("class", "circle data")
+   .attr("cx", (d) => xScale(d.oscar_year))
+   .attr("cy", (d) => yScale(d.budget))
+   .attr("r", 5)
+   .attr("fill", (d) => colorScale(d.rating)) // Apply the color scale to "rating"
+   .attr("stroke", "black")
+   .on("mouseover", handleMouseOver)
+   .on("mouseout", handleMouseOut)
+   .append("title")
+   .text((d) => d.title);
 
   // Append x and y axes to the line chart
   svg
@@ -243,71 +341,78 @@ function createLineChart(data) {
     .text("Budget");
 }
 
-function createBoxPlot(data) {
-  // Select the #boxPlot element and append an SVG to it
-  const svg = d3
-    .select("#boxPlot")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right
-     )
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+// function createBoxPlot(data) {
+//   // Select the #boxPlot element and append an SVG to it
+//   const svg = d3
+//     .select("#boxPlot")
+//     .append("svg")
+//     .attr("width", width + margin.left + margin.right
+//      )
+//     .attr("height", height + margin.top + margin.bottom)
+//     .append("g")
+//     .attr("transform", `translate(${margin.left},${margin.top})`);
   
   
-    var data_sorted = data.sort(d3.ascending)
-    var q1 = d3.quantile(data_sorted, .25)
-    var median = d3.quantile(data_sorted, .5)
-    var q3 = d3.quantile(data_sorted, .75)
-    var interQuantileRange = q3 - q1
-    var min = q1 - 1.5 * interQuantileRange
-    var max = q1 + 1.5 * interQuantileRange
+//     // Define a custom comparator function for sorting by "rating"
+//     function sortByRating(a, b) {
+//       return d3.ascending(a.rating, b.rating);
+//     }
+
+//     // Sort the data by "rating"
+
+//     var data_sorted = data.sort(sortByRating)
+//     var q1 = d3.quantile(data_sorted, 0.25)
+//     var median = d3.quantile(data_sorted, 0.5)
+//     var q3 = d3.quantile(data_sorted, 0.75)
+//     var interQuantileRange = q3 - q1
+//     var min = q1 - 1.5 * interQuantileRange
+//     var max = q1 + 1.5 * interQuantileRange
+//     console.log(data_sorted)
+//    // Create x and y scales for the box plot       
+//   //const xScale = d3.scaleBand()
+//   //    .domain(data.map((d) => d.oscar_year)
+//   //    .range([0, width])
+//   //    .padding(0.2);
+
+//   const yScale = d3.scaleLinear()
+//       .domain([0, d3.max(data, (d) => d.rating) + 1])
+//       .range([0, height]);
+//   svg.call(d3.axisLeft(yScale))
+//   var center = 300
+//   var w = 100
+//   console.log(yScale(q1))
+//   // Show the main vertical line
+//   svg
+//     .append("line")
+//     .attr("x1", center)
+//     .attr("x2", center)
+//     .attr("y1", yScale(min) )
+//     .attr("y2", yScale(max) )
+//     .attr("stroke", "black")
+
+
     
-   // Create x and y scales for the box plot       
-  //const xScale = d3.scaleBand()
-  //    .domain(data.map((d) => d.oscar_year)
-  //    .range([0, width])
-  //    .padding(0.2);
+//   // Show the box
+//   svg
+//     .append("rect")
+//     .attr("x", center - w/2)
+//     .attr("y", yScale(q3) )
+//     .attr("height", yScale(q3)
+//     // yScale(q1)-yScale(q3)
+//     )
+//     .attr("width", w )
+//     .attr("stroke", "black")
+//     .style("fill", "#69b3a2")
 
-  const yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, (d) => d.rating) + 1])
-      .range([0, height]);
-  svg.call(d3.axisLeft(yScale))
-  var center = 300
-  var w = 100
-      
-  // Show the main vertical line
-  svg
-    .append("line")
-    .attr("x1", center)
-    .attr("x2", center)
-    .attr("y1", yScale(min) )
-    .attr("y2", yScale(max) )
-    .attr("stroke", "black")
-
-
-    
-  // Show the box
-  svg
-    .append("rect")
-    .attr("x", center - w/2)
-    .attr("y", yScale(q3) )
-    .attr("height",
-    yScale(q1)-yScale(q3)
-    )
-    .attr("width", w )
-    .attr("stroke", "black")
-    .style("fill", "#69b3a2")
-
-  // show median, min and max horizontal lines
-  svg
-    .selectAll("toto")
-    .data([min, median, max])
-    .enter()
-    .append("line")
-    .attr("x1", center-w/2)
-    .attr("x2", center+w/2)
-    .attr("y1", function(d){ return(yScale(d))} )
-    .attr("y2", function(d){ return(yScale(d))} )
-    .attr("stroke", "black") 
-}
+//   // show median, min and max horizontal lines
+//   svg
+//     .selectAll("toto")
+//     .data([min, median, max])
+//     .enter()
+//     .append("line")
+//     .attr("x1", center-w/2)
+//     .attr("x2", center+w/2)
+//     .attr("y1", function(d){ return(yScale(d))} )
+//     .attr("y2", function(d){ return(yScale(d))} )
+//     .attr("stroke", "black") 
+// }

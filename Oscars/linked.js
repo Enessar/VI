@@ -31,4 +31,9 @@ function handleMouseOut(event, item) {
   d3.selectAll(".bar.data")
     // Change the "fill" attribute of the "bar" elements based on the budget value using the color scale.
     .attr("fill", (d) => colorScale(d.budget));
+
+    d3.selectAll(".circle.data")
+    // Change the "fill" attribute of the "bar" elements based on the budget value using the color scale.
+    .attr("fill", (d) => colorScale(d.rating));
+  
 }

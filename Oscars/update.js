@@ -162,6 +162,7 @@ function updateLineChart(data) {
 
   // Select all existing circles and bind the data to them
   const circles = svg.selectAll(".circle").data(data, (d) => d.title);
+  const colorScale = d3.scaleDiverging("blue", "orange").domain([d3.min(data, (d) => d.rating), d3.max(data, (d) => d.rating)]);
 
   // Update existing circles with transitions for position
   circles
@@ -178,7 +179,7 @@ function updateLineChart(data) {
     .attr("cx", (d) => xScale(d.oscar_year))
     .attr("cy", (d) => yScale(d.budget))
     .attr("r", 0)
-    .attr("fill", "steelblue")
+    .attr("fill", (d) => colorScale(d.rating)) // Apply the color scale to "rating"
     .attr("stroke", "black")
     .transition()
     .duration(500)
