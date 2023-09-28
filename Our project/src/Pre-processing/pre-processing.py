@@ -1,26 +1,48 @@
 import pandas as pd
-
+threshold =0
 def handle_missing_values_table(tab):
+    global threshold
     threshold = len(tab.columns) * 1/2
-    return tab.apply(handle_missing_values_row(threshold),axis = 1)#.dropna()
+    return tab.apply(handle_missing_values_row,axis = 1)#.dropna()
 
-def handle_missing_values_row(row,th):
+def handle_missing_values_row(row):
     global threshold
     numerical_values= row.drop(['Country name','Country Code'])
     missing_count = numerical_values.isnull().sum() #maybe isna()
-    print(row['Country name'])
+    # print(row['Country name'])
     # print(missing_count)
-    print("threshold")
-    print(threshold)
-
+    # print("threshold")
+    # print(threshold)
     if missing_count > threshold :
         return None
     elif (missing_count == 0):
         return row
     else:
-        print(row['Country name'])
-        print(missing_count)
-        return row.ffill().bfill()
+        # print(row['Country name'])
+        # print(missing_count)
+        for column in numerical_values.index:
+            if pd.isnull(row[column]):
+                # Replace missing value with the value from the same column
+                val = 0
+                print(column)
+                index = int(column) -1
+
+
+                while val == 0:
+                    print(index)
+                    if index > row.shape[0]:
+                        val = row[int(column) -1]
+                        break
+
+                    if not pd.isnull(row[index]):
+                        val = row[index]
+                        break
+                    index +=1
+
+
+                row[column] = val
+                
+        return row
 
 # Cleaning HDI
 HDI_df = pd.read_csv("Our project\src\Initial_data\GDL-Subnational-HDI-data.csv", encoding='latin1', delimiter=',')
