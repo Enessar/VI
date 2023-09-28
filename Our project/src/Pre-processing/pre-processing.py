@@ -2,52 +2,44 @@ import pandas as pd
 threshold =0
 def handle_missing_values_table(tab):
     global threshold
-    threshold = len(tab.columns) * 1/2
-    return tab.apply(handle_missing_values_row,axis = 1)#.dropna()
+    threshold = len(tab.columns) * 3/4
+    return tab.apply(handle_missing_values_row,axis = 1).dropna()
 
 def handle_missing_values_row(row):
     global threshold
     numerical_values= row.drop(['Country name','Country Code'])
-    missing_count = numerical_values.isnull().sum() #maybe isna()
-    # print(row['Country name'])
-    # print(missing_count)
-    # print("threshold")
-    # print(threshold)
+    missing_count = numerical_values.isnull().sum()
+
     if missing_count > threshold :
         return None
     elif (missing_count == 0):
         return row
     else:
-        # print(row['Country name'])
-        # print(missing_count)
         for column in numerical_values.index:
             if pd.isnull(row[column]):
                 # Replace missing value with the value from the same column
-                val = 0
-                print(column)
-                index = int(column) -1
-
+                val = 0.0
+                index = int(column) +1
 
                 while val == 0:
-                    print(index)
-                    if index > row.shape[0]:
-                        val = row[int(column) -1]
+                    if index >= 2016:
+                        val = row[str(int(column) -1)]
                         break
 
-                    if not pd.isnull(row[index]):
-                        val = row[index]
+                    if not pd.isnull(row[str(index)]):
+                        val = row[str(index)]
                         break
                     index +=1
-
-
                 row[column] = val
-                
         return row
 
 # Cleaning HDI
 HDI_df = pd.read_csv("Our project\src\Initial_data\GDL-Subnational-HDI-data.csv", encoding='latin1', delimiter=',')
 HDI_df.drop(['Continent','ISO_Code','Level','GDLCODE','Region'], axis=1, inplace=True)
 HDI_df.rename(columns={'Country': 'Country name'}, inplace=True)
+HDI_df['Country Code'] = 0
+HDI_df = handle_missing_values_table(HDI_df)
+HDI_df.drop(['Country Code'], axis=1, inplace=True)
 HDI_df.to_csv('Our project\src\Final_data\HDI.csv', index=False, header=True)
 
 # Cleaning reporduction rate
@@ -65,27 +57,28 @@ fertility_df.rename(columns={'ï»¿"Country Name"' : 'Country name'}, inplace=T
 fertility_df = handle_missing_values_table(fertility_df)
 fertility_df.to_csv('Our project/src/Final_data/fertility_R.csv', index=False, header=True)
 
-# # replacement rate
-# replacement_df = fertility_df.merge(NRR_df[['Country name','1960','1961','1962','1963','1964',
-#         '1965','1966','1967','1968','1969','1970','1971','1972','1973','1974','1975','1976',
-#         '1977','1978','1979','1980','1981','1982','1983','1984','1985','1986','1987','1988','1989',
-#         '1990', '1991', '1992', '1993', '1994', '1995', '1996',
-#        '1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005',
-#        '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014',
-#        '2015', '2016']], left_on='Country name', right_on='Country name', how='inner')
-# for i in range(1960,2017):
-#     replacement_df[str(i)] = replacement_df[str(i) + '_x'] / replacement_df[str(i) + '_y']
-#     replacement_df.drop([str(i) + '_x' , str(i) + '_y'], axis=1, inplace=True)
-# replacement_df.to_csv('Our project/src/Final_data/replacement_rate.csv', index=False, header=True)
+# replacement rate
+replacement_df = fertility_df.merge(NRR_df[['Country name','1960','1961','1962','1963','1964',
+        '1965','1966','1967','1968','1969','1970','1971','1972','1973','1974','1975','1976',
+        '1977','1978','1979','1980','1981','1982','1983','1984','1985','1986','1987','1988','1989',
+        '1990', '1991', '1992', '1993', '1994', '1995', '1996',
+       '1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005',
+       '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014',
+       '2015', '2016']], left_on='Country name', right_on='Country name', how='inner')
+for i in range(1960,2017):
+    replacement_df[str(i)] = replacement_df[str(i) + '_x'] / replacement_df[str(i) + '_y']
+    replacement_df.drop([str(i) + '_x' , str(i) + '_y'], axis=1, inplace=True)
+replacement_df.to_csv('Our project/src/Final_data/replacement_rate.csv', index=False, header=True)
 
 
 #Cleaning life_expectancy
 life_df = pd.read_csv("Our project/src/Initial_data/life_expectancy.csv", encoding='latin1', delimiter=',')
 life_df.drop(["Indicator Name","Indicator Code"], axis=1, inplace=True)
 life_df.rename(columns={'ï»¿"Country Name"' : 'Country name'}, inplace=True)
+life_df = handle_missing_values_table(life_df)
 life_df.to_csv('Our project/src/Final_data/life_exp.csv', index=False, header=True)
 
-# Create natural instead of population growth
+# Create natural rate instead of population growth
 natural_rate_df = pd.read_csv("Our project/src/Initial_data/natual rate.csv", encoding='latin1', delimiter=';')
 natural_rate_df = natural_rate_df.drop_duplicates(subset=['ï»¿Country','Year'])
 out_df = natural_rate_df.pivot(index='ï»¿Country', columns='Year', values='Rate of Natural Change (per 1,000 population)').reset_index()
