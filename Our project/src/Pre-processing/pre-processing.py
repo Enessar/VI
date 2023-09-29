@@ -89,6 +89,71 @@ for i in range(2017,2022):
     out_df.drop(i, axis=1, inplace=True)
 out_df.to_csv('Our project/src/Final_data/natural_rate.csv', index=False, header=True)
 
+                                    #########################
+                                    #                       #
+                                    #   data per question   #
+                                    #                       #
+                                    #########################
+
+# For all questions
+life_exp_df = pd.read_csv("Our project/src/Final_data/life_exp.csv", encoding='latin1', delimiter=',')
+fertility_rate_df = pd.read_csv("Our project/src/Final_data/fertility_R.csv", encoding='latin1', delimiter=',')
+replacement_R_df = pd.read_csv("Our project/src/Final_data/replacement_rate.csv", encoding='latin1', delimiter=',')
+natural_R_df = pd.read_csv("Our project/src/Final_data/natural_rate.csv", encoding='latin1', delimiter=',')
+
+life_exp_df = life_exp_df.melt(id_vars=['Country name','Country Code'], var_name='Year', value_name='life expectancy')
+life_exp_df = pd.DataFrame({
+    'Country name': life_exp_df['Country name'].repeat(len(life_exp_df.columns) - 3),
+    'Country Code': life_exp_df['Country Code'].repeat(len(life_exp_df.columns) - 3),
+    'Year': life_exp_df['Year'].values,
+    'life expectancy': life_exp_df['life expectancy'].values
+})
+life_exp_df = life_exp_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
+fertility_rate_df = fertility_rate_df.melt(id_vars=['Country name','Country Code'], var_name='Year', value_name='Fertility Rate')
+fertility_rate_df = pd.DataFrame({
+    'Country name': fertility_rate_df['Country name'].repeat(len(fertility_rate_df.columns) - 3),
+    'Country Code': fertility_rate_df['Country Code'].repeat(len(fertility_rate_df.columns) - 3),
+    'Year': fertility_rate_df['Year'].values,
+    'Fertility Rate': fertility_rate_df['Fertility Rate'].values
+})
+fertility_rate_df = fertility_rate_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
+replacement_R_df = replacement_R_df.melt(id_vars=['Country name','Country Code'], var_name='Year', value_name='Replacement Rate')
+replacement_R_df = pd.DataFrame({
+    'Country name': replacement_R_df['Country name'].repeat(len(replacement_R_df.columns) - 3),
+    'Country Code': replacement_R_df['Country Code'].repeat(len(replacement_R_df.columns) - 3),
+    'Year': replacement_R_df['Year'].values,
+    'Replacement Rate': replacement_R_df['Replacement Rate'].values
+})
+replacement_R_df = replacement_R_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
+natural_R_df = natural_R_df.melt(id_vars=['Country name'], var_name='Year', value_name='Natural Rate')
+natural_R_df = pd.DataFrame({
+    'Country name': natural_R_df['Country name'].repeat(len(natural_R_df.columns) - 2),
+    'Year': natural_R_df['Year'].values,
+    'Natural Rate': natural_R_df['Natural Rate'].values
+})
+natural_R_df = natural_R_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
+HDI_df = HDI_df.melt(id_vars=['Country name'], var_name='Year', value_name='HDI')
+HDI_df = pd.DataFrame({
+    'Country name': HDI_df['Country name'].repeat(len(HDI_df.columns) - 2),
+    'Year': HDI_df['Year'].values,
+    'HDI': HDI_df['HDI'].values
+})
+HDI_df = HDI_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
+Q_df = pd.merge(life_exp_df, fertility_rate_df, on=['Country name','Country Code', 'Year'])
+Q_df = pd.merge(Q_df, replacement_R_df, on=['Country name','Country Code', 'Year'])
+Q_df = pd.merge(Q_df, natural_R_df, on=['Country name', 'Year'])
+Q_df = pd.merge(Q_df, HDI_df, on=['Country name', 'Year'])
+
+
+Q_df['Natural Rate'] = Q_df['Natural Rate'].apply(lambda x: float(x.replace(',', '.')))
+Q_df.to_csv('Our project\src\Data per question\Q.csv', index=False, header=True)
+
+
                                     #####################
                                     #                   #
                                     #   unused data     #
