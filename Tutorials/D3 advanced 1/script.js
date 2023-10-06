@@ -48,6 +48,7 @@ function startDashboard() {
     // Call functions to create the choropleth map and scatter plot
     createChoroplethMap();
     createScatterPlot();
+    createMirroredBeeswarmPlot();
   });
 }
 
@@ -281,4 +282,74 @@ function createScatterPlot() {
     .style("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
     .text("Alcohol Consumption");
+}
+
+function createMirroredBeeswarmPlot() {
+  // Filter the data to remove entries with missing incomeperperson or alcconsumption values
+  currentData = globalDataCapita.filter(function (d) {
+    return d.incomeperperson != "" && d.alcconsumption != "";
+  });
+
+  const svg = d3
+    .select("#mirroredBeeswarmPlot")
+    .append("svg")
+    .attr("width",  width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Create x and y scales for the scatter plot
+  const xScale = d3
+    .scaleLinear()
+    .domain([
+      d3.min(currentData, (d) => d.femaleemployrate),
+      d3.max(currentData, (d) => d.femaleemployrate),
+    ])
+    .range([0, width]);
+
+  const yScale = d3
+    .scaleLinear()
+    .domain([
+      d3.min(currentData, (d) => d.country),
+      d3.max(currentData, (d) => d.country),
+    ])
+    .range([height, 0]);
+
+  const radiusScale = d3
+    .scaleLinear()
+    .domain([
+      d3.min(currentData, (d) => d.lifeexpectancy),
+      d3.max(currentData, (d) => d.lifeexpectancy),
+    ])
+    .range([0, 20]); // Adjust the range for radius as needed
+
+  // Create a group for the beeswarm plot
+  const beeswarmGroup = svg.append("g");
+
+  // Create circles for each data point
+  beeswarmGroup
+    .selectAll(".circle")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("class", "circle")
+    .attr("cx", (d) => xScale(d.femaleemployrate))
+    .attr("cy", (d) => yScale(d.country))
+    .attr("r", (d) => radiusScale(d.lifeexpectancy))
+    .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
+    .attr("stroke", "black");
+
+  // Create mirrored circles on the right side
+  beeswarmGroup
+    .selectAll(".circle-mirrored")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("class", "circle-mirrored")
+    .attr("cx", (d) => width - xScale(d.femaleemployrate)) // Mirror the x-position
+    .attr("cy", (d) => yScale(d.country))
+    .attr("r", (d) => radiusScale(d.lifeexpectancy))
+    .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
+    .attr("stroke", "black");
+
 }
