@@ -43,6 +43,8 @@ function startDashboard() {
     globalDataCapita.forEach(function (d) {
       d.incomeperperson = +d.incomeperperson;
       d.alcconsumption = +d.alcconsumption;
+      d.femaleemployrate = +d.femaleemployrate;
+      d.lifeexpectancy = +d.lifeexpectancy;
     });
 
     // Call functions to create the choropleth map and scatter plot
@@ -287,7 +289,7 @@ function createScatterPlot() {
 function createMirroredBeeswarmPlot() {
   // Filter the data to remove entries with missing incomeperperson or alcconsumption values
   currentData = globalDataCapita.filter(function (d) {
-    return d.incomeperperson != "" && d.alcconsumption != "";
+    return d.femaleemployrate != "" && d.lifeexpectancy != "";
   });
 
   const svg = d3
@@ -324,12 +326,13 @@ function createMirroredBeeswarmPlot() {
     .range([0, 20]); // Adjust the range for radius as needed
 
   // Create a group for the beeswarm plot
+
   const beeswarmGroup = svg.append("g");
 
   // Create circles for each data point
   beeswarmGroup
     .selectAll(".circle")
-    .data(data)
+    .data(currentData)
     .enter()
     .append("circle")
     .attr("class", "circle")
@@ -342,7 +345,7 @@ function createMirroredBeeswarmPlot() {
   // Create mirrored circles on the right side
   beeswarmGroup
     .selectAll(".circle-mirrored")
-    .data(data)
+    .data(currentData)
     .enter()
     .append("circle")
     .attr("class", "circle-mirrored")
