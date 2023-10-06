@@ -310,12 +310,10 @@ function createMirroredBeeswarmPlot() {
     .range([0, width]);
 
   const yScale = d3
-    .scaleLinear()
-    .domain([
-      d3.min(currentData, (d) => d.country),
-      d3.max(currentData, (d) => d.country),
-    ])
-    .range([height, 0]);
+    .scaleBand()
+    .domain(currentData.map((d) => d.country))
+    .range([height, 0])
+    // .padding(0.2);
 
   const radiusScale = d3
     .scaleLinear()
@@ -337,7 +335,8 @@ function createMirroredBeeswarmPlot() {
     .append("circle")
     .attr("class", "circle")
     .attr("cx", (d) => xScale(d.femaleemployrate))
-    .attr("cy", (d) => yScale(d.country))
+    .attr("cy", d => height / 2 - radiusScale(d.lifeexpectancy) - margin.top - yScale(d.country))
+    // .attr("cy", (d) => yScale(d.country))
     .attr("r", (d) => radiusScale(d.lifeexpectancy))
     .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
     .attr("stroke", "black");
@@ -350,9 +349,13 @@ function createMirroredBeeswarmPlot() {
     .append("circle")
     .attr("class", "circle-mirrored")
     .attr("cx", (d) => width - xScale(d.femaleemployrate)) // Mirror the x-position
-    .attr("cy", (d) => yScale(d.country))
+    // .attr("cy", (d) => yScale(d.country))
     .attr("r", (d) => radiusScale(d.lifeexpectancy))
     .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
     .attr("stroke", "black");
+
+    beeswarmGroup
+    .attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(xScale).tickSizeOuter(0));
 
 }
