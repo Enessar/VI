@@ -309,12 +309,7 @@ function createMirroredBeeswarmPlot() {
     ])
     .range([0, width]);
 
-  const yScale = d3
-    .scaleBand()
-    .domain(currentData.map((d) => d.country))
-    .range([height, 0])
-    // .padding(0.2);
-
+  const padding = 1.5;
   const radiusScale = d3
     .scaleLinear()
     .domain([
@@ -330,32 +325,60 @@ function createMirroredBeeswarmPlot() {
   // Create circles for each data point
   beeswarmGroup
     .selectAll(".circle")
-    .data(currentData)
-    .enter()
-    .append("circle")
-    .attr("class", "circle")
-    .attr("cx", (d) => xScale(d.femaleemployrate))
-    .attr("cy", d => height / 2 - radiusScale(d.lifeexpectancy) - margin.top - yScale(d.country))
+    .data(dodge(currentData, {radius: radiusScale(d.lifeexpectancy) * 2 + padding, x: d => xScale(d.femaleemployrate)}))
+    .join("circle")
+      .attr("cx", (d) => d.x)
+      .attr("cy", d => height / 2 - radiusScale(d.lifeexpectancy) - padding -d.y)
     // .attr("cy", (d) => yScale(d.country))
-    .attr("r", (d) => radiusScale(d.lifeexpectancy))
+      .attr("r", (d) => radiusScale(d.lifeexpectancy))
+    .append("title")
+      .text(d => d.femaleemployrate.name)
     .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
     .attr("stroke", "black");
+}
 
-  // Create mirrored circles on the right side
-  beeswarmGroup
-    .selectAll(".circle-mirrored")
-    .data(currentData)
-    .enter()
-    .append("circle")
-    .attr("class", "circle-mirrored")
-    .attr("cx", (d) => width - xScale(d.femaleemployrate)) // Mirror the x-position
-    // .attr("cy", (d) => yScale(d.country))
-    .attr("r", (d) => radiusScale(d.lifeexpectancy))
-    .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
-    .attr("stroke", "black");
+dodge = (data, {radius, x}) => {
+  const radius2 = radius ** 2;
+  const circles = data.map(d => ({x: x(d), data: d})).sort((a, b) => a.x - b.x);
+  const epsilon = 1e-3;
+  let head = null, tail = null;
 
-    beeswarmGroup
-    .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(xScale).tickSizeOuter(0));
+  // Returns true if circle ⟨x,y⟩ intersects with any circle in the queue.
+  function intersects(x, y) {
+    let a = head;
+    while (a) {
+      if (radius2 - epsilon > (a.x - x) ** 2 + (a.y - y) ** 2) {
+        return true;
+      }
+      a = a.next;
+    }
+    return false;
+  }
 
+  // Place each circle sequentially.
+  for (const b of circles) {
+
+    // Remove circles from the queue that can’t intersect the new circle b.
+    while (head && head.x < b.x - radius2) head = head.next;
+
+    // Choose the minimum non-intersecting tangent.
+    if (intersects(b.x, b.y = 0)) {
+      let a = head;
+      b.y = Infinity;
+      do {
+        let y1 = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
+        let y2 = a.y - Math.sqrt(radius2 - (a.x - b.x) ** 2);
+        if (Math.abs(y1) < Math.abs(b.y) && !intersects(b.x, y1)) b.y = y1;
+        if (Math.abs(y2) < Math.abs(b.y) && !intersects(b.x, y2)) b.y = y2;
+        a = a.next;
+      } while (a);
+    }
+
+    // Add b to the queue.
+    b.next = null;
+    if (head === null) head = tail = b;
+    else tail = tail.next = b;
+  }
+
+  return circles;
 }
