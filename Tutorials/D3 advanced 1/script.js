@@ -310,13 +310,14 @@ function createMirroredBeeswarmPlot() {
     .range([0, width]);
 
   const padding = 1.5;
+
   const radiusScale = d3
     .scaleLinear()
     .domain([
       d3.min(currentData, (d) => d.lifeexpectancy),
       d3.max(currentData, (d) => d.lifeexpectancy),
     ])
-    .range([0, 20]); // Adjust the range for radius as needed
+    .range([0, 5]); // Adjust the range for radius as needed
 
   // Create a group for the beeswarm plot
 
@@ -325,26 +326,29 @@ function createMirroredBeeswarmPlot() {
   // Create circles for each data point
   beeswarmGroup
     .selectAll(".circle")
-    .data(dodge(currentData, {radius: radiusScale(d.lifeexpectancy) * 2 + padding, x: d => xScale(d.femaleemployrate)}))
+    .data(dodge(currentData, {radius: d => (radiusScale(d.lifeexpectancy) * 2 + padding), x: d => xScale(d.femaleemployrate)}))
+    // (d => radiusScale(d.lifeexpectancy))
     .join("circle")
-      .attr("cx", (d) => d.x)
-      .attr("cy", d => height / 2 - radiusScale(d.lifeexpectancy) - padding -d.y)
-    // .attr("cy", (d) => yScale(d.country))
-      .attr("r", (d) => radiusScale(d.lifeexpectancy))
-    .append("title")
-      .text(d => d.femaleemployrate.name)
-    .attr("fill", (d) => d3.interpolateBlues(d.breastcancerper100th / 100)) // Use breastcancerper100th for fill color
+    .attr("cx", (d) => d.x)
+    .attr("cy", (d) => height / 2 - d.radius - padding - d.y)
+      // height / 2 - radiusScale(d.lifeexpectancy) - padding - d.y
+    .attr("r", d => d.radius)
+      // d => radiusScale(d.lifeexpectancy)
+    // .append("title")
+      // .text(d => d.femaleemployrate)
+    .attr("fill",d => d.breastcancerper100th) // Use breastcancerper100th for fill color
+    // (d) => d3.interpolateBlues(d.breastcancerper100th / 100)
     .attr("stroke", "black");
 }
 
 dodge = (data, {radius, x}) => {
-  const radius2 = radius ** 2;
-  const circles = data.map(d => ({x: x(d), data: d})).sort((a, b) => a.x - b.x);
+  // const radius2 = radius ** 2;
+  const circles = data.map(d => ({x: x(d), radius: radius(d), breastcancerper100th : d3.interpolateBlues(d.breastcancerper100th / 100), femaleemployrate: d.femaleemployrate, data: d})).sort((a, b) => a.x - b.x);
   const epsilon = 1e-3;
   let head = null, tail = null;
 
   // Returns true if circle ⟨x,y⟩ intersects with any circle in the queue.
-  function intersects(x, y) {
+  function intersects(x, y,radius2) {
     let a = head;
     while (a) {
       if (radius2 - epsilon > (a.x - x) ** 2 + (a.y - y) ** 2) {
@@ -357,19 +361,19 @@ dodge = (data, {radius, x}) => {
 
   // Place each circle sequentially.
   for (const b of circles) {
-
+    radius2 = b.radius ** 2;
     // Remove circles from the queue that can’t intersect the new circle b.
     while (head && head.x < b.x - radius2) head = head.next;
 
     // Choose the minimum non-intersecting tangent.
-    if (intersects(b.x, b.y = 0)) {
+    if (intersects(b.x, b.y = 0,radius2)) {
       let a = head;
       b.y = Infinity;
       do {
         let y1 = a.y + Math.sqrt(radius2 - (a.x - b.x) ** 2);
         let y2 = a.y - Math.sqrt(radius2 - (a.x - b.x) ** 2);
-        if (Math.abs(y1) < Math.abs(b.y) && !intersects(b.x, y1)) b.y = y1;
-        if (Math.abs(y2) < Math.abs(b.y) && !intersects(b.x, y2)) b.y = y2;
+        if (Math.abs(y1) < Math.abs(b.y) && !intersects(b.x, y1,radius2)) b.y = y1;
+        if (Math.abs(y2) < Math.abs(b.y) && !intersects(b.x, y2,radius2)) b.y = y2;
         a = a.next;
       } while (a);
     }
