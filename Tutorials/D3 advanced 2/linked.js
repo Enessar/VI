@@ -15,22 +15,34 @@ function handleMouseOver(event, item) {
     })
     .attr("fill", "red"); // Change the fill color of the matching elements to red
 
+
+  // Retrieve the country name from the item
+  console.log(item)
+  
+  countryName=  "none";
+  if ("properties" in item) {
+    countryName =item.properties.name
+  } else {
+    countryName = item.country
+  }
+
+
+  // Find the corresponding data in currentData
+  const countryData = currentData.find((d) => d.country === countryName);
+
   // Create and display a tooltip with country information
   const tooltip = d3.select("body").append("div")
     .attr("class", "tooltip")
     .style("position", "absolute")
     .style("opacity", 0);
 
-    // var coordinates= d3.pointer(this);
-    // var mouseX = coordinates[0];
-    // var mouseY = coordinates[1];
 
   // Populate the tooltip with information
   tooltip.html(
-    `<strong>Country:</strong> ${item.properties.name}<br>
-     <strong>Income Per Person:</strong> ${item.properties.incomeperperson}<br>
-     <strong>Alcohol Consumption:</strong> ${item.properties.alcconsumption}<br>
-     <strong>Employment Rate:</strong> ${item.properties.employrate}`
+    `<strong>Country:</strong> ${countryName}<br>
+     <strong>Income Per Person:</strong> ${countryData.incomeperperson}<br>
+     <strong>Alcohol Consumption:</strong> ${countryData.alcconsumption}<br>
+     <strong>Employment Rate:</strong> ${countryData.employrate}`
   )
   .style("background-color", "rgba(128, 128, 128, 0.7)") // Grey with 70% transparency
   .style("padding", "8px") // Adjust the padding as needed

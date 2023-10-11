@@ -93,6 +93,7 @@ function createChoroplethMap() {
   // Create a path generator for the map
   const path = d3.geoPath().projection(projection);
 
+  console.log(globalDataCountries)
   // Add countries as path elements to the map
   mapGroup
     .selectAll(".country")
