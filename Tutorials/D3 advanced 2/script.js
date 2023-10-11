@@ -105,6 +105,7 @@ function createChoroplethMap() {
     .attr("stroke", "black")
     .on("mouseover", handleMouseOver) // Function to handle mouseover event
     .on("mouseout", handleMouseOut)   // Function to handle mouseout event
+    .on("click", handleMouseClick)
     .append("title")
     .text((d) => d.properties.name);
 
@@ -231,6 +232,7 @@ function createScatterPlot() {
     .attr("stroke", "black")
     .on("mouseover", handleMouseOver) // Function to handle mouseover event
     .on("mouseout", handleMouseOut)   // Function to handle mouseout event
+    .on("click", handleMouseClick)
     .append("title")
     .text((d) => d.country);
 

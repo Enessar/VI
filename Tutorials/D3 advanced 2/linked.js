@@ -17,7 +17,7 @@ function handleMouseOver(event, item) {
 
 
   // Retrieve the country name from the item
-  console.log(item)
+
   
   countryName=  "none";
   if ("properties" in item) {
@@ -28,30 +28,35 @@ function handleMouseOver(event, item) {
 
 
   // Find the corresponding data in currentData
+  currentData = globalDataCapita.filter(function (d) {
+    return d.incomeperperson != "";
+  });
   const countryData = currentData.find((d) => d.country === countryName);
+  // console.log(currentData)
+  if (countryData != undefined){
+    // Create and display a tooltip with country information
+    const tooltip = d3.select("body").append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("opacity", 0);
 
-  // Create and display a tooltip with country information
-  const tooltip = d3.select("body").append("div")
-    .attr("class", "tooltip")
-    .style("position", "absolute")
-    .style("opacity", 0);
 
-
-  // Populate the tooltip with information
-  tooltip.html(
-    `<strong>Country:</strong> ${countryName}<br>
-     <strong>Income Per Person:</strong> ${countryData.incomeperperson}<br>
-     <strong>Alcohol Consumption:</strong> ${countryData.alcconsumption}<br>
-     <strong>Employment Rate:</strong> ${countryData.employrate}`
-  )
-  .style("background-color", "rgba(128, 128, 128, 0.7)") // Grey with 70% transparency
-  .style("padding", "8px") // Adjust the padding as needed
-  .style("border", "1px solid #333") // Optional border
-  .style("left", (event.pageX + 10) + "px")
-  .style("top", (event.pageY - 20) + "px")
-  .transition()
-  .duration(200)
-  .style("opacity", 0.9);
+    // Populate the tooltip with information
+    tooltip.html(
+      `<strong>Country:</strong> ${countryName}<br>
+      <strong>Income Per Person:</strong> ${countryData.incomeperperson}<br>
+      <strong>Alcohol Consumption:</strong> ${countryData.alcconsumption}<br>
+      <strong>Employment Rate:</strong> ${countryData.employrate}`
+    )
+    .style("background-color", "rgba(128, 128, 128, 0.7)") // Grey with 70% transparency
+    .style("padding", "8px") // Adjust the padding as needed
+    .style("border", "1px solid #333") // Optional border
+    .style("left", (event.pageX + 10) + "px")
+    .style("top", (event.pageY - 20) + "px")
+    .transition()
+    .duration(200)
+    .style("opacity", 0.9);
+  }
 }
 
 // Function to handle mouseout event
@@ -94,4 +99,47 @@ function handleMouseOut(event, item) {
 
   // Reset the fill color of all elements with class "circle data" to steelblue
   d3.selectAll("circle.data").attr("fill", "steelblue");
+}
+
+
+// Define a set to keep track of selected country names
+const selectedCountries = new Set();
+
+// Function to handle mouse click event
+function handleMouseClick(event, item) {
+  countryName=  "none";
+  if ("properties" in item) {
+    countryName =item.properties.name
+  } else {
+    countryName = item.country
+  }
+
+  if (selectedCountries.has(countryName)) {
+    // If the country name is in the set, remove it
+    selectedCountries.delete(countryName);
+  } else {
+    // If the country name is not in the set, add it
+    selectedCountries.add(countryName);
+  }
+
+  updateDrawer();
+}
+
+// Function to update the drawer with the selected country names
+function updateDrawer() {
+  const drawer = document.getElementById("drawer");
+  drawer.innerHTML = '<h2>Drawer</h2>';
+  
+  selectedCountries.forEach((countryName) => {
+    const countryDiv = document.createElement("div");
+    countryDiv.textContent = countryName;
+    
+    // Add a click event listener to remove the country from the drawer
+    countryDiv.addEventListener("click", () => {
+      selectedCountries.delete(countryName);
+      updateDrawer();
+    });
+    
+    drawer.appendChild(countryDiv);
+  });
 }
