@@ -1,4 +1,4 @@
-Country name,Country Code,Year,life expectancy,Fertility Rate,Replacement Rate,Natural Rate
+Country_name,Country_Code,Year,life_expectancy,Fertility_Rate,Replacement_Rate,Natural_Rate
 Afghanistan,AFG,1960,32.292,7.45,4.132919116831244,18.4
 Afghanistan,AFG,1961,32.742,7.45,4.073486795341462,19.1
 Afghanistan,AFG,1962,33.185,7.45,4.018121999892131,19.7

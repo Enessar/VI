@@ -27,7 +27,7 @@ def handle_missing_values_row(row):
                         break
 
                     if not pd.isnull(row[str(index)]):
-                        val = row[str(index)]
+                        val = row[str(index)] 
                         break
                     index +=1
                 row[column] = val
@@ -41,6 +41,7 @@ HDI_df['Country Code'] = 0
 HDI_df = handle_missing_values_table(HDI_df)
 HDI_df.drop(['Country Code'], axis=1, inplace=True)
 HDI_df.to_csv('Our project\src\Final_data\HDI.csv', index=False, header=True)
+HDI_df.rename(columns={'Country name': 'Country_name'}, inplace=True)
 HDI_df.to_csv('Our project\src\All data in one\HDI.csv', index=False, header=True)
 
 # Cleaning reporduction rate
@@ -143,6 +144,9 @@ Q_df = pd.merge(Q_df, replacement_R_df, on=['Country name','Country Code', 'Year
 Q_df = pd.merge(Q_df, natural_R_df, on=['Country name', 'Year'])
 
 Q_df['Natural Rate'] = Q_df['Natural Rate'].apply(lambda x: float(x.replace(',', '.')))
+Q_df.rename(columns={'Country name' : 'Country_name','Country Code': 'Country_Code',
+                     'life expectancy': 'life_expectancy','Fertility Rate': 'Fertility_Rate',
+                     'Replacement Rate': 'Replacement_Rate', 'Natural Rate': 'Natural_Rate'}, inplace=True)
 Q_df.to_csv('Our project\src\All data in one\Q.csv', index=False, header=True)
 
 

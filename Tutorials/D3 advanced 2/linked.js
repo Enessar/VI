@@ -46,7 +46,8 @@ function handleMouseOver(event, item) {
       `<strong>Country:</strong> ${countryName}<br>
       <strong>Income Per Person:</strong> ${countryData.incomeperperson}<br>
       <strong>Alcohol Consumption:</strong> ${countryData.alcconsumption}<br>
-      <strong>Employment Rate:</strong> ${countryData.employrate}`
+      <strong>Employment Rate:</strong> ${countryData.employrate}<br>
+      <strong>Polity score:</stong> ${countryData.polityscore}`
     )
     .style("background-color", "rgba(128, 128, 128, 0.7)") // Grey with 70% transparency
     .style("padding", "8px") // Adjust the padding as needed
