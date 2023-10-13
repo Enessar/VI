@@ -102,7 +102,7 @@ function createChoroplethMap() {
     .append("path")
     .attr("class", "country data")
     .attr("d", path)
-    .attr("stroke", "black")
+    // .attr("stroke", "black")
     .on("mouseover", handleMouseOver) // Function to handle mouseover event
     .on("mouseout", handleMouseOut)   // Function to handle mouseout event
     .on("click", handleMouseClick)
