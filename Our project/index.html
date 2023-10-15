@@ -19,11 +19,74 @@
             #choroplethTitle {
                 text-align: center;
             }
+            #slider .noUi-handle .noUi-touch-area {
+                border: 1px solid transparent;
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+                width: auto;
+                height: auto;
+            }
+            
+            /* Show a border when hovering the area the handle responds to*/
+            #slider .noUi-handle:hover .noUi-touch-area {
+                border: 1px dashed #7f7f7f;
+            }
+            #slider {
+                height: 10px;
+                width: 90%;
+                left: 5%;
+            }
+
+            #slider .noUi-connect {
+                background: rgb(0, 149, 255);
+            }
+
+            #slider .noUi-handle {
+                height: 18px;
+                width: 18px;
+                top: -5px;
+                right: -9px; 
+                border-radius: 9px;
+            }
+            #slider .noUi-handle[data-handle="0"] {
+                height: 30px;
+                width: 10px;
+                top: -10px;
+                right:-4px;
+                background: blue;
+                border-color: black;
+                box-shadow: none;
+            }
+            #slider .noUi-handle[data-handle="2"] {
+                height: 30px;
+                width: 10px;
+                top: -10px;
+                right:-4px;
+                background: blue;
+                border-color: black;
+                box-shadow: none;
+            }
+
+            
+
+
+            .active-pip {
+                color: red; 
+                border: 2px solid white;
+            }
+
+
         </style>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.js"></script>
         <script src="script.js"></script>
         <script src="linked.js"></script>
+        <script src="update.js"></script>
     </head>
     <body onload="startDashboard()">
         <div class="dashboard">
@@ -34,10 +97,14 @@
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-            <div id="filters"></div>
+        </div>
+            <div id="filters">
+
+                <div id="slider"></div>
+            </div>
             <div class="visualisation" id="lineChart"></div>
             <div class="visualisation" id="sankeyPlot"></div>
 
-        </div>          
+          
     </body>
 </html>
