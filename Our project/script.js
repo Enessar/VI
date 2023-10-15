@@ -2,6 +2,10 @@ var globalDataCountries;
 var globalData;
 var globalHDI;
 
+var curYear;
+var rangeMin;
+var rangeMax;
+
 // Define margin and dimensions for the charts
 const margin = {
     top: 20,
@@ -52,6 +56,7 @@ function startDashboard(){
 
 
     createChoroplethMap();
+    createSlider();
     });
 }
 
@@ -130,22 +135,6 @@ function createChoroplethMap() {
             ,
             d3.interpolateReds(colorScale2(element.Fertility_Rate))
                 )(0.5)
-        // (d) => {
-        //     const value1 = element.life_expectancy; // Replace with your actual dimension1 value
-        //     const value2 = element.Fertility_Rate; // Replace with your actual dimension2 value
-        
-
-        //     // Calculate the relative weight of each dimension in color mixing
-        //     const weight1 = value1 / (value1 + value2);
-        //     const weight2 = value2 / (value1 + value2);
-
-        //     const color1 = d3.interpolateBlues(weight1); // Use interpolateBlues for the first dimension
-        //     const color2 = d3.interpolateOranges(weight2); // Use interpolateOranges for the second dimension
-      
-        //     // Calculate the mixed color
-        //     return d3.interpolate(color1, color2)(0.5); // You can adjust the weight as needed
-
-        // }
         );
     });
   
@@ -219,3 +208,80 @@ function createChoroplethMap() {
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
   }
+
+function createSlider (){
+
+
+    // Get references to the slider container and value elements
+    var slider = document.getElementById("slider");
+
+
+    function filterPips(value, type) {
+        if (value == 2016 || value % 5 == 0 && value != 2015){return 1;}
+        else return 0;
+    }
+
+    // Create the multi-cursor slider with three cursors
+    noUiSlider.create(slider, {
+        start: [1970, 1990, 2010], // Initial positions of the three handles
+        connect: true, // Connect all handles with colored bars
+        range: {
+            min: 1960,
+            max: 2016,
+        },
+        tooltips: true,
+        format: {
+            to: function(value) {
+                return Math.round(value);
+            },
+            from: function (value) {
+                return value;
+            }
+        },
+        pips: {
+            mode: 'steps', // Use 'steps' mode for pips
+            density: 5, // Density of pips
+            filter: filterPips
+        },
+        step:1,
+    });
+
+    var activePips = [null, null,null];
+    
+
+    // Update the values as the handles are moved
+    slider.noUiSlider.on("update", function (values, handle) {
+        rangeMin = values[0];
+        curYear = values[1];
+        rangeMax = values[2];
+
+        // Remove the active class from the current pip
+        if (activePips[handle]) {
+            activePips[handle].classList.remove('active-pip');
+        }
+
+        // Match the formatting for the pip
+        var dataValue = Math.round(values[handle]);
+
+        // Find the pip matching the value
+        activePips[handle] = slider.querySelector('.noUi-value[data-value="' + dataValue + '"]');
+
+        // Add the active class
+        if (activePips[handle]) {
+            activePips[handle].classList.add('active-pip');
+        }
+        // updateIdioms();
+    }); 
+
+    var sliderHandleYear = slider.querySelector(".noUi-handle[data-handle='1']");
+
+
+    sliderHandleYear.addEventListener("mouseup",function (event) {
+        updateIdioms();
+    });
+
+}
+
+function updateIdioms(){
+    updateChoroplethMap();
+}
