@@ -52,6 +52,7 @@ function startDashboard(){
 
 
     createChoroplethMap();
+    createLineChart(); 
     });
 }
 
@@ -65,6 +66,8 @@ function createChoroplethMap() {
       .attr("x", width / 2)
       .attr("y", margin.top)
       .text("Main map");
+    
+  
   
     // Create an SVG element to hold the map
     const svg = d3
@@ -109,11 +112,7 @@ function createChoroplethMap() {
       .append("path")
       .attr("class", "country data")
       .attr("d", path)
-    //   .attr("stroke", "black")
-    //   .attr("stroke-width", 0.5) // Adjust this value to make the stroke very thin
-    //   .on("mouseover", handleMouseOver) // Function to handle mouseover event
-    //   .on("mouseout", handleMouseOut)   // Function to handle mouseout event
-    //   .on("click", handleMouseClick)
+
       .append("title")
       .text((d) => d.properties.name);
   
@@ -126,23 +125,7 @@ function createChoroplethMap() {
         })
         .attr("fill", 
         d3.interpolateBlues(colorScale1(element.life_expectancy))
-        // (d) => {
-        //     const value1 = d.life_expectancy; // Replace with your actual dimension1 value
-        //     const value2 = d.Fertility_Rate; // Replace with your actual dimension2 value
-        
-
-        //     // Calculate the relative weight of each dimension in color mixing
-        //     const weight1 = value1 / (value1 + value2);
-        //     const weight2 = value2 / (value1 + value2);
-
-        //     // Interpolate colors for both dimensions and combine them
-        //     const color1 = d3.interpolateBlues(colorScale1(element.life_expectancy));
-        //     const color2 = cd3.interpolateBlues(colorScale1(element.Fertility_Rate));
-
-        //     const mixedColor = d3.rgb(color1).mix(d3.rgb(color2), weight2);
-
-        //     return mixedColor;
-        // }
+       
         );
     });
   
@@ -162,52 +145,323 @@ function createChoroplethMap() {
     // Function to handle the zoom event
     function zoomed(event) {
       mapGroup.attr("transform", event.transform);
-    }
-  
-    // // Create a legend for the choropleth map
-    // const svg2 = d3
-    //   .select("#choroplethLabel")
-    //   .append("svg")
-    //   .attr("width", width * 0.2)
-    //   .attr("height", height);
-  
-    // // Create a gradient for the legend color scale
-    // const defs = svg2.append("defs");
-    // const gradient = defs
-    //   .append("linearGradient")
-    //   .attr("id", "colorScaleGradient")
-    //   .attr("x1", "0%")
-    //   .attr("y1", "0%")
-    //   .attr("x2", "0%")
-    //   .attr("y2", "100%");
-  
-    // gradient
-    //   .append("stop")
-    //   .attr("offset", "0%")
-    //   .attr("stop-color", d3.interpolateBlues(0));
-  
-    // gradient
-    //   .append("stop")
-    //   .attr("offset", "100%")
-    //   .attr("stop-color", d3.interpolateBlues(1));
-  
-    // // Create the legend rectangle filled with the color scale gradient
-    // const legend = svg2.append("g").attr("transform", `translate(0, 40)`);
-    // const legendHeight = height - 40;
-    // const legendWidth = 20;
-  
-    // legend
-    //   .append("rect")
-    //   .attr("width", legendWidth)
-    //   .attr("height", legendHeight)
-    //   .style("fill", "url(#colorScaleGradient)");
-  
-    // // Add tick marks and labels to the legend
-    // for (let index = 0; index <= 1; index += 0.25) {
-    //   legend
-    //     .append("text")
-    //     .attr("x", legendWidth + 5)
-    //     .attr("y", legendHeight * index)
-    //     .text(Math.round(colorScale.invert(index)));
-    // }
+    } 
   }
+
+  // Function to create a line chart
+function createLineChart() {
+
+  // const CONTINENT_MAP = [
+  //   {
+  //     continent: 'Oceania',
+  //     countries: ['Australia', 'Fiji'],
+  //   },
+  //   {
+  //     continent: 'Europe',
+  //     countries: [
+  //       'Anguilla',
+  //       'Aruba',
+  //       'Austria',
+  //       'Azerbaijan',
+  //       'Belgium',
+  //       'Bulgaria',
+  //       'Croatia',
+  //       'Curacao',
+  //       'Cyprus',
+  //       'Denmark',
+  //       'Finland',
+  //       'France',
+  //       'Georgia',
+  //       'Germany',
+  //       'Greece',
+  //       'Italy',
+  //       'Luxembourg',
+  //       'Malta',
+  //       'Monaco',
+  //       'Netherlands',
+  //       'Netherlands Antilles',
+  //       'Norway',
+  //       'Poland',
+  //       'Portugal',
+  //       'Romania',
+  //       'Spain',
+  //       'Sweden',
+  //       'Switzerland',
+  //       'Ukraine',
+  //       'United Kingdom',
+  //     ],
+  //   },
+  //   {
+  //     continent: 'Asia',
+  //     countries: [
+  //       'Bahrain',
+  //       'China',
+  //       'East Timor',
+  //       'India',
+  //       'Indonesia',
+  //       'Iran',
+  //       'Iraq',
+  //       'Israel',
+  //       'Japan',
+  //       'Jordan',
+  //       'Kazakhstan',
+  //       'Myanmar',
+  //       'North Korea',
+  //       'South Korea',
+  //       'Kuwait',
+  //       'Kyrgyzstan',
+  //       'Laos',
+  //       'Malaysia',
+  //       'Oman',
+  //       'Pakistan',
+  //       'Qatar',
+  //       'Russian Federation',
+  //       'Saudi Arabia',
+  //       'Singapore',
+  //       'Taiwan',
+  //       'Thailand',
+  //       'Turkey',
+  //       'Turkmenistan',
+  //       'United Arab Emirates',
+  //       'Uzbekistan',
+  //       'Vietnam',
+  //       'Yemen',
+  //     ],
+  //   },
+  //   {
+  //     continent: 'Africa',
+  //     countries: [
+ 
+  //   'Algeria',
+  //   'Angola',
+  //   'Benin',
+  //   'Botswana',
+  //   'Burkina Faso',
+  //   'Burundi',
+  //   'Cabo Verde/Cape Verde',
+  //   'Cameroon',
+  //   'Central African Republic',
+  //   'Chad',
+  //   'Comoros',
+  //   'Congo/Republic of the Congo',
+  //   'Democratic Republic of the Congo',
+  //   'Djiboti',
+  //   'Egypt',
+  //   'Equatorial Guinea',
+  //   'Eritrea',
+  //   'Eswatini',
+  //   'Ethiopia',
+  //   'Gabon',
+  //   'Gambia',
+  //   'Ghana',
+  //   'Guinea',
+  //   'Guinea-Bissau',
+  //   'Côte dIvoire',
+  //   'Kenya',
+  //   'Lesotho',
+  //   'Liberia',
+  //   'Libya',
+  //   'Madagascar',
+  //   'Malawi',
+  //   'Mali',
+  //   'Mauritania',
+  //   'Mauritius',
+  //   'Morocco',
+  //   'Mozambique',
+  //   'Namibia',
+  //   'Niger',
+  //   'Nigeria',
+  //   'Rwanda',
+  //   'Sao Tome and Principe',
+  //   'Senegal',
+  //   'Seychelles',
+  //   'Sierra Leone',
+  //   'Somalia',
+  //   'South Africa',
+  //   'South Sudan',
+  //   'Sudan',
+  //   'Tanzania',
+  //   'Togo',
+  //   'Tunisia',
+  //   'Uganda',
+  //   'Zambia',
+  //   'Zimbabwe'
+  //     ]
+  //   },
+  //   {
+  //     continent: 'North America',
+  //     countries: [    
+
+  //   'Antigua and Barbuda',
+  //   'Bahamas',
+  //   'Barbados',
+  //   'Belize',
+  //   'Canada',
+  //   'Costa Rica',
+  //   'Cuba',
+  //   'Dominica',
+  //   'Dominican Republic',
+  //   'El Salvador',
+  //   'Grenada',
+  //   'Guatemala',
+  //   'Haiti',
+  //   'Honduras',
+  //   'Jamaica',
+  //   'Mexico',
+  //   'Nicaragua',
+  //   'Panama',
+  //   'Saint Kitts and Nevis',
+  //   'Saint Lucia',
+  //   'Saint Vincent and the Grenadines',
+  //   'Trinidad and Tobago',
+  //   'United States of America'
+  // ]
+  // },
+  // {
+  //   continent: 'South America',
+  //   countries: [  
+  //   'Argentina',
+  //   'Bolivia',
+  //   'Brazil',
+  //   'Chile',
+  //   'Colombia',
+  //   'Ecuador',
+  //   'Guyana',
+  //   'Paraguay',
+  //   'Peru',
+  //   'Suriname',
+  //   'Uruguay',
+  //   'Venezuela'
+  //   ]  
+  // },
+  // ];
+
+  // Create a title for the line chart
+  const chartTitle = d3
+    .select("#lineChartTitle")
+    .append("text")
+    .attr("x", width / 2)
+    .attr("y", margin.top)
+    .text("Life Expectancy Over Time");
+
+  // Create an SVG element to hold the line chart
+  const svg = d3
+    .select("#lineChart")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+
+  const yScale = d3
+   .scaleLinear()
+    .domain([
+      d3.min(globalData, (d) => d.life_expectancy),
+      d3.max(globalData, (d) => d.life_expectancy),
+    ])
+    .nice()
+    .range([height - margin.bottom, margin.top]);
+
+  // Calculate the minimum and maximum life expectancy values
+  // const minLifeExpectancy = d3.min(globalData, (d) => d.life_expectancy);
+  // const maxLifeExpectancy = d3.max(globalData, (d) => d.life_expectancy);
+
+  // Calculate the percentage values and add them to the data
+  // globalData.forEach((d) => {
+  //   d.life_expectancy_percentage = ((d.life_expectancy - minLifeExpectancy) / (maxLifeExpectancy - minLifeExpectancy)) * 100 ;
+  // });
+
+  const xScale = d3
+    .scaleLinear()
+    .domain([1960, 2018]) // Adjust the domain based on your data
+    .range([margin.left, width - margin.right]);
+
+ 
+  // Create a line generator
+  const line = d3
+    .line()
+    .x((d) => xScale(d.Year))
+    .y((d) => yScale(d.life_expectancy));
+    
+
+  // Create a group for the line chart elements
+  const chartGroup = svg.append("g");
+
+  // Add the line to the chart
+  chartGroup
+    .append("path")
+    .datum(globalData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue");
+
+
+//   // Group the data by continent
+// const dataByContinent = new Map();
+
+// globalData.forEach((d) => {
+//   const country = d.Country_name;
+//   const continent = CONTINENT_MAP[country] || 'Unknown'; // Assign 'Unknown' for unmatched countries
+//   if (!dataByContinent.has(continent)) {
+//     dataByContinent.set(continent, []);
+//   }
+//   dataByContinent.get(continent).push(d);
+// });
+
+// // Define a color scale for continents
+// const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+// // Iterate through each group (continent) and create a line for each
+// dataByContinent.forEach((continentData, continent) => {
+//   chartGroup
+//     .append("path")
+//     .datum(continentData)
+//     .attr("class", "line")
+//     .attr("d", line)
+//     .attr("fill", "none")
+//     .attr("stroke", colorScale(continent));
+// });
+
+
+
+  // Add axes
+  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+  // Create the y-axis with percentage formatting
+  // const yAxis = d3.axisLeft(yScale).tickFormat(d3.format(".0%"));
+  const yAxis = d3.axisLeft(yScale);
+
+
+  svg
+    .append("g")
+    .attr("class", "x-axis")
+    .attr("transform", `translate(0, ${height - margin.bottom})`)
+    .call(xAxis);
+
+  svg
+    .append("g")
+    .attr("class", "y-axis")
+    .attr("transform", `translate(${margin.left}, 0)`)
+    .call(yAxis);
+  
+
+  // Add labels for the x and y axes
+  svg
+  .append("text")
+  .attr("class", "x-axis-label")
+  .attr("x", width / 2)
+  .attr("y", height + margin.top + 30)
+  .style("text-anchor", "middle")
+  .text("Year");
+
+
+  // Add labels for the x and y axes
+  svg
+  .append("text")
+  .attr("class", "y-axis-label")
+  .attr("x", -height / 2)
+  .attr("y", -margin.left + 20)
+  .attr("transform", "rotate(-90)")
+  .style("text-anchor", "middle")
+  .text("Life expectancy");
+}
+
