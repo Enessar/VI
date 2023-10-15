@@ -6,6 +6,7 @@ var curYear;
 var rangeMin;
 var rangeMax;
 
+// Variable for the Map
 var colorScaleMap1 = null;
 var colorScaleMap2 = null;
 
@@ -739,10 +740,10 @@ function createSlider (){
         } else {
             var currentValue = parseInt(slider.noUiSlider.get()[1]);
             var maxValue = rangeMax; // Maximum value of the slider
-            var playInterval = 200; // 500 milliseconds (half a second)
+            var playInterval = 500; // 500 milliseconds (half a second)
 
             function incrementValue() {
-                currentValue++; // Increment the value
+                currentValue += 5; // Increment the value
                 if (currentValue <= maxValue) {
                     updateSliderValue(currentValue); // Update the slider
                 } else {
