@@ -7,13 +7,19 @@ function updateChoroplethMap(attr = false){
     }
     
     if(attr){
+        const filteredDatarange = globalData.filter((element) => {
+            const year = element.Year;
+            return year >= rangeMin && year <= rangeMax;
+          });
 
+          console.log(d3.min(filteredDatarange, (d) => d[attributes[0]]));
+          console.log(d3.max(filteredDatarange, (d) => d[attributes[0]]));
         // Create a color scale for the incomeperperson values
         colorScaleMap1 = d3
             .scaleLinear()
             .domain([
-            d3.min(globalData, (d) => d[attributes[0]]),
-            d3.max(globalData, (d) => d[attributes[0]]),
+            d3.min(filteredDatarange, (d) => d[attributes[0]]),
+            d3.max(filteredDatarange, (d) => d[attributes[0]]),
             ])
             .range([0,1]);
 
@@ -22,8 +28,8 @@ function updateChoroplethMap(attr = false){
             colorScaleMap2 = d3
                 .scaleLinear()
                 .domain([
-                d3.min(globalData, (d) => d[attributes[1]]),
-                d3.max(globalData, (d) => d[attributes[1]]),
+                d3.min(filteredDatarange, (d) => d[attributes[1]]),
+                d3.max(filteredDatarange, (d) => d[attributes[1]]),
                 ])
                 .range([0,1]);
         }

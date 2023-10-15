@@ -61,8 +61,8 @@ function startDashboard(){
         //TODO maybe convert also globalDataHDI to numbers
 
 
-    createChoroplethMap();
     createSlider();
+    createChoroplethMap();
     createLineChart(); 
     createButtons();
     });
@@ -91,22 +91,29 @@ function createChoroplethMap() {
     // Create a group to hold the map elements
     const mapGroup = svg.append("g");
   
-    // Create a color scale for the incomeperperson values
-    colorScaleMap1 = d3
+    const filteredData = globalData.filter((element) => {
+        const year = element.Year;
+        return year >= rangeMin && year <= rangeMax;
+      });
+
+    
+      // Create a color scale for the first attribute
+      colorScaleMap1 = d3
         .scaleLinear()
         .domain([
-        d3.min(globalData, (d) => d.life_expectancy),
-        d3.max(globalData, (d) => d.life_expectancy),
+        d3.min(filteredData, (d) => d.life_expectancy),
+        d3.max(filteredData, (d) => d.life_expectancy),
         ])
-        .range([0,1]);
-
+        .range([0, 1]);
+    
+    // Create a color scale for the second attribute
     colorScaleMap2 = d3
         .scaleLinear()
         .domain([
-        d3.min(globalData, (d) => d.Fertility_Rate),
-        d3.max(globalData, (d) => d.Fertility_Rate),
+        d3.min(filteredData, (d) => d.Fertility_Rate),
+        d3.max(filteredData, (d) => d.Fertility_Rate),
         ])
-        .range([0,1]);
+        .range([0, 1]);
   
     // Create a projection to convert geo-coordinates to pixel values
     const projection = d3
@@ -703,10 +710,18 @@ function createSlider (){
     }); 
 
     var sliderHandleYear = slider.querySelector(".noUi-handle[data-handle='1']");
+    var sliderHandleMin = slider.querySelector(".noUi-handle[data-handle='0']");
+    var sliderHandleMax = slider.querySelector(".noUi-handle[data-handle='2']");
 
     
     sliderHandleYear.addEventListener("mouseup",function (event) {
         updateIdioms();
+    });
+    sliderHandleMin.addEventListener("mouseup",function (event) {
+        updateIdioms(true);
+    });
+    sliderHandleMax.addEventListener("mouseup",function (event) {
+        updateIdioms(true);
     });
     // Play flag to indicate if the animation is running
     var isPlaying = false;
