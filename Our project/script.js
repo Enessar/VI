@@ -6,6 +6,11 @@ var curYear;
 var rangeMin;
 var rangeMax;
 
+var colorScaleMap1 = null;
+var colorScaleMap2 = null;
+
+var setButtons = new Set();
+
 // Define margin and dimensions for the charts
 const margin = {
     top: 20,
@@ -58,6 +63,7 @@ function startDashboard(){
     createChoroplethMap();
     createSlider();
     createLineChart(); 
+    createButtons();
     });
 }
 
@@ -85,21 +91,21 @@ function createChoroplethMap() {
     const mapGroup = svg.append("g");
   
     // Create a color scale for the incomeperperson values
-    const colorScale1 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.life_expectancy),
-    d3.max(globalData, (d) => d.life_expectancy),
-    ])
-    .range([0,1]);
+    colorScaleMap1 = d3
+        .scaleLinear()
+        .domain([
+        d3.min(globalData, (d) => d.life_expectancy),
+        d3.max(globalData, (d) => d.life_expectancy),
+        ])
+        .range([0,1]);
 
-    const colorScale2 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.Fertility_Rate),
-    d3.max(globalData, (d) => d.Fertility_Rate),
-    ])
-    .range([0,1]);
+    colorScaleMap2 = d3
+        .scaleLinear()
+        .domain([
+        d3.min(globalData, (d) => d.Fertility_Rate),
+        d3.max(globalData, (d) => d.Fertility_Rate),
+        ])
+        .range([0,1]);
   
     // Create a projection to convert geo-coordinates to pixel values
     const projection = d3
@@ -134,9 +140,9 @@ function createChoroplethMap() {
         })
         .attr("fill", 
         d3.interpolate(
-            d3.interpolateGreens(colorScale1(element.life_expectancy))
+            d3.interpolateGreens(colorScaleMap1(element.life_expectancy))
             ,
-            d3.interpolateReds(colorScale2(element.Fertility_Rate))
+            d3.interpolateReds(colorScaleMap2(element.Fertility_Rate))
                 )(0.5)
         );
     });
@@ -205,7 +211,7 @@ function createChoroplethMap() {
         .append("text")
         .attr("x", 0)
         .attr("y", legendHeight - legendHeight * index + 10)
-        .text(Math.round(colorScale2.invert(index)));
+        .text(Math.round(colorScaleMap2.invert(index)));
     }
 
     // Position the legend on the page
@@ -532,6 +538,105 @@ function createChoroplethMap() {
 }
 
 
+function createButtons(){
+    const warningMessage = d3.select("#warningMessage");
+
+    // Select button 1 using D3.js
+    var fertilityR = d3.select("#fertilityR");
+
+    // Add a click event listener to button 1
+    fertilityR.on("click", function() {
+        if (setButtons.has("Fertility_Rate")){
+            setButtons.delete("Fertility_Rate");
+            fertilityR.classed('active', false);
+            updateIdioms(true);
+        } else if (setButtons.size >= 2) {
+            
+        } else {
+            setButtons.add("Fertility_Rate");
+            fertilityR.classed('active', true);
+            updateIdioms(true);
+        }
+    });
+    // Select button 1 using D3.js
+    var lifeExp = d3.select("#lifeExp");
+
+    // Add a click event listener to button 1
+    lifeExp.on("click", function() {
+        if (setButtons.has("life_expectancy")){
+            setButtons.delete("life_expectancy");
+            lifeExp.classed('active', false);
+            updateIdioms(true);
+        } else if (setButtons.size >= 2) {
+            
+        } else {
+            setButtons.add("life_expectancy");
+            lifeExp.classed('active', true);
+            updateIdioms(true);
+        }
+    });
+    // Select button 1 using D3.js
+    var birthR = d3.select("#HDI");
+
+    // Add a click event listener to button 1
+    birthR.on("click", function() {
+        if (setButtons.has("HDI")){
+            setButtons.delete("HDI");
+            birthR.classed('active', false);
+            updateIdioms(true);
+        } else if (setButtons.size >= 2) {
+            
+        } else {
+            setButtons.add("HDI");
+            birthR.classed('active', true);
+            updateIdioms(true);
+        }
+    });
+    // Select button 1 using D3.js
+    var naturalR = d3.select("#naturalR");
+
+    // Add a click event listener to button 1
+    naturalR.on("click", function() {
+        if (setButtons.has("Natural_Rate")){
+            setButtons.delete("Natural_Rate");
+            naturalR.classed('active', false);
+            updateIdioms(true);
+        } else if (setButtons.size >= 2) {
+            
+        } else {
+            setButtons.add("Natural_Rate");
+            naturalR.classed('active', true);
+            updateIdioms(true);
+        }
+    });
+    // Select button 1 using D3.js
+    var raplacementR = d3.select("#raplacementR");
+
+    // Add a click event listener to button 1
+    raplacementR.on("click", function() {
+        if (setButtons.has("Replacement_Rate")){
+            setButtons.delete("Replacement_Rate");
+            raplacementR.classed('active', false);
+            updateIdioms(true);
+        } else if (setButtons.size >= 2) {
+            // Show the warning message
+            warningMessage.style("display", "block");
+        } else {
+            setButtons.add("Replacement_Rate");
+            raplacementR.classed('active', true);
+            // Hide the warning message if it was previously shown
+            warningMessage.style("display", "none");
+            updateIdioms(true);
+        }
+    });
+
+    // put the first 2 attributes:
+    setButtons.add("life_expectancy");
+    lifeExp.classed('active', true);
+    setButtons.add("Fertility_Rate");
+    fertilityR.classed('active', true);
+
+}
 
 function createSlider (){
 
@@ -594,21 +699,70 @@ function createSlider (){
         if (activePips[handle]) {
             activePips[handle].classList.add('active-pip');
         }
-        // updateIdioms();
     }); 
 
     var sliderHandleYear = slider.querySelector(".noUi-handle[data-handle='1']");
 
-
+    
     sliderHandleYear.addEventListener("mouseup",function (event) {
         updateIdioms();
     });
+    // Play flag to indicate if the animation is running
+    var isPlaying = false;
+    var playIntervalId;
 
+    slider.addEventListener("click", function (event) {
+        if (isPlaying) {
+          clearInterval(playIntervalId); // Pause the animation
+          isPlaying = false;
+        }
+        updateIdioms();
+      });
+    
+    var playButton = d3.select("#play-button");
+
+    // Function to update the slider's value
+    function updateSliderValue(newValue) {
+        var currentValues = slider.noUiSlider.get();
+        currentValues[1] = newValue;
+        slider.noUiSlider.set(currentValues);
+        updateIdioms(); // Call your function to update the visualizations
+    }
+
+
+    // Function to handle the play functionality
+    function playSlider() {
+        if (isPlaying) {
+            // If animation is running, stop it
+            clearInterval(playIntervalId);
+            isPlaying = false;
+        } else {
+            var currentValue = parseInt(slider.noUiSlider.get()[1]);
+            var maxValue = rangeMax; // Maximum value of the slider
+            var playInterval = 200; // 500 milliseconds (half a second)
+
+            function incrementValue() {
+                currentValue++; // Increment the value
+                if (currentValue <= maxValue) {
+                    updateSliderValue(currentValue); // Update the slider
+                } else {
+                    currentValue = rangeMin;
+                }
+            }
+
+            playIntervalId = setInterval(incrementValue, playInterval); // Start playing
+            isPlaying = true;
+        }
+    }
+
+    // Add a click event listener to the play button
+    playButton.on("click", function() {
+        playSlider(); // Start/stop playing the slider
+    });
+
+  
 }
 
-function updateIdioms(){
-    updateChoroplethMap();
+function updateIdioms(attr = false){
+    updateChoroplethMap(attr);
 }
-
-
-

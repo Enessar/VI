@@ -1,36 +1,55 @@
-function updateChoroplethMap(){
+function updateChoroplethMap(attr = false){
     const mapGroup = d3.select("#choropleth").select("svg").select("g");
-    
-    // Create a color scale for the incomeperperson values
-    const colorScale1 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.life_expectancy),
-    d3.max(globalData, (d) => d.life_expectancy),
-    ])
-    .range([0,1]);
+    attributes = Array.from(setButtons);
 
-    const colorScale2 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.Fertility_Rate),
-    d3.max(globalData, (d) => d.Fertility_Rate),
-    ])
-    .range([0,1]);
+    if(attr){
 
-    // Set the fill color of each country based on its incomeperperson value
-    globalData.forEach((element) => {
-        mapGroup
-            .selectAll("path")
-            .filter(function (d) {
-            return d.properties.name == element.Country_name && element.Year == curYear;
-            })
-            .attr("fill", 
-            d3.interpolate(
-                d3.interpolateGreens(colorScale1(element.life_expectancy))
-                ,
-                d3.interpolateReds(colorScale2(element.Fertility_Rate))
-                    )(0.5)
-            );
-        });
+        // Create a color scale for the incomeperperson values
+        colorScaleMap1 = d3
+            .scaleLinear()
+            .domain([
+            d3.min(globalData, (d) => d[attributes[0]]),
+            d3.max(globalData, (d) => d[attributes[0]]),
+            ])
+            .range([0,1]);
+
+        if (attributes.length == 2){
+
+            colorScaleMap2 = d3
+                .scaleLinear()
+                .domain([
+                d3.min(globalData, (d) => d[attributes[1]]),
+                d3.max(globalData, (d) => d[attributes[1]]),
+                ])
+                .range([0,1]);
+        }
+    }
+    if (attributes.length == 2){
+        // Set the fill color of each country based on its incomeperperson value
+        globalData.forEach((element) => {
+            mapGroup
+                .selectAll("path")
+                .filter(function (d) {
+                return d.properties.name == element.Country_name && element.Year == curYear;
+                })
+                .attr("fill", 
+                d3.interpolate(
+                    d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
+                    ,
+                    d3.interpolateReds(colorScaleMap2(element[attributes[1]]))
+                        )(0.5)
+        );
+                });
+    } else {
+        // Set the fill color of each country based on its incomeperperson value
+        globalData.forEach((element) => {
+            mapGroup
+                .selectAll("path")
+                .filter(function (d) {
+                return d.properties.name == element.Country_name && element.Year == curYear;
+                })
+                .attr("fill", d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
+        );
+            });
+    }
 }
