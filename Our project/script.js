@@ -439,6 +439,15 @@ function createChoroplethMap() {
   // Create a group for the line chart elements
   const chartGroup = svg.append("g");
 
+  // Add the line to the chart
+  chartGroup
+    .append("path")
+    .datum(filteredDataByRange)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue");
+
 
 // Group the data by continent
 const dataByContinent = d3.group(filteredDataByRange, (d) => {
