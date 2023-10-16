@@ -5,7 +5,7 @@
         <style>
             .container {
                 display: flex;
-
+                /* background-color: #ccc; */
             }
             .dashboard {
                 display: grid;
@@ -17,9 +17,11 @@
             .visualization {
                 padding: 10px;
             }
-            #choroplethTitle {
+            #choroplethTitle, #lineChartTitle {
                 text-align: center;
             }
+
+
             #slider .noUi-handle .noUi-touch-area {
                 border: 1px solid transparent;
                 position: absolute;
@@ -145,9 +147,12 @@
         </div>
         <button id="play-button">Play</button>
         <div class="dashboard">
-            <div  class="visualisation" id="lineChart"></div>
+            <div>
+                <div id="lineChartTitle"></div>
+                <div  class="container" class="visualisation" id="lineChart"></div>
+            </div>
             <div id="legend"></div>
-            <div  class="visualisation" id="sankeyPlot"></div>
+            <div class="container"  class="visualisation" id="sankeyPlot"></div>
         </div>
           
     </body>

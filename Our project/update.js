@@ -12,8 +12,6 @@ function updateChoroplethMap(attr = false){
             return year >= rangeMin && year <= rangeMax;
           });
 
-          console.log(d3.min(filteredDatarange, (d) => d[attributes[0]]));
-          console.log(d3.max(filteredDatarange, (d) => d[attributes[0]]));
         // Create a color scale for the incomeperperson values
         colorScaleMap1 = d3
             .scaleLinear()
@@ -54,4 +52,8 @@ function updateChoroplethMap(attr = false){
                 }
         });
             });
+}
+
+function updateLineChart(attr = false){
+    const lineGroup = d3.select("#lineChart").select("svg").select("g");
 }
