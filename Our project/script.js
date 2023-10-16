@@ -195,6 +195,16 @@ const margin = {
   const width = 900 - margin.left - margin.right;
   const height = 600 - margin.top - margin.bottom;
 
+  function getContinentForCountry(country) {
+    for (const continentInfo of CONTINENT_MAP) {
+        const countries = continentInfo.countries;
+        if (countries.includes(country)) {
+            return continentInfo.continent;
+        }
+    }
+    return "Unknown"; // Default to "Unknown" if the country is not found in the map
+}
+
 
 function startDashboard(){
     // Helper functions to load JSON and CSV files using D3's d3.json and d3.csv
@@ -797,4 +807,57 @@ function filterData(){
 function updateIdioms(attr = false){
     updateChoroplethMap(attr);
     updateLineChart(attr);
+}
+
+
+function createFilterButtons() {
+  const warningMessage = d3.select("#warningMessage");
+  const selectedContinents = new Set(); // Initialize a Set to keep track of selected continents
+
+  // Select continent buttons using D3.js
+  var africaBtn = d3.select("#africa");
+  var asiaBtn = d3.select("#asia");
+  var europeBtn = d3.select("#europe");
+  var northAmericaBtn = d3.select("#northAmerica");
+  var southAmericaBtn = d3.select("#southAmerica");
+
+  // Function to handle continent button clicks
+  function handleContinentButtonClick(continent, button) {
+      if (selectedContinents.has(continent)) {
+          selectedContinents.delete(continent);
+          button.classed('active', false);
+          // You can perform any filtering or data manipulation here based on selected continents.
+          updateDataBasedOnSelectedContinents(selectedContinents);
+      } else {
+          selectedContinents.add(continent);
+          button.classed('active', true);
+          // You can perform any filtering or data manipulation here based on selected continents.
+          updateDataBasedOnSelectedContinents(selectedContinents);
+      }
+  }
+
+  // Add click event listeners for continent buttons
+  africaBtn.on("click", () => handleContinentButtonClick("Africa", africaBtn));
+  asiaBtn.on("click", () => handleContinentButtonClick("Asia", asiaBtn));
+  europeBtn.on("click", () => handleContinentButtonClick("Europe", europeBtn));
+  northAmericaBtn.on("click", () => handleContinentButtonClick("NorthAmerica", northAmericaBtn));
+  southAmericaBtn.on("click", () => handleContinentButtonClick("SouthAmerica", southAmericaBtn));
+
+  // Function to update your data based on selected continents
+  function updateDataBasedOnSelectedContinents(selectedContinents) {
+      // Perform data filtering or manipulation based on the selected continents here
+      // You can use the CONTINENT_MAP to map countries to continents for filtering.
+
+      // For example, you can filter data points that belong to the selected continents:
+      const filteredCountries = [];
+      selectedContinents.forEach((continent) => {
+          const continentData = CONTINENT_MAP.find((entry) => entry.continent === continent);
+          if (continentData) {
+              filteredCountries.push(...continentData.countries);
+          }
+      });
+
+      // Now you can use the filteredCountries array to filter your data.
+      // This assumes that your data contains country names that match the countries in CONTINENT_MAP.
+  }
 }

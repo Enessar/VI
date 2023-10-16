@@ -15,17 +15,17 @@ function updateChoroplethMap(attr = false){
             ])
             .range([0,1]);
 
-        if (attributes.length == 2){
-
-            colorScaleMap2 = d3
-                .scaleLinear()
-                .domain([
-                d3.min(filteredDataByRange, (d) => d[attributes[1]]),
-                d3.max(filteredDataByRange, (d) => d[attributes[1]]),
-                ])
-                .range([0,1]);
+            if (attributes.length === 2) {
+                colorScaleMap2 = d3
+                    .scaleLinear()
+                    .domain([
+                        d3.min(filteredDatarange, (d) => d[attributes[1]]),
+                        d3.max(filteredDatarange, (d) => d[attributes[1]]),
+                    ])
+                    .range([0, 1]);
+            }
         }
-    }
+
 
     // Set the fill color of each country based on its incomeperperson value
     filteredData.forEach((element) => {
@@ -39,15 +39,24 @@ function updateChoroplethMap(attr = false){
             .attr("fill", (d) => {
                 if (attributes.length == 2){
                     return d3.interpolate(
-                        d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
-                        ,
-                        d3.interpolateReds(colorScaleMap2(element[attributes[1]]))
-                            )(0.5)
+                        d3.interpolateGreens(colorScaleMap1(countryData[attributes[0]])),
+                        d3.interpolateReds(colorScaleMap2(countryData[attributes[1]]))
+                    )(0.5);
                 } else {
-                    return d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
+                    return d3.interpolateGreens(colorScaleMap1(countryData[attributes[0]]));
                 }
+            // } else {
+            //     // Handle cases where data for the country is not found
+            //     return "gray"; // Set a default color or handle as needed
+            // }
         });
-            });
+    
+    // Add code to zoom and center the map on the selected continent
+    if (selectedContinent) {
+        // Implement zoom and center logic here
+        // You may need to adjust the projection and scale to focus on the selected continent.
+    }
+});
 }
 
 function updateLineChart(attr = false) {
