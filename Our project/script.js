@@ -62,7 +62,7 @@ function startDashboard(){
 
 
     createSlider();
-    createChoroplethMap();
+    createChoroplethsMap();
     createLineChart(); 
     createButtons();
     });
