@@ -217,190 +217,176 @@ function createChoroplethMap() {
  // Function to create a line chart
  function createLineChart() {
 
-  // const CONTINENT_MAP = [
-  //   {
-  //     continent: 'Oceania',
-  //     countries: ['Australia', 'Fiji'],
-  //   },
-  //   {
-  //     continent: 'Europe',
-  //     countries: [
-  //       'Anguilla',
-  //       'Aruba',
-  //       'Austria',
-  //       'Azerbaijan',
-  //       'Belgium',
-  //       'Bulgaria',
-  //       'Croatia',
-  //       'Curacao',
-  //       'Cyprus',
-  //       'Denmark',
-  //       'Finland',
-  //       'France',
-  //       'Georgia',
-  //       'Germany',
-  //       'Greece',
-  //       'Italy',
-  //       'Luxembourg',
-  //       'Malta',
-  //       'Monaco',
-  //       'Netherlands',
-  //       'Netherlands Antilles',
-  //       'Norway',
-  //       'Poland',
-  //       'Portugal',
-  //       'Romania',
-  //       'Spain',
-  //       'Sweden',
-  //       'Switzerland',
-  //       'Ukraine',
-  //       'United Kingdom',
-  //     ],
-  //   },
-  //   {
-  //     continent: 'Asia',
-  //     countries: [
-  //       'Bahrain',
-  //       'China',
-  //       'East Timor',
-  //       'India',
-  //       'Indonesia',
-  //       'Iran',
-  //       'Iraq',
-  //       'Israel',
-  //       'Japan',
-  //       'Jordan',
-  //       'Kazakhstan',
-  //       'Myanmar',
-  //       'North Korea',
-  //       'South Korea',
-  //       'Kuwait',
-  //       'Kyrgyzstan',
-  //       'Laos',
-  //       'Malaysia',
-  //       'Oman',
-  //       'Pakistan',
-  //       'Qatar',
-  //       'Russian Federation',
-  //       'Saudi Arabia',
-  //       'Singapore',
-  //       'Taiwan',
-  //       'Thailand',
-  //       'Turkey',
-  //       'Turkmenistan',
-  //       'United Arab Emirates',
-  //       'Uzbekistan',
-  //       'Vietnam',
-  //       'Yemen',
-  //     ],
-  //   },
-  //   {
-  //     continent: 'Africa',
-  //     countries: [
+  const CONTINENT_MAP = [
+    {
+      continent: 'Oceania',
+      countries: ['Australia', 'Fiji'],
+    },
+    {
+      continent: 'Europe',
+      countries: [
+        'Aruba',
+        'Austria',
+        'Azerbaijan',
+        'Belgium',
+        'Bulgaria',
+        'Croatia',
+        'Cyprus',
+        'Denmark',
+        'Finland',
+        'France',
+        'Georgia',
+        'Germany',
+        'Greece',
+        'Italy',
+        'Luxembourg',
+        'Malta',
+        'Netherlands',
+        'Norway',
+        'Poland',
+        'Portugal',
+        'Romania',
+        'Spain',
+        'Sweden',
+        'Switzerland',
+        'Ukraine',
+        'United Kingdom',
+      ],
+    },
+    {
+      continent: 'Asia',
+      countries: [
+        'Bahrain',
+        'China',
+        'India',
+        'Indonesia',
+        'Iran',
+        'Iraq',
+        'Israel',
+        'Japan',
+        'Jordan',
+        'Kazakhstan',
+        'Myanmar',
+        'South Korea',
+        'Kuwait',
+        'Kyrgyzstan',
+        'Laos',
+        'Malaysia',
+        'Oman',
+        'Pakistan',
+        'Qatar',
+        'Russia',
+        'Saudi Arabia',
+        'Singapore',
+        'Thailand',
+        'Turkey',
+        'Turkmenistan',
+        'United Arab Emirates',
+        'Uzbekistan',
+        'Vietnam',
+        'Yemen',
+      ],
+    },
+    {
+      continent: 'Africa',
+      countries: [
  
-  //   'Algeria',
-  //   'Angola',
-  //   'Benin',
-  //   'Botswana',
-  //   'Burkina Faso',
-  //   'Burundi',
-  //   'Cabo Verde/Cape Verde',
-  //   'Cameroon',
-  //   'Central African Republic',
-  //   'Chad',
-  //   'Comoros',
-  //   'Congo/Republic of the Congo',
-  //   'Democratic Republic of the Congo',
-  //   'Djiboti',
-  //   'Egypt',
-  //   'Equatorial Guinea',
-  //   'Eritrea',
-  //   'Eswatini',
-  //   'Ethiopia',
-  //   'Gabon',
-  //   'Gambia',
-  //   'Ghana',
-  //   'Guinea',
-  //   'Guinea-Bissau',
-  //   'Côte dIvoire',
-  //   'Kenya',
-  //   'Lesotho',
-  //   'Liberia',
-  //   'Libya',
-  //   'Madagascar',
-  //   'Malawi',
-  //   'Mali',
-  //   'Mauritania',
-  //   'Mauritius',
-  //   'Morocco',
-  //   'Mozambique',
-  //   'Namibia',
-  //   'Niger',
-  //   'Nigeria',
-  //   'Rwanda',
-  //   'Sao Tome and Principe',
-  //   'Senegal',
-  //   'Seychelles',
-  //   'Sierra Leone',
-  //   'Somalia',
-  //   'South Africa',
-  //   'South Sudan',
-  //   'Sudan',
-  //   'Tanzania',
-  //   'Togo',
-  //   'Tunisia',
-  //   'Uganda',
-  //   'Zambia',
-  //   'Zimbabwe'
-  //     ]
-  //   },
-  //   {
-  //     continent: 'North America',
-  //     countries: [    
+    'Algeria',
+    'Angola',
+    'Benin',
+    'Botswana',
+    'Burkina Faso',
+    'Burundi',
+    'Cabo Verde',
+    'Cameroon',
+    'Central African Rep.',
+    'Chad',
+    'Comoros',
+    'Congo',
+    'Dem. Rep. Congo',
+    'Djibouti',
+    'Egypt',
+    'Eq. Guinea',
+    'Eritrea',
+    'Ethiopia',
+    'Gabon',
+    'Gambia',
+    'Ghana',
+    'Guinea',
+    'Guinea-Bissau',
+    'Kenya',
+    'Lesotho',
+    'Liberia',
+    'Libya',
+    'Madagascar',
+    'Malawi',
+    'Mali',
+    'Mauritania',
+    'Mauritius',
+    'Morocco',
+    'Mozambique',
+    'Namibia',
+    'Niger',
+    'Nigeria',
+    'Rwanda',
+    'Sao Tome and Principe',
+    'Senegal',
+    'Seychelles',
+    'Sierra Leone',
+    'Somalia',
+    'South Africa',
+    'S. Sudan',
+    'Sudan',
+    'Tanzania',
+    'Togo',
+    'Tunisia',
+    'Uganda',
+    'Zambia',
+    'Zimbabwe'
+      ]
+    },
+    {
+      continent: 'Americas',
+      countries: [    
 
-  //   'Antigua and Barbuda',
-  //   'Bahamas',
-  //   'Barbados',
-  //   'Belize',
-  //   'Canada',
-  //   'Costa Rica',
-  //   'Cuba',
-  //   'Dominica',
-  //   'Dominican Republic',
-  //   'El Salvador',
-  //   'Grenada',
-  //   'Guatemala',
-  //   'Haiti',
-  //   'Honduras',
-  //   'Jamaica',
-  //   'Mexico',
-  //   'Nicaragua',
-  //   'Panama',
-  //   'Saint Kitts and Nevis',
-  //   'Saint Lucia',
-  //   'Saint Vincent and the Grenadines',
-  //   'Trinidad and Tobago',
-  //   'United States of America'
-  // ]
-  // },
-  // {
-  //   continent: 'South America',
-  //   countries: [  
-  //   'Argentina',
-  //   'Bolivia',
-  //   'Brazil',
-  //   'Chile',
-  //   'Colombia',
-  //   'Ecuador',
-  //   'Guyana',
-  //   'Paraguay',
-  //   'Peru',
-  //   'Suriname',
-  //   'Uruguay',
-  //   'Venezuela'
-  //   ]  
-  // },
-  // ];
+    'Antigua and Barbuda',
+    '"Bahamas, The"',
+    'Barbados',
+    'Belize',
+    'Canada',
+    'Costa Rica',
+    'Cuba',
+    'Dominican Republic',
+    'El Salvador',
+    'Grenada',
+    'Guatemala',
+    'Haiti',
+    'Honduras',
+    'Jamaica',
+    'Mexico',
+    'Nicaragua',
+    'Panama',
+    'Trinidad and Tobago',
+    'United States of America',
+    'Argentina',
+    'Bolivia',
+    'Brazil',
+    'Chile',
+    'Colombia',
+    'Ecuador',
+    'Guyana',
+    'Paraguay',
+    'Peru',
+    'Suriname',
+    'Uruguay',
+    'Venezuela'
+    ]  
+  },
+  {
+    continent: 'Unknown',
+    countries: [] // Leave this empty or add specific countries as needed
+  }
+  ];
 
   // Create a title for the line chart
   const chartTitle = d3
@@ -414,8 +400,8 @@ function createChoroplethMap() {
   const svg = d3
     .select("#lineChart")
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("width", width )
+    .attr("height", height );
 
 
   const yScale = d3
@@ -426,15 +412,6 @@ function createChoroplethMap() {
     ])
     .nice()
     .range([height - margin.bottom, margin.top]);
-
-  // Calculate the minimum and maximum life expectancy values
-  // const minLifeExpectancy = d3.min(globalData, (d) => d.life_expectancy);
-  // const maxLifeExpectancy = d3.max(globalData, (d) => d.life_expectancy);
-
-  // Calculate the percentage values and add them to the data
-  // globalData.forEach((d) => {
-  //   d.life_expectancy_percentage = ((d.life_expectancy - minLifeExpectancy) / (maxLifeExpectancy - minLifeExpectancy)) * 100 ;
-  // });
 
   const xScale = d3
     .scaleLinear()
@@ -462,33 +439,66 @@ function createChoroplethMap() {
     .attr("stroke", "steelblue");
 
 
-//   // Group the data by continent
-// const dataByContinent = new Map();
+// Group the data by continent
+const dataByContinent = d3.group(globalData, (d) => {
+  const country = d.Country_name;
+  const continentEntry = CONTINENT_MAP.find((entry) =>
+    entry.countries.includes(country)
+  );
+  return continentEntry ? continentEntry.continent : 'Unknown';
+});
 
-// globalData.forEach((d) => {
-//   const country = d.Country_name;
-//   const continent = CONTINENT_MAP[country] || 'Unknown'; // Assign 'Unknown' for unmatched countries
-//   if (!dataByContinent.has(continent)) {
-//     dataByContinent.set(continent, []);
-//   }
-//   dataByContinent.get(continent).push(d);
-// });
+// Define a color scale for continents, including the 'Unknown' category
+const colorScale = d3.scaleOrdinal()
+  .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
+  .range(d3.schemeCategory10);
 
-// // Define a color scale for continents
-// const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+// Iterate through each group (continent) and create a line for each
+dataByContinent.forEach((continentData, continent) => {
+  if (continent !== 'Unknown') {  // Exclude 'Unknown'
+  chartGroup
+    .append("path")
+    .datum(continentData)
+    .attr("class", "line")
+    .attr("d", line)
+    .attr("fill", "none")
+    .attr("stroke", colorScale(continent));
+}
+ });
 
-// // Iterate through each group (continent) and create a line for each
-// dataByContinent.forEach((continentData, continent) => {
-//   chartGroup
-//     .append("path")
-//     .datum(continentData)
-//     .attr("class", "line")
-//     .attr("d", line)
-//     .attr("fill", "none")
-//     .attr("stroke", colorScale(continent));
-// });
+  // Create a group for the legend elements
+  const legendGroup = svg
+  .append("g")
+  .attr("class", "legend")
+  .attr("transform", `translate(${width - margin.right}, ${margin.top})`);
 
+  // Extract a list of all unique continents, including 'Unknown'
+  const uniqueContinents = Array.from(dataByContinent.keys()).filter((continent) => continent !== 'Unknown');
 
+  // Create the legend items
+  const legendItems = legendGroup
+  .selectAll(".legend-item")
+  .data(uniqueContinents)
+  .enter()
+  .append("g")
+  .attr("class", "legend-item")
+  .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+  // Add colored rectangles for each continent
+  legendItems
+  .append("rect")
+  .attr("width", 18)
+  .attr("height", 18)
+  .style("fill", (d) => colorScale(d));
+
+  // Add text labels for each continent
+  legendItems
+  .append("text")
+  .attr("x", -60)
+  .attr("y", 9)
+  .attr("dy", ".35em")
+  .style("text-anchor", "start")
+  .text((d) => d);
 
   // Add axes
   const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
@@ -509,26 +519,23 @@ function createChoroplethMap() {
     .attr("transform", `translate(${margin.left}, 0)`)
     .call(yAxis);
   
-
-  // Add labels for the x and y axes
+  // Create a title for the x-axis
   svg
   .append("text")
-  .attr("class", "x-axis-label")
+  .attr("class", "axis-title")
   .attr("x", width / 2)
   .attr("y", height + margin.top + 30)
-  .style("text-anchor", "middle")
   .text("Year");
 
-
-  // Add labels for the x and y axes
+  // Create a title for the y-axis
   svg
   .append("text")
-  .attr("class", "y-axis-label")
+  .attr("class", "axis-title")
   .attr("x", -height / 2)
   .attr("y", -margin.left + 20)
   .attr("transform", "rotate(-90)")
-  .style("text-anchor", "middle")
-  .text("Life expectancy");
+  .text("Life Expectancy");
+
 }
 
 
