@@ -401,6 +401,9 @@ function createChoroplethMap() {
 
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
+
+    // console.log("here");
+
   }
 
 
@@ -704,6 +707,7 @@ function createSlider (){
 
     // Update the values as the handles are moved
     slider.noUiSlider.on("update", function (values, handle) {
+
         rangeMin = values[0];
         curYear = values[1];
         rangeMax = values[2];
@@ -806,6 +810,7 @@ function filterData(){
 
 function updateIdioms(attr = false){
     updateChoroplethMap(attr);
+
     updateLineChart(attr);
 }
 
