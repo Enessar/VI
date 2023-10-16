@@ -1,4 +1,5 @@
 var filteredData = null;
+
 function updateChoroplethMap(attr = false){
     const mapGroup = d3.select("#choropleth").select("svg").select("g");
     attributes = Array.from(setButtons);
@@ -54,6 +55,28 @@ function updateChoroplethMap(attr = false){
             });
 }
 
-function updateLineChart(attr = false){
+function updateLineChart(attr = false) {
     const lineGroup = d3.select("#lineChart").select("svg").select("g");
-}
+    
+    if (attr) {
+      // If attr is provided or no buttons are selected, use the selected metric
+      const metricName = Array.from(setButtons)[0];
+      
+  
+      // Update the yScale, line, and line chart
+      yScale.domain([
+        d3.min(filteredData, (d) => d[metricName]),
+        d3.max(filteredData, (d) => d[metricName])
+      ]).nice();
+  
+      // Update the line generator based on the selected metric
+      line.y((d) => yScale(d[metricName]));
+  
+      // Select the line chart group and update the line
+      lineGroup.select(".line")
+        .datum(filteredData)
+        .attr("d", line);
+  
+    }
+  }
+  

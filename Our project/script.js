@@ -429,7 +429,7 @@ function createChoroplethMap() {
 
   const xScale = d3
     .scaleLinear()
-    .domain([minRange, 2018]) // Adjust the domain based on your data
+    .domain([1960, 2016]) // Adjust the domain based on your data
     .range([margin.left, width - margin.right]);
 
  
