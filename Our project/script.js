@@ -1,6 +1,7 @@
 var globalDataCountries;
 var globalData;
 var globalHDI;
+var filteredDataByRange;
 
 var curYear;
 var rangeMin;
@@ -12,17 +13,8 @@ var colorScaleMap2 = null;
 
 var setButtons = new Set();
 
-// Define margin and dimensions for the charts
-const margin = {
-    top: 20,
-    right: 20,
-    bottom: 50,
-    left: 80,
-  };
-  const width = 900 - margin.left - margin.right;
-  const height = 600 - margin.top - margin.bottom;
-
-  const CONTINENT_MAP = [
+//to put in the dataSet
+const CONTINENT_MAP = [
     {
       continent: 'Oceania',
       countries: ['Australia', 'Fiji'],
@@ -192,6 +184,17 @@ const margin = {
     countries: [] // Leave this empty or add specific countries as needed
   }
   ];
+
+// Define margin and dimensions for the charts
+const margin = {
+    top: 20,
+    right: 20,
+    bottom: 50,
+    left: 80,
+  };
+  const width = 900 - margin.left - margin.right;
+  const height = 600 - margin.top - margin.bottom;
+
   function getContinentForCountry(country) {
     for (const continentInfo of CONTINENT_MAP) {
         const countries = continentInfo.countries;
@@ -242,10 +245,9 @@ function startDashboard(){
 
 
     createSlider();
+    createButtons();
     createChoroplethMap();
     createLineChart(); 
-    createButtons();
-    createFilterButtons();
     });
 }
 
@@ -271,19 +273,13 @@ function createChoroplethMap() {
   
     // Create a group to hold the map elements
     const mapGroup = svg.append("g");
-  
-    const filteredData = globalData.filter((element) => {
-        const year = element.Year;
-        return year >= rangeMin && year <= rangeMax;
-      });
-
     
-      // Create a color scale for the first attribute
-      colorScaleMap1 = d3
+    // Create a color scale for the first attribute
+    colorScaleMap1 = d3
         .scaleLinear()
         .domain([
-        d3.min(filteredData, (d) => d.life_expectancy),
-        d3.max(filteredData, (d) => d.life_expectancy),
+        d3.min(filteredDataByRange, (d) => d.life_expectancy),
+        d3.max(filteredDataByRange, (d) => d.life_expectancy),
         ])
         .range([0, 1]);
     
@@ -291,8 +287,8 @@ function createChoroplethMap() {
     colorScaleMap2 = d3
         .scaleLinear()
         .domain([
-        d3.min(filteredData, (d) => d.Fertility_Rate),
-        d3.max(filteredData, (d) => d.Fertility_Rate),
+        d3.min(filteredDataByRange, (d) => d.Fertility_Rate),
+        d3.max(filteredDataByRange, (d) => d.Fertility_Rate),
         ])
         .range([0, 1]);
   
@@ -431,15 +427,15 @@ function createChoroplethMap() {
   const yScale = d3
    .scaleLinear()
     .domain([
-      d3.min(globalData, (d) => d.life_expectancy),
-      d3.max(globalData, (d) => d.life_expectancy),
+      d3.min(filteredDataByRange, (d) => d.life_expectancy),
+      d3.max(filteredDataByRange, (d) => d.life_expectancy),
     ])
     .nice()
     .range([height - margin.bottom, margin.top]);
 
   const xScale = d3
     .scaleLinear()
-    .domain([1960, 2018]) // Adjust the domain based on your data
+    .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
     .range([margin.left, width - margin.right]);
 
  
@@ -456,7 +452,7 @@ function createChoroplethMap() {
   // Add the line to the chart
   chartGroup
     .append("path")
-    .datum(globalData)
+    .datum(filteredDataByRange)
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
@@ -464,7 +460,7 @@ function createChoroplethMap() {
 
 
 // Group the data by continent
-const dataByContinent = d3.group(globalData, (d) => {
+const dataByContinent = d3.group(filteredDataByRange, (d) => {
   const country = d.Country_name;
   const continentEntry = CONTINENT_MAP.find((entry) =>
     entry.countries.includes(country)
@@ -664,11 +660,12 @@ function createButtons(){
 }
 
 function createSlider (){
-
-
     // Get references to the slider container and value elements
     var slider = document.getElementById("slider");
-
+    
+    rangeMin = 1970;
+    rangeMax = 2010;
+    filterData(); //filter data the first time
 
     function filterPips(value, type) {
         if (value == 2016 || value % 5 == 0 && value != 2015){return 1;}
@@ -699,6 +696,7 @@ function createSlider (){
         },
         step:1,
     });
+
 
     var activePips = [null, null,null];
     
@@ -735,9 +733,11 @@ function createSlider (){
         updateIdioms();
     });
     sliderHandleMin.addEventListener("mouseup",function (event) {
+        filterData();
         updateIdioms(true);
     });
     sliderHandleMax.addEventListener("mouseup",function (event) {
+        filterData();
         updateIdioms(true);
     });
     // Play flag to indicate if the animation is running
@@ -794,6 +794,13 @@ function createSlider (){
     });
 
   
+}
+
+function filterData(){
+    filteredDataByRange = globalData.filter((element) => {
+        const year = element.Year;
+        return year >= rangeMin && year <= rangeMax;
+      });
 }
 
 function updateIdioms(attr = false){
