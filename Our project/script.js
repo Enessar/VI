@@ -246,6 +246,7 @@ function startDashboard(){
 
     createSlider();
     createButtons();
+    createFilterButtons();
     createChoroplethMap();
     createLineChart(); 
     });
