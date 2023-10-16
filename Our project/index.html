@@ -5,6 +5,7 @@
         <style>
             .container {
                 display: flex;
+
             }
             .dashboard {
                 display: grid;
@@ -31,13 +32,13 @@
             }
             
             /* Show a border when hovering the area the handle responds to*/
-            #slider .noUi-handle:hover .noUi-touch-area {
+            /* #slider .noUi-handle:hover .noUi-touch-area {
                 border: 1px dashed #7f7f7f;
-            }
+            } */
             #slider {
                 height: 10px;
                 width: 90%;
-                left: 5%;
+                left: 2%;
             }
 
             #slider .noUi-connect {
@@ -78,6 +79,36 @@
                 border: 2px solid white;
             }
 
+            .my-button {
+            padding: 10px 20px;
+            background-color: #ccc;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            }
+
+            .my-button.active {
+            background-color: #007bff;
+            color: #fff;
+            }
+
+            #play-button {
+                background: #f08080;
+                padding-right: 2%;
+                border-radius: 3px;
+                border: none;
+                color: white;
+                margin: 0;
+                padding: 0 12px;
+                width: 60px;
+                cursor: pointer;
+                height: 30px;
+            }
+
+            #play-button:hover {
+                background-color: #696969;
+            }
+
 
         </style>
         <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -97,15 +128,27 @@
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-        </div>
-            <div id="filters">
-
-                <div id="slider"></div>
+            <div class="container" id="filters">
+                <p id="warningMessage" style="display: none; color: red;">You can select a maximum of two values.</p>
+                <div id="buttons">
+                    <button  class="my-button" id="fertilityR">Fertility Rate</button>
+                    <button  class="my-button" id="lifeExp">Life Expectancy</button>
+                    <button  class="my-button" id="HDI">HDI</button>
+                    <button  class="my-button" id="naturalR">Natural Rate</button>
+                    <button  class="my-button" id="raplacementR">Replacement Rate</button>
+                </div>
             </div>
-            <div class="visualisation" id="lineChart"></div>
-            <div id="legend"></div>
-            <div class="visualisation" id="sankeyPlot"></div>
+        </div>
 
+        <div class="container" style="margin-top: 30px; margin-bottom: 30px">
+            <div id="slider"></div>
+        </div>
+        <button id="play-button">Play</button>
+        <div class="dashboard">
+            <div  class="visualisation" id="lineChart"></div>
+            <div id="legend"></div>
+            <div  class="visualisation" id="sankeyPlot"></div>
+        </div>
           
     </body>
 </html>

@@ -1,36 +1,57 @@
-function updateChoroplethMap(){
+var filteredData = null;
+function updateChoroplethMap(attr = false){
     const mapGroup = d3.select("#choropleth").select("svg").select("g");
+    attributes = Array.from(setButtons);
+    if(!attr){
+        filteredData = globalData.filter((element) => element.Year === curYear);
+    }
     
-    // Create a color scale for the incomeperperson values
-    const colorScale1 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.life_expectancy),
-    d3.max(globalData, (d) => d.life_expectancy),
-    ])
-    .range([0,1]);
+    if(attr){
+        const filteredDatarange = globalData.filter((element) => {
+            const year = element.Year;
+            return year >= rangeMin && year <= rangeMax;
+          });
 
-    const colorScale2 = d3
-    .scaleLog()
-    .domain([
-    d3.min(globalData, (d) => d.Fertility_Rate),
-    d3.max(globalData, (d) => d.Fertility_Rate),
-    ])
-    .range([0,1]);
+          console.log(d3.min(filteredDatarange, (d) => d[attributes[0]]));
+          console.log(d3.max(filteredDatarange, (d) => d[attributes[0]]));
+        // Create a color scale for the incomeperperson values
+        colorScaleMap1 = d3
+            .scaleLinear()
+            .domain([
+            d3.min(filteredDatarange, (d) => d[attributes[0]]),
+            d3.max(filteredDatarange, (d) => d[attributes[0]]),
+            ])
+            .range([0,1]);
+
+        if (attributes.length == 2){
+
+            colorScaleMap2 = d3
+                .scaleLinear()
+                .domain([
+                d3.min(filteredDatarange, (d) => d[attributes[1]]),
+                d3.max(filteredDatarange, (d) => d[attributes[1]]),
+                ])
+                .range([0,1]);
+        }
+    }
 
     // Set the fill color of each country based on its incomeperperson value
-    globalData.forEach((element) => {
+    filteredData.forEach((element) => {
         mapGroup
             .selectAll("path")
             .filter(function (d) {
-            return d.properties.name == element.Country_name && element.Year == curYear;
+                return d.properties.name == element.Country_name;
             })
-            .attr("fill", 
-            d3.interpolate(
-                d3.interpolateGreens(colorScale1(element.life_expectancy))
-                ,
-                d3.interpolateReds(colorScale2(element.Fertility_Rate))
-                    )(0.5)
-            );
+            .attr("fill", (d) => {
+                if (attributes.length == 2){
+                    return d3.interpolate(
+                        d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
+                        ,
+                        d3.interpolateReds(colorScaleMap2(element[attributes[1]]))
+                            )(0.5)
+                } else {
+                    return d3.interpolateGreens(colorScaleMap1(element[attributes[0]]))
+                }
         });
+            });
 }
