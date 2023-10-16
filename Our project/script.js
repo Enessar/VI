@@ -656,6 +656,7 @@ function createSlider (){
     rangeMin = 1970;
     rangeMax = 2010;
     filterData(); //filter data the first time
+    filteredData = filteredDataByRange;
 
     function filterPips(value, type) {
         if (value == 2016 || value % 5 == 0 && value != 2015){return 1;}
@@ -795,4 +796,5 @@ function filterData(){
 
 function updateIdioms(attr = false){
     updateChoroplethMap(attr);
+    updateLineChart(attr);
 }

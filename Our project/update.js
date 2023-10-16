@@ -31,6 +31,8 @@ function updateChoroplethMap(attr = false){
     filteredData.forEach((element) => {
         mapGroup
             .selectAll("path")
+            // .transition()
+            // .duration(500)
             .filter(function (d) {
                 return d.properties.name == element.Country_name;
             })
@@ -49,17 +51,18 @@ function updateChoroplethMap(attr = false){
 }
 
 function updateLineChart(attr = false) {
-    const lineGroup = d3.select("#lineChart").select("svg").select("g");
+    const chartGroup = d3.select("#lineChart").select("svg").select("g");
+    const svg = d3.select("#lineChart").select("svg");
     
     if (attr) {
       // If attr is provided or no buttons are selected, use the selected metric
-      const metricName = Array.from(setButtons)[0];
+      const attributes = Array.from(setButtons)[0];
       
       // Update the yScale, line, and line chart
-     yScale.scaleLinear()
+    const yScale = d3.scaleLinear()
         .domain([
-        d3.min(filteredDataByRange, (d) => d[metricName]),
-        d3.max(filteredDataByRange, (d) => d[metricName])
+        d3.min(filteredDataByRange, (d) => d[attributes]),
+        d3.max(filteredDataByRange, (d) => d[attributes])
       ]).nice()
       .nice()
       .range([height - margin.bottom, margin.top]);
@@ -70,7 +73,9 @@ function updateLineChart(attr = false) {
     .range([margin.left, width - margin.right]);
 
       // Update the line generator based on the selected metric
-    line.y((d) => yScale(d[metricName]))
+    const line = d3
+        .line()
+        .y((d) => yScale(d[attributes]))
         .x((d) => xScale(d.Year));
 
   // Group the data by continent
@@ -91,11 +96,10 @@ function updateLineChart(attr = false) {
   dataByContinent.forEach((continentData, continent) => {
     if (continent !== 'Unknown') {  // Exclude 'Unknown'
     chartGroup
-      .append("path")
+      .select(".line")
       .datum(continentData)
-      .attr("class", "line")
+      .transition().duration(500)
       .attr("d", line)
-      .attr("fill", "none")
       .attr("stroke", colorScale(continent));
   }
    });
@@ -106,24 +110,21 @@ function updateLineChart(attr = false) {
    const yAxis = d3.axisLeft(yScale);
  
  
-   svg
-     .append("g")
-     .attr("class", "x-axis")
-     .attr("transform", `translate(0, ${height - margin.bottom})`)
+   chartGroup
+     .select(".x-axis")
+     .transition().duration(500)
      .call(xAxis);
  
-   svg
-     .append("g")
-     .attr("class", "y-axis")
-     .attr("transform", `translate(${margin.left}, 0)`)
+     chartGroup
+     .select(".y-axis")
+     .transition().duration(500)
      .call(yAxis);
  
- }
-      // Select the line chart group and update the line
-      lineGroup.select(".line")
+    // Select the line chart group and update the line
+      chartGroup.select(".line")
         .datum(filteredData)
         .attr("d", line);
   
     }
 
-  
+}
