@@ -277,7 +277,7 @@ function createChoroplethMap() {
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width)
+      .attr("width", width +300)
       .attr("height", height);
   
     // Create a group to hold the map elements
@@ -360,8 +360,8 @@ function createChoroplethMap() {
     }
   
     // Create a legend for the choropleth map
-    const legendWidth = 250; // Width of the legend
-    const legendHeight = 250; // Height of the legend
+    const legendWidth = 200; // Width of the legend
+    const legendHeight = 200; // Height of the legend
     
     const legendSvg = d3.select("#choroplethLabel")
         .append("svg")
@@ -380,7 +380,14 @@ function createChoroplethMap() {
 
     
     for (let i = 0; i < numColumns; i++) {
-        for (let j = 0; j < numRows; j++) {
+      // if (i%2 == 0){
+      //   legendSvg.append("text")
+      //             .attr("x", i * columnWidth +50)
+      //             .attr("y", 150)
+      //             .attr("font-size", "10px") // Add this line to set the font size
+      //             .text((i + 0.5) / numColumns);
+      // }
+      for (let j = 0; j < numRows; j++) {
             const mixedColor = d3.interpolate(
                 d3.interpolateGreens((i + 0.5) / numColumns),
                             d3.interpolateReds((j + 0.5) / numRows))(0.5) // Adjust the mixing ratio as needed
@@ -395,18 +402,82 @@ function createChoroplethMap() {
         }
     }
 
-    const legend = legendSvg.append("g").attr("transform", `translate(0, 0)`);
+    const legend = legendSvg.append("g").attr("transform", `translate(35, 125)`);
 
 
-    // Add tick marks and labels to the legend
-    for (let index = 0; index <= 1; index+=0.2) {
-        // console.log(colorScale1.invert(index))
-        legend
-        .append("text")
-        .attr("x", 0)
-        .attr("y", legendHeight - legendHeight * index + 10)
-        .text(Math.round(colorScaleMap2.invert(index)));
-    }
+    attributes = Array.from(setButtons);
+
+    // x-axis
+      legend.append("text")
+            .attr("x", 20)
+            .attr("y", 0)
+            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally
+            .text(d3.min(filteredData, (d) => d[attributes[0]]));
+      legend.append("text")
+            .attr("x", 120)
+            .attr("y", 0)
+            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally
+            .text(d3.max(filteredData, (d) => d[attributes[0]].toFixed(2)));
+      legend.append("text")
+          .attr("x", 70)
+          .attr("y", 10)
+          .attr("font-size", "10px") // Add this line to set the font size
+          .attr("text-anchor", "middle") // Center the text horizontally
+          .text(attributes[0]);
+    
+    // y-axis
+      legend.append("text")
+            .attr("x", 0)
+            .attr("y", -10)
+            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally  
+            .text(d3.min(filteredData, (d) => d[attributes[1]].toFixed(2)));
+      legend.append("text")
+            .attr("x", 0)
+            .attr("y", -110)
+            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally
+            .text(d3.max(filteredData, (d) => d[attributes[1]].toFixed(2)));
+      legend.append("text")
+          .attr("x", -60)
+          .attr("y", 20)
+          .attr("font-size", "10px") // Add this line to set the font size
+          .attr("text-anchor", "middle") // Center the text horizontally
+          .attr("transform", "rotate(90)") // Rotate the text 90 degrees counter-clockwise
+          .text(attributes[1]);
+
+  // // Append x and y axes to the line chart
+  // legendSvg
+  //     .append("g")
+  //     .attr("class", "x-axis")
+  //     .attr("transform", `translate(10,100)`)
+  //     .call(d3.axisBottom(colorScaleMap1));
+
+  //       // Append x and y axes to the line chart
+  // legendSvg
+  // .append("g")
+  // .attr("class", "y-axis")
+  // .attr("transform", `translate(100,0)`)
+  // .call(d3.axisBottom(colorScaleMap2));
+
+  //   legendSvg
+  //     .selectAll(".x-axis text")
+  //     .attr("transform", "rotate(-45)")
+  //     .style("text-anchor", "end")
+  //     .attr("dx", "-0.8em")
+  //     .attr("dy", "0.15em");
+
+    // // Add tick marks and labels to the legend
+    // for (let index = 0; index <= 1; index+=0.2) {
+    //     // console.log(colorScale1.invert(index))
+    //     legend
+    //     .append("text")
+    //     .attr("x", 0)
+    //     .attr("y", legendHeight - legendHeight * index + 10)
+    //     .text(Math.round(colorScaleMap2.invert(index)));
+    // }
 
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
