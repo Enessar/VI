@@ -14,8 +14,19 @@ var colorScaleMap2 = null;
 // Variable for the line chart
 var colorScaleLine = null;
 
+// buttons
 var setButtons = new Set();
 var setFilter = new Set();
+
+// map for name columns to display
+const toName = {
+  Fertility_Rate: "Fertility Rate",
+  life_expectancy: "Life Expectancy",
+  HDI: "HDI",
+  Natural_Rate: "Natural Rate",
+  Replacement_Rate: "Replacement Rate",
+  // Add more mappings as needed
+};
 
 //to put in the dataSet
 const CONTINENT_MAP = [
@@ -251,25 +262,26 @@ function startDashboard(){
     createSlider();
     createButtons();
     createFilterButtons();
-
+    
     filterData(); //filter data the first time
     filteredDataYear = filteredData;
-
+    
     createChoroplethMap();
     createLineChart(); 
-    });
+  });
 }
 
 // Function to create the choropleth map
 function createChoroplethMap() {
   
+    var attributes = Array.from(setButtons);
     // Create a title for the choropleth map
     const chartTitle = d3
       .select("#choroplethTitle")
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
-      .text("Main map");
+      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
     
   
   
@@ -277,7 +289,7 @@ function createChoroplethMap() {
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width +300)
+      .attr("width", width +300 )
       .attr("height", height);
   
     // Create a group to hold the map elements
@@ -405,48 +417,82 @@ function createChoroplethMap() {
     const legend = legendSvg.append("g").attr("transform", `translate(35, 125)`);
 
 
-    attributes = Array.from(setButtons);
+    // Define the arrowhead path
+    const arrowhead = "M0 0 L10 5 L0 10 L3 5Z";
 
     // x-axis
       legend.append("text")
             .attr("x", 20)
             .attr("y", 0)
-            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("id", "minXLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
             .attr("text-anchor", "middle") // Center the text horizontally
             .text(d3.min(filteredData, (d) => d[attributes[0]]));
       legend.append("text")
             .attr("x", 120)
             .attr("y", 0)
-            .attr("font-size", "10px") // Add this line to set the font size
+            .attr("id", "maxXLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
             .attr("text-anchor", "middle") // Center the text horizontally
             .text(d3.max(filteredData, (d) => d[attributes[0]].toFixed(2)));
       legend.append("text")
           .attr("x", 70)
-          .attr("y", 10)
-          .attr("font-size", "10px") // Add this line to set the font size
+          .attr("y", 20)
+          .attr("id", "textXLegendMap")
+          .attr("font-size", "15px") // Add this line to set the font size
           .attr("text-anchor", "middle") // Center the text horizontally
-          .text(attributes[0]);
+          .text(toName[attributes[0]]);
+
+      // Draw an arrow body (a line) using a line element
+      legend.append("line")
+        .attr("x1", 14)
+        .attr("y1", -15)
+        .attr("x2", 118)
+        .attr("y2", -15)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      // Draw an arrow using a path element
+      legend.append("path")
+        .attr("d", arrowhead)
+        .attr("fill", "black")
+        .attr("transform", "translate(110, -20)");
     
     // y-axis
       legend.append("text")
-            .attr("x", 0)
+            .attr("x", -18)
             .attr("y", -10)
-            .attr("font-size", "10px") // Add this line to set the font size
-            .attr("text-anchor", "middle") // Center the text horizontally  
+            .attr("id", "minYLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "right") // Center the text horizontally  
             .text(d3.min(filteredData, (d) => d[attributes[1]].toFixed(2)));
       legend.append("text")
-            .attr("x", 0)
+            .attr("x", -18)
             .attr("y", -110)
-            .attr("font-size", "10px") // Add this line to set the font size
-            .attr("text-anchor", "middle") // Center the text horizontally
+            .attr("id", "maxYLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "right") // Center the text horizontally
             .text(d3.max(filteredData, (d) => d[attributes[1]].toFixed(2)));
       legend.append("text")
           .attr("x", -60)
-          .attr("y", 20)
-          .attr("font-size", "10px") // Add this line to set the font size
+          .attr("y", 30)
+          .attr("id", "textYLegendMap")
+          .attr("font-size", "15px") // Add this line to set the font size
           .attr("text-anchor", "middle") // Center the text horizontally
           .attr("transform", "rotate(90)") // Rotate the text 90 degrees counter-clockwise
-          .text(attributes[1]);
+          .text(toName[attributes[1]]);
+      // Draw an arrow body (a line) using a line element
+      legend.append("line")
+        .attr("x1", 15)
+        .attr("y1", -14)
+        .attr("x2", 15)
+        .attr("y2", -118)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      // Draw an arrow using a path element
+      legend.append("path")
+        .attr("d", arrowhead)
+        .attr("fill", "black")
+        .attr("transform", " rotate(-90), translate(110,10)");
 
   // // Append x and y axes to the line chart
   // legendSvg
@@ -490,6 +536,8 @@ function createChoroplethMap() {
 
  // Function to create a line chart
  function createLineChart() {
+  var attributes = Array.from(setButtons);
+
 
   // Create a title for the line chart
   const chartTitle = d3
@@ -497,7 +545,7 @@ function createChoroplethMap() {
     .append("text")
     .attr("x", width / 2)
     .attr("y", margin.top)
-    .text("Data Over Time");
+    .text(`Line chart representing ${toName[attributes[0]]}`);
 
   // Create an SVG element to hold the line chart
   const svg = d3

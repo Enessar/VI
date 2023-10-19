@@ -49,6 +49,39 @@ function updateChoroplethMap(attr = false){
                 return grayColor; // Set gray fill color for countries not in filteredDataYear
             }
         });
+    
+    //axis
+    if (attr){
+        
+        if (attributes.length === 0){
+            d3.select("#choroplethTitle")
+                .text(`Main map`);
+
+            d3.select('#minXLegendMap').text("");
+            d3.select('#maxXLegendMap').text("");
+            d3.select('#textXLegendMap').text("");
+        } else {
+            d3.select('#minXLegendMap').text(d3.min(filteredData, (d) => d[attributes[0]]).toFixed(2));
+            d3.select('#maxXLegendMap').text(d3.max(filteredData, (d) => d[attributes[0]]).toFixed(2));
+            d3.select('#textXLegendMap').text(toName[attributes[0]]);
+        
+            if (attributes.length === 2) {
+                d3.select("#choroplethTitle")
+                    .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
+                    
+                d3.select('#minYLegendMap').text(d3.min(filteredData, (d) => d[attributes[1]]).toFixed(2));
+                d3.select('#maxYLegendMap').text(d3.max(filteredData, (d) => d[attributes[1]]).toFixed(2));
+                d3.select('#textYLegendMap').text(toName[attributes[1]]);
+            } else {
+                d3.select("#choroplethTitle")
+                .text(`Main map representing ${toName[attributes[0]]}`);
+
+                d3.select('#minYLegendMap').text("");
+                d3.select('#maxYLegendMap').text("");
+                d3.select('#textYLegendMap').text("");
+            }
+        }
+    }
 }
 
 function updateLineChart(attr = false) {
@@ -145,7 +178,13 @@ function updateLineChart(attr = false) {
             .attr("transform", `translate(${margin.left}, 0)`)
             .call(yAxis);
     
-  
+        if(setButtons.size === 0){
+            d3.select("#lineChartTitle")
+                    .text(`Line chart`);
+        }else{
+            d3.select("#lineChartTitle")
+                    .text(`Line chart representing ${toName[attributes]}`);
+        }
     }
 
 }
