@@ -39,7 +39,7 @@
             } */
             #slider {
                 height: 10px;
-                width: 90%;
+                width: 95%;
                 left: 2%;
             }
 
@@ -74,7 +74,46 @@
             }
 
             
+            .container {
+                padding: 20px;
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                text-align: center;
+            }
 
+            #attributeButtons {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                display: inline-block;
+            }
+
+            #continentFilters {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: #fff;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                display: inline-block;
+            }
+
+            .my-button {
+                background-color: #007BFF;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                margin: 5px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .my-button:hover {
+                background-color: #0056b3;
+            }
 
             .active-pip {
                 color: red; 
@@ -96,6 +135,9 @@
 
             #play-button {
                 background: #f08080;
+                /* position: relative;
+                right: 15px;
+                top: 5px; */
                 padding-right: 2%;
                 border-radius: 3px;
                 border: none;
@@ -123,37 +165,42 @@
     </head>
     <body onload="startDashboard()">
         <div class="dashboard">
-            <div class="container">
+            <div class="container" style="width: auto;">
                 <div>
                     <div id="choroplethTitle"></div>
                     <div class="visualization" id="choropleth"></div>
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-            <div class="container" id="filters">
+            <div class="container" id="filters" >
                 <p id="warningMessage" style="display: none; color: red;">You can select a maximum of two values.</p>
-                <div id="buttons">
-                    <button  class="my-button" id="fertilityR">Fertility Rate</button>
-                    <button  class="my-button" id="lifeExp">Life Expectancy</button>
-                    <button  class="my-button" id="HDI">HDI</button>
-                    <button  class="my-button" id="naturalR">Natural Rate</button>
-                    <button  class="my-button" id="raplacementR">Replacement Rate</button>
-                    <div id="continentFilters">
-                        <button class="my-button" id="africa">Africa</button>
-                        <button class="my-button" id="asia">Asia</button>
-                        <button class="my-button" id="europe">Europe</button>
-                        <button class="my-button" id="northAmerica">North America</button>
-                        <button class="my-button" id="southAmerica">South America</button>
-                    </div>
-                    
+                
+                <!-- Container for attribute buttons -->
+                <div id="attributeButtons">
+                    <button class="my-button" id="fertilityR">Fertility Rate</button>
+                    <button class="my-button" id="lifeExp">Life Expectancy</button>
+                    <button class="my-button" id="HDI">HDI</button>
+                    <button class="my-button" id="naturalR">Natural Rate</button>
+                    <button class="my-button" id="raplacementR">Replacement Rate</button>
+                </div>
+                
+                <!-- Container for continent buttons -->
+                <div id="continentFilters">
+                    <button class="my-button" id="africa">Africa</button>
+                    <button class="my-button" id="asia">Asia</button>
+                    <button class="my-button" id="europe">Europe</button>
+                    <button class="my-button" id="Americas">Americas</button>
+                    <button class="my-button" id="Oceania">Oceania</button>
                 </div>
             </div>
         </div>
 
-        <div class="container" style="margin-top: 30px; margin-bottom: 30px">
-            <div id="slider"></div>
+        <div class="container" style="display: flex; justify-content: space-between; width: auto;">
+            <div style="flex-grow: 1;" >
+                <div id="slider"></div>
+            </div>
+            <button id="play-button">Play</button>
         </div>
-        <button id="play-button">Play</button>
         <div class="dashboard">
             <div>
                 <div id="lineChartTitle"></div>

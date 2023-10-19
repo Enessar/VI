@@ -1,18 +1,19 @@
-var filteredData = null;
+var filteredDataYear = null;
 
 function updateChoroplethMap(attr = false){
     const mapGroup = d3.select("#choropleth").select("svg").select("g");
     attributes = Array.from(setButtons);
 
     if(!attr){
-        filteredData = filteredDataByRange.filter((element) => element.Year === curYear);
+        filteredDataYear = filteredData.filter((element) => element.Year === curYear);
     } else {
+        filteredDataYear = filteredData;
         // Create a color scale for the incomeperperson values
         colorScaleMap1 = d3
             .scaleLinear()
             .domain([
-            d3.min(filteredDataByRange, (d) => d[attributes[0]]),
-            d3.max(filteredDataByRange, (d) => d[attributes[0]]),
+            d3.min(filteredData, (d) => d[attributes[0]]),
+            d3.max(filteredData, (d) => d[attributes[0]]),
             ])
             .range([0,1]);
 
@@ -20,25 +21,23 @@ function updateChoroplethMap(attr = false){
                 colorScaleMap2 = d3
                     .scaleLinear()
                     .domain([
-                        d3.min(filteredDataByRange, (d) => d[attributes[1]]),
-                        d3.max(filteredDataByRange, (d) => d[attributes[1]]),
+                        d3.min(filteredData, (d) => d[attributes[1]]),
+                        d3.max(filteredData, (d) => d[attributes[1]]),
                     ])
                     .range([0, 1]);
             }
         }
 
 
+        // Set the default gray fill color
+    const grayColor = "gray";
+
     // Set the fill color of each country based on its incomeperperson value
-    filteredData.forEach((element) => {
-        mapGroup
-            .selectAll("path")
-            // .transition()
-            // .duration(500)
-            .filter(function (d) {
-                return d.properties.name == element.Country_name;
-            })
-            .attr("fill", (d) => {
-                if (attributes.length == 2){
+    mapGroup.selectAll("path")
+        .attr("fill", (d) => {
+            const element = filteredDataYear.find((el) => el.Country_name === d.properties.name);
+            if (element) {
+                if (attributes.length === 2) {
                     return d3.interpolate(
                         d3.interpolateGreens(colorScaleMap1(element[attributes[0]])),
                         d3.interpolateReds(colorScaleMap2(element[attributes[1]]))
@@ -46,18 +45,10 @@ function updateChoroplethMap(attr = false){
                 } else {
                     return d3.interpolateGreens(colorScaleMap1(element[attributes[0]]));
                 }
-            // } else {
-            //     // Handle cases where data for the country is not found
-            //     return "gray"; // Set a default color or handle as needed
-            // }
+            } else {
+                return grayColor; // Set gray fill color for countries not in filteredDataYear
+            }
         });
-    
-    // // Add code to zoom and center the map on the selected continent
-    // if (selectedContinent) {
-    //     // Implement zoom and center logic here
-    //     // You may need to adjust the projection and scale to focus on the selected continent.
-    // }
-});
 }
 
 function updateLineChart(attr = false) {
@@ -71,8 +62,8 @@ function updateLineChart(attr = false) {
         // Update the yScale, line, and line chart
         const yScale = d3.scaleLinear()
             .domain([
-            d3.min(filteredDataByRange, (d) => d[attributes]),
-            d3.max(filteredDataByRange, (d) => d[attributes])
+            d3.min(filteredData, (d) => d[attributes]),
+            d3.max(filteredData, (d) => d[attributes])
         ]).nice()
         .nice()
         .range([height - margin.bottom, margin.top]);
@@ -89,7 +80,7 @@ function updateLineChart(attr = false) {
             .x((d) => xScale(d.Year));
 
         // Group the data by continent
-        const dataByContinent = d3.group(filteredDataByRange, (d) => {
+        const dataByContinent = d3.group(filteredData, (d) => {
             const country = d.Country_name;
             const continentEntry = CONTINENT_MAP.find((entry) =>
                 entry.countries.includes(country)
@@ -97,10 +88,10 @@ function updateLineChart(attr = false) {
             return continentEntry ? continentEntry.continent : 'Unknown';
         } );
   
-        // Define a color scale for continents, including the 'Unknown' category
-        const colorScale = d3.scaleOrdinal()
-            .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
-            .range(d3.schemeCategory10);
+        // // Define a color scale for continents, including the 'Unknown' category
+        // const colorScale = d3.scaleOrdinal()
+        //     .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
+        //     .range(d3.schemeCategory10);
         
         // // Iterate through each group (continent) and create a line for each
         // dataByContinent.forEach((continentData, continent) => {
@@ -110,7 +101,7 @@ function updateLineChart(attr = false) {
         //         .datum(continentData)
         //         .transition().duration(500)
         //         .attr("d", line)
-        //         .attr("stroke", colorScale(continent));
+        //         .attr("stroke", colorScaleLine(continent));
         // }
         // });
 
@@ -125,9 +116,9 @@ function updateLineChart(attr = false) {
             .attr("fill", "none")
             .merge(lines) // Update + Enter selection
             .transition().duration(500)
-            .attr("d", (continent) => line(dataByContinent.get(continent))) // Use the continent as a key to get the data
-            .attr("stroke", (continent) => colorScale(continent));
-
+            .attr("d", (continent) => line(dataByContinent.get(continent))); // Use the continent as a key to get the data
+        
+        
         // Exit: remove any lines that don't have data anymore
         lines.exit().remove();
 
@@ -153,11 +144,7 @@ function updateLineChart(attr = false) {
             .transition().duration(500)
             .attr("transform", `translate(${margin.left}, 0)`)
             .call(yAxis);
-        
-            // // Select the line chart group and update the line
-            //   chartGroup.select(".line")
-            //     .datum(filteredData)
-            //     .attr("d", line);
+    
   
     }
 

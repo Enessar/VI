@@ -1,7 +1,7 @@
 var globalDataCountries;
 var globalData;
 var globalHDI;
-var filteredDataByRange;
+var filteredData;
 
 var curYear;
 var rangeMin;
@@ -11,7 +11,11 @@ var rangeMax;
 var colorScaleMap1 = null;
 var colorScaleMap2 = null;
 
+// Variable for the line chart
+var colorScaleLine = null;
+
 var setButtons = new Set();
+var setFilter = new Set();
 
 //to put in the dataSet
 const CONTINENT_MAP = [
@@ -192,8 +196,8 @@ const margin = {
     bottom: 50,
     left: 80,
   };
-  const width = 900 - margin.left - margin.right;
-  const height = 600 - margin.top - margin.bottom;
+  const width = 800 - margin.left - margin.right;
+  const height = 500 - margin.top - margin.bottom;
 
   function getContinentForCountry(country) {
     for (const continentInfo of CONTINENT_MAP) {
@@ -247,6 +251,10 @@ function startDashboard(){
     createSlider();
     createButtons();
     createFilterButtons();
+
+    filterData(); //filter data the first time
+    filteredDataYear = filteredData;
+
     createChoroplethMap();
     createLineChart(); 
     });
@@ -279,8 +287,8 @@ function createChoroplethMap() {
     colorScaleMap1 = d3
         .scaleLinear()
         .domain([
-        d3.min(filteredDataByRange, (d) => d.life_expectancy),
-        d3.max(filteredDataByRange, (d) => d.life_expectancy),
+        d3.min(filteredData, (d) => d.life_expectancy),
+        d3.max(filteredData, (d) => d.life_expectancy),
         ])
         .range([0, 1]);
     
@@ -288,8 +296,8 @@ function createChoroplethMap() {
     colorScaleMap2 = d3
         .scaleLinear()
         .domain([
-        d3.min(filteredDataByRange, (d) => d.Fertility_Rate),
-        d3.max(filteredDataByRange, (d) => d.Fertility_Rate),
+        d3.min(filteredData, (d) => d.Fertility_Rate),
+        d3.max(filteredData, (d) => d.Fertility_Rate),
         ])
         .range([0, 1]);
   
@@ -360,8 +368,8 @@ function createChoroplethMap() {
         .attr("width", legendWidth )
         .attr("height", legendHeight);
         
-    const heatWidth = 200;
-    const heatHeight = 200;
+    const heatWidth = 100;
+    const heatHeight = 100;
 
     const numColumns = 10; // Number of columns (dimension 1)
     const numRows = 10; // Number of rows (dimension 2)
@@ -418,7 +426,7 @@ function createChoroplethMap() {
     .append("text")
     .attr("x", width / 2)
     .attr("y", margin.top)
-    .text("Life Expectancy Over Time");
+    .text("Data Over Time");
 
   // Create an SVG element to hold the line chart
   const svg = d3
@@ -431,8 +439,8 @@ function createChoroplethMap() {
   const yScale = d3
    .scaleLinear()
     .domain([
-      d3.min(filteredDataByRange, (d) => d.life_expectancy),
-      d3.max(filteredDataByRange, (d) => d.life_expectancy),
+      d3.min(filteredData, (d) => d.life_expectancy),
+      d3.max(filteredData, (d) => d.life_expectancy),
     ])
     .nice()
     .range([height - margin.bottom, margin.top]);
@@ -440,7 +448,7 @@ function createChoroplethMap() {
   const xScale = d3
     .scaleLinear()
     .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
-    .range([margin.left, width - margin.right]);
+    .range([margin.left, width - margin.right - 100]);
 
  
   // Create a line generator
@@ -456,7 +464,7 @@ function createChoroplethMap() {
   // Add the line to the chart
   chartGroup
     .append("path")
-    .datum(filteredDataByRange)
+    .datum(filteredData)
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
@@ -464,7 +472,7 @@ function createChoroplethMap() {
 
 
 // Group the data by continent
-const dataByContinent = d3.group(filteredDataByRange, (d) => {
+const dataByContinent = d3.group(filteredData, (d) => {
   const country = d.Country_name;
   const continentEntry = CONTINENT_MAP.find((entry) =>
     entry.countries.includes(country)
@@ -473,9 +481,9 @@ const dataByContinent = d3.group(filteredDataByRange, (d) => {
 });
 
 // Define a color scale for continents, including the 'Unknown' category
-const colorScale = d3.scaleOrdinal()
-  .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
-  .range(d3.schemeCategory10);
+    colorScaleLine = d3.scaleOrdinal()
+        .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
+        .range(d3.schemeCategory10);
 
 // Iterate through each group (continent) and create a line for each
 dataByContinent.forEach((continentData, continent) => {
@@ -486,15 +494,25 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", colorScale(continent));
+    .attr("stroke", colorScaleLine(continent));
 }
  });
+
+// // Create line charts for each continent
+// const lines = chartGroup.selectAll(".line")
+//     .data(dataByContinent.keys()) // Use keys() to get an array of continent names
+//     .enter()
+//     .append("path")
+//     .attr("class", "line")
+//     .attr("fill", "none")
+//     .attr("d", (continent) => line(dataByContinent.get(continent))) // Use the continent as a key to get the data
+//     .attr("stroke", (continent) => colorScaleLine(continent));
 
   // Create a group for the legend elements
   const legendGroup = svg
   .append("g")
   .attr("class", "legend")
-  .attr("transform", `translate(${width - margin.right}, ${margin.top})`);
+  .attr("transform", `translate(${width - margin.right+5}, ${margin.top})`);
 
   // Extract a list of all unique continents, including 'Unknown'
   const uniqueContinents = Array.from(dataByContinent.keys()).filter((continent) => continent !== 'Unknown');
@@ -513,12 +531,12 @@ dataByContinent.forEach((continentData, continent) => {
   .append("rect")
   .attr("width", 18)
   .attr("height", 18)
-  .style("fill", (d) => colorScale(d));
+  .style("fill", (d) => colorScaleLine(d));
 
   // Add text labels for each continent
   legendItems
   .append("text")
-  .attr("x", -60)
+  .attr("x", -70)
   .attr("y", 9)
   .attr("dy", ".35em")
   .style("text-anchor", "start")
@@ -670,7 +688,7 @@ function createSlider (){
     rangeMin = 1970;
     rangeMax = 2010;
     filterData(); //filter data the first time
-    filteredData = filteredDataByRange;
+    filteredDataYear = filteredData;
 
     function filterPips(value, type) {
         if (value == 2016 || value % 5 == 0 && value != 2015){return 1;}
@@ -803,10 +821,22 @@ function createSlider (){
 }
 
 function filterData(){
-    filteredDataByRange = globalData.filter((element) => {
+    filteredData = globalData.filter((element) => {
         const year = element.Year;
-        return year >= rangeMin && year <= rangeMax;
+        const country = element.Country_name
+        return year >= rangeMin && year <= rangeMax  && CountryInSelectedContinents(country);
       });
+
+    function CountryInSelectedContinents(country){
+        for (const continentInfo of CONTINENT_MAP) {
+            // console.log(continentInfo);
+            const countries = continentInfo.countries;
+            if (setFilter.has(continentInfo.continent) && countries.includes(country)) {
+                return true;
+            }
+        }
+    return false;
+    }
 }
 
 function updateIdioms(attr = false){
@@ -814,6 +844,8 @@ function updateIdioms(attr = false){
 
     updateLineChart(attr);
 }
+
+
 
 
 function createFilterButtons() {
@@ -825,10 +857,13 @@ function createFilterButtons() {
       if (setFilter.has("Africa")){
         setFilter.delete("Africa");
         africaBtn.classed('active', false);
+        filterData();
         updateIdioms(true);
     } else {
         setFilter.add("Africa");
         africaBtn.classed('active', true);
+        filterData();
+
         updateIdioms(true);
     }
     });
@@ -840,10 +875,12 @@ function createFilterButtons() {
       if (setFilter.has("Asia")){
         setFilter.delete("Asia");
         asiaBtn.classed('active', false);
+        filterData();
         updateIdioms(true);
     } else {
         setFilter.add("Asia");
         asiaBtn.classed('active', true);
+        filterData();
         updateIdioms(true);
     }
     });
@@ -856,10 +893,12 @@ function createFilterButtons() {
      if (setFilter.has("Europe")){
        setFilter.delete("Europe");
        europeBtn.classed('active', false);
+       filterData();
        updateIdioms(true);
    } else {
        setFilter.add("Europe");
        europeBtn.classed('active', true);
+       filterData();
        updateIdioms(true);
    }
    });
@@ -871,10 +910,12 @@ function createFilterButtons() {
      if (setFilter.has("Americas")){
        setFilter.delete("Americas");
        AmericaBtn.classed('active', false);
+       filterData();
        updateIdioms(true);
    } else {
        setFilter.add("Americas");
        AmericaBtn.classed('active', true);
+       filterData();
        updateIdioms(true);
    }
    });
@@ -886,12 +927,26 @@ function createFilterButtons() {
      if (setFilter.has("Oceania")){
        setFilter.delete("Oceania");
        OceaniaBtn.classed('active', false);
+       filterData();
        updateIdioms(true);
    } else {
        setFilter.add("Oceania");
        OceaniaBtn.classed('active', true);
+       filterData();
        updateIdioms(true);
-   }
-   });
-    
+  }
+  });
+
+  setFilter.add("Africa");
+  africaBtn.classed('active', true);
+  setFilter.add("Asia");
+  asiaBtn.classed('active', true);
+  setFilter.add("Europe");
+  europeBtn.classed('active', true);
+  setFilter.add("Americas");
+  AmericaBtn.classed('active', true);
+  setFilter.add("Oceania");
+  OceaniaBtn.classed('active', true);
+
+  
   }
