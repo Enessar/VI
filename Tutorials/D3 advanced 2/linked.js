@@ -17,7 +17,6 @@ function handleMouseOver(event, item) {
 
 
   // Retrieve the country name from the item
-
   
   countryName=  "none";
   if ("properties" in item) {
@@ -25,7 +24,6 @@ function handleMouseOver(event, item) {
   } else {
     countryName = item.country
   }
-
 
   // Find the corresponding data in currentData
   currentData = globalDataCapita.filter(function (d) {

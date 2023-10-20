@@ -21,11 +21,31 @@ var setFilter = new Set();
 const CONTINENT_MAP = [
     {
       continent: 'Oceania',
-      countries: ['Australia', 'Fiji'],
+      countries: ['Australia', 'Fiji', 'Papua New Guinea'],
     },
     {
       continent: 'Europe',
       countries: [
+        'Hungary',
+        'Czech',
+        'Slovakia',
+        'Slovenia',
+        'Serbia',
+        'Croatia',
+        'Bosnia and Herz.',
+        'Montenegro',
+        'Macedonia',
+        'Kosovo',
+        'Albania',
+        'Moldova',
+        'Europe',
+        'Belarus',
+        'Lithuania',
+        'Latvia',
+        'Estonia',
+        'Czechia',
+        'Ireland',
+        'Iceland',
         'Aruba',
         'Austria',
         'Azerbaijan',
@@ -58,9 +78,24 @@ const CONTINENT_MAP = [
       continent: 'Asia',
       countries: [
         'Bahrain',
+        'Syria',
+        'Azerbi',
+        'Azerbaijan',
         'China',
         'India',
+        'Mongolia',
+        'Cambodia',
+        'Vietnam',
+        'Sri lanka',
+        'Philippines',
         'Indonesia',
+        'Armenia',
+        'Afghanistan',
+        'Tajikistan',
+        'Nepal',
+        'Bhutan',
+        'Bangladesh',
+        'Lebanon',
         'Iran',
         'Iraq',
         'Israel',
@@ -149,7 +184,7 @@ const CONTINENT_MAP = [
     {
       continent: 'Americas',
       countries: [    
-
+    'Greenland',
     'Antigua and Barbuda',
     '"Bahamas, The"',
     'Barbados',
@@ -271,7 +306,6 @@ function createChoroplethMap() {
       .attr("y", margin.top)
       .text("Main map");
     
-  
   
     // Create an SVG element to hold the map
     const svg = d3
@@ -450,7 +484,11 @@ function createChoroplethMap() {
     .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
     .range([margin.left, width - margin.right - 100]);
 
- 
+  // Add axes
+  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+  const yAxis = d3.axisLeft(yScale);
+  
+  
   // Create a line generator
   const line = d3
     .line()
@@ -461,16 +499,6 @@ function createChoroplethMap() {
   // Create a group for the line chart elements
   const chartGroup = svg.append("g");
 
-  // Add the line to the chart
-  chartGroup
-    .append("path")
-    .datum(filteredData)
-    .attr("class", "line")
-    .attr("d", line)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue");
-
-
 // Group the data by continent
 const dataByContinent = d3.group(filteredData, (d) => {
   const country = d.Country_name;
@@ -480,10 +508,10 @@ const dataByContinent = d3.group(filteredData, (d) => {
   return continentEntry ? continentEntry.continent : 'Unknown';
 });
 
-// Define a color scale for continents, including the 'Unknown' category
-    colorScaleLine = d3.scaleOrdinal()
-        .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
-        .range(d3.schemeCategory10);
+  // Define a fixed color scale for continents
+  const colorScaleLine = d3.scaleOrdinal()
+  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
+  .range(['green', 'orange', 'red', 'purple', 'blue', 'grey']);
 
 // Iterate through each group (continent) and create a line for each
 dataByContinent.forEach((continentData, continent) => {
@@ -498,21 +526,11 @@ dataByContinent.forEach((continentData, continent) => {
 }
  });
 
-// // Create line charts for each continent
-// const lines = chartGroup.selectAll(".line")
-//     .data(dataByContinent.keys()) // Use keys() to get an array of continent names
-//     .enter()
-//     .append("path")
-//     .attr("class", "line")
-//     .attr("fill", "none")
-//     .attr("d", (continent) => line(dataByContinent.get(continent))) // Use the continent as a key to get the data
-//     .attr("stroke", (continent) => colorScaleLine(continent));
-
   // Create a group for the legend elements
   const legendGroup = svg
   .append("g")
   .attr("class", "legend")
-  .attr("transform", `translate(${width - margin.right+5}, ${margin.top})`);
+  .attr("transform", `translate(${600}, ${margin.top})`);
 
   // Extract a list of all unique continents, including 'Unknown'
   const uniqueContinents = Array.from(dataByContinent.keys()).filter((continent) => continent !== 'Unknown');
@@ -529,31 +547,38 @@ dataByContinent.forEach((continentData, continent) => {
   // Add colored rectangles for each continent
   legendItems
   .append("rect")
-  .attr("width", 18)
-  .attr("height", 18)
-  .style("fill", (d) => colorScaleLine(d));
+  .attr("width", 16)
+  .attr("height", 16)
+  .style("fill", (d) => colorScaleLine(d))
+  .attr("rx", 3) // Rounded corners
+  .style("stroke", "black") // Border color
+  .style("stroke-width", 1) // Border width
+  .style("background-color", "black"); // Background color here
+
 
   // Add text labels for each continent
   legendItems
   .append("text")
-  .attr("x", -70)
+  .attr("x", 23)
   .attr("y", 9)
   .attr("dy", ".35em")
   .style("text-anchor", "start")
   .text((d) => d);
 
-  // Add axes
-  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-  // Create the y-axis with percentage formatting
-  // const yAxis = d3.axisLeft(yScale).tickFormat(d3.format(".0%"));
-  const yAxis = d3.axisLeft(yScale);
 
-
-  svg
+   svg
     .append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0, ${height - margin.bottom})`)
     .call(xAxis);
+
+  // You can also customize the x-axis as needed here
+  svg
+    .selectAll(".x-axis text")
+    .attr("transform", "rotate(-45)")
+    .style("text-anchor", "end")
+    .attr("dx", "-0.8em")
+    .attr("dy", "0.15em");
 
   svg
     .append("g")
@@ -561,22 +586,22 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("transform", `translate(${margin.left}, 0)`)
     .call(yAxis);
   
-  // Create a title for the x-axis
-  svg
-  .append("text")
-  .attr("class", "axis-title")
-  .attr("x", width / 2)
-  .attr("y", height + margin.top + 30)
-  .text("Year");
+  // // Create a title for the x-axis
+  // svg
+  // .append("text")
+  // .attr("class", "axis-title")
+  // .attr("x", width / 2)
+  // .attr("y", height + margin.top + 30)
+  // .text("Year");
 
-  // Create a title for the y-axis
-  svg
-  .append("text")
-  .attr("class", "axis-title")
-  .attr("x", -height / 2)
-  .attr("y", -margin.left + 20)
-  .attr("transform", "rotate(-90)")
-  .text("Life Expectancy");
+  // // Create a title for the y-axis
+  // svg
+  // .append("text")
+  // .attr("class", "axis-title")
+  // .attr("x", -height / 2)
+  // .attr("y", -margin.left + 20)
+  // .attr("transform", "rotate(-90)")
+  // .text("Life Expectancy");
 
 }
 
@@ -841,12 +866,8 @@ function filterData(){
 
 function updateIdioms(attr = false){
     updateChoroplethMap(attr);
-
     updateLineChart(attr);
 }
-
-
-
 
 function createFilterButtons() {
     const warningMessage = d3.select("#warningMessage");

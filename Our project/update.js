@@ -54,24 +54,38 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-    
+
+     // Remove the existing legend group
+     d3.select("#lineChart").select(".legend").remove();
+
+     // Create a new legend group
+    const legendGroup = svg
+    .append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${600}, ${margin.top})`);
+
+    // Define a fixed color scale for continents
+    const colorScaleLine = d3.scaleOrdinal()
+    .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
+    .range(['green', 'orange', 'red', 'purple', 'blue', 'grey']);
+
     if (attr) {
         // If attr is provided or no buttons are selected, use the selected metric
         const attributes = Array.from(setButtons)[0];
-        
+    
         // Update the yScale, line, and line chart
         const yScale = d3.scaleLinear()
             .domain([
             d3.min(filteredData, (d) => d[attributes]),
             d3.max(filteredData, (d) => d[attributes])
-        ]).nice()
+        ])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
         const xScale = d3
         .scaleLinear()
         .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
-        .range([margin.left, width - margin.right]);
+        .range([margin.left, width - margin.right - 100]);
 
         // Update the line generator based on the selected metric
         const line = d3
@@ -87,27 +101,14 @@ function updateLineChart(attr = false) {
             );
             return continentEntry ? continentEntry.continent : 'Unknown';
         } );
-  
-        // // Define a color scale for continents, including the 'Unknown' category
-        // const colorScale = d3.scaleOrdinal()
-        //     .domain([...CONTINENT_MAP.map((entry) => entry.continent), 'Unknown'])
-        //     .range(d3.schemeCategory10);
         
-        // // Iterate through each group (continent) and create a line for each
-        // dataByContinent.forEach((continentData, continent) => {
-        //     if (continent !== 'Unknown') {  // Exclude 'Unknown'
-        //     chartGroup
-        //         .select(".line")
-        //         .datum(continentData)
-        //         .transition().duration(500)
-        //         .attr("d", line)
-        //         .attr("stroke", colorScaleLine(continent));
-        // }
-        // });
+
+        // Extract the currently displayed continents
+        const displayedContinents = new Set(dataByContinent.keys());
 
         // Select all lines with the class "line"
         const lines = chartGroup.selectAll(".line")
-        .data(dataByContinent.keys()); // Use keys() to get an array of continent names
+            .data(displayedContinents);
 
         // Enter: append new lines for new data
         lines.enter()
@@ -116,35 +117,73 @@ function updateLineChart(attr = false) {
             .attr("fill", "none")
             .merge(lines) // Update + Enter selection
             .transition().duration(500)
-            .attr("d", (continent) => line(dataByContinent.get(continent))); // Use the continent as a key to get the data
-        
-        
+            .attr("d", (continent) => line(dataByContinent.get(continent)))
+            .attr("stroke", (continent) => colorScaleLine(continent));
+
         // Exit: remove any lines that don't have data anymore
         lines.exit().remove();
+        
 
         // Add axes
         const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
-        // Create the y-axis with percentage formatting
-        // const yAxis = d3.axisLeft(yScale).tickFormat(d3.format(".0%"));
         const yAxis = d3.axisLeft(yScale);
         
-        
         svg
-            .select(".x-axis")
-            .transition().duration(500)
-            .call(xAxis)
+        .select(".x-axis")
+        .transition().duration(500)
+        .call(xAxis);
+
+      // You can also customize the x-axis updates as needed here
+        svg
             .selectAll(".x-axis text")
             .attr("transform", "rotate(-45)")
             .style("text-anchor", "end")
             .attr("dx", "-0.8em")
-            .attr("dy", "0.15em");;
+            .attr("dy", "0.15em");
         
         svg
             .select(".y-axis")
             .transition().duration(500)
             .attr("transform", `translate(${margin.left}, 0)`)
             .call(yAxis);
-    
+        
+        // Determine which continents are selected based on button states
+        const selectedContinents = [];
+        const CONTINENTS = ['Asia', 'Europe', 'Africa', 'Americas', 'Oceania', 'Unknown'];
+        CONTINENTS.forEach((continent) => {
+            if (setFilter.has(continent)) {
+            selectedContinents.push(continent);
+            }
+        });
+
+       const newLegendItems = legendGroup
+                            .selectAll(".legend-item")
+                            .data(selectedContinents)
+                            .enter()
+                            .append("g")
+                            .attr("class", "legend-item")
+                            .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+        // Add colored rectangles for each selected continent
+        newLegendItems
+            .append("rect")
+            .attr("width", 16)
+            .attr("height", 16)
+            .style("fill", (d) => colorScaleLine(d))
+            .attr("rx", 3) // Rounded corners
+            .style("stroke", "black") // Border color
+            .style("stroke-width", 1) // Border width
+            .style("background-color", "black"); // Background color here
+
+        // Add text labels for each selected continent
+        newLegendItems
+            .append("text")
+            .attr("x", 23)
+            .attr("y", 9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "start")
+            .text((d) => d);
+
   
     }
 
