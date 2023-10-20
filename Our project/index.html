@@ -3,8 +3,13 @@
     <head>
         <title>VI project</title>
         <style>
+            h1 {
+                text-align: center;
+            }
             .container {
                 display: flex;
+                position: relative;
+
                 /* background-color: #ccc; */
             }
             .dashboard {
@@ -19,6 +24,13 @@
             }
             #choroplethTitle, #lineChartTitle {
                 text-align: center;
+            }
+
+            #choroplethLabel {
+                /* background-color: aliceblue; */
+                position: absolute;
+                left: 30px;
+                top: 300px;
             }
 
 
@@ -163,6 +175,13 @@
         <script src="linked.js"></script>
         <script src="update.js"></script>
     </head>
+    <h1>World Data</h1>
+    <div class="container" style="display: flex; justify-content: space-between; width: auto;">
+        <div style="flex-grow: 1;" >
+            <div id="slider"></div>
+        </div>
+        <button id="play-button">Play</button>
+    </div>
     <body onload="startDashboard()">
         <div class="dashboard">
             <div class="container" style="width: auto;">
@@ -195,12 +214,6 @@
             </div>
         </div>
 
-        <div class="container" style="display: flex; justify-content: space-between; width: auto;">
-            <div style="flex-grow: 1;" >
-                <div id="slider"></div>
-            </div>
-            <button id="play-button">Play</button>
-        </div>
         <div class="dashboard">
             <div>
                 <div id="lineChartTitle"></div>             

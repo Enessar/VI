@@ -14,8 +14,19 @@ var colorScaleMap2 = null;
 // Variable for the line chart
 var colorScaleLine = null;
 
+// buttons
 var setButtons = new Set();
 var setFilter = new Set();
+
+// map for name columns to display
+const toName = {
+  Fertility_Rate: "Fertility Rate",
+  life_expectancy: "Life Expectancy",
+  HDI: "HDI",
+  Natural_Rate: "Natural Rate",
+  Replacement_Rate: "Replacement Rate",
+  // Add more mappings as needed
+};
 
 //to put in the dataSet
 const CONTINENT_MAP = [
@@ -286,32 +297,33 @@ function startDashboard(){
     createSlider();
     createButtons();
     createFilterButtons();
-
+    
     filterData(); //filter data the first time
     filteredDataYear = filteredData;
-
+    
     createChoroplethMap();
     createLineChart(); 
-    });
+  });
 }
 
 // Function to create the choropleth map
 function createChoroplethMap() {
   
+    var attributes = Array.from(setButtons);
     // Create a title for the choropleth map
     const chartTitle = d3
       .select("#choroplethTitle")
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
-      .text("Main map");
+      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
     
   
     // Create an SVG element to hold the map
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width)
+      .attr("width", width +300 )
       .attr("height", height);
   
     // Create a group to hold the map elements
@@ -394,8 +406,8 @@ function createChoroplethMap() {
     }
   
     // Create a legend for the choropleth map
-    const legendWidth = 250; // Width of the legend
-    const legendHeight = 250; // Height of the legend
+    const legendWidth = 200; // Width of the legend
+    const legendHeight = 200; // Height of the legend
     
     const legendSvg = d3.select("#choroplethLabel")
         .append("svg")
@@ -414,7 +426,14 @@ function createChoroplethMap() {
 
     
     for (let i = 0; i < numColumns; i++) {
-        for (let j = 0; j < numRows; j++) {
+      // if (i%2 == 0){
+      //   legendSvg.append("text")
+      //             .attr("x", i * columnWidth +50)
+      //             .attr("y", 150)
+      //             .attr("font-size", "10px") // Add this line to set the font size
+      //             .text((i + 0.5) / numColumns);
+      // }
+      for (let j = 0; j < numRows; j++) {
             const mixedColor = d3.interpolate(
                 d3.interpolateGreens((i + 0.5) / numColumns),
                             d3.interpolateReds((j + 0.5) / numRows))(0.5) // Adjust the mixing ratio as needed
@@ -429,18 +448,116 @@ function createChoroplethMap() {
         }
     }
 
-    const legend = legendSvg.append("g").attr("transform", `translate(0, 0)`);
+    const legend = legendSvg.append("g").attr("transform", `translate(35, 125)`);
 
 
-    // Add tick marks and labels to the legend
-    for (let index = 0; index <= 1; index+=0.2) {
-        // console.log(colorScale1.invert(index))
-        legend
-        .append("text")
-        .attr("x", 0)
-        .attr("y", legendHeight - legendHeight * index + 10)
-        .text(Math.round(colorScaleMap2.invert(index)));
-    }
+    // Define the arrowhead path
+    const arrowhead = "M0 0 L10 5 L0 10 L3 5Z";
+
+    // x-axis
+      legend.append("text")
+            .attr("x", 20)
+            .attr("y", 0)
+            .attr("id", "minXLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally
+            .text(d3.min(filteredData, (d) => d[attributes[0]]));
+      legend.append("text")
+            .attr("x", 120)
+            .attr("y", 0)
+            .attr("id", "maxXLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "middle") // Center the text horizontally
+            .text(d3.max(filteredData, (d) => d[attributes[0]].toFixed(2)));
+      legend.append("text")
+          .attr("x", 70)
+          .attr("y", 20)
+          .attr("id", "textXLegendMap")
+          .attr("font-size", "15px") // Add this line to set the font size
+          .attr("text-anchor", "middle") // Center the text horizontally
+          .text(toName[attributes[0]]);
+
+      // Draw an arrow body (a line) using a line element
+      legend.append("line")
+        .attr("x1", 14)
+        .attr("y1", -15)
+        .attr("x2", 118)
+        .attr("y2", -15)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      // Draw an arrow using a path element
+      legend.append("path")
+        .attr("d", arrowhead)
+        .attr("fill", "black")
+        .attr("transform", "translate(110, -20)");
+    
+    // y-axis
+      legend.append("text")
+            .attr("x", -18)
+            .attr("y", -10)
+            .attr("id", "minYLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "right") // Center the text horizontally  
+            .text(d3.min(filteredData, (d) => d[attributes[1]].toFixed(2)));
+      legend.append("text")
+            .attr("x", -18)
+            .attr("y", -110)
+            .attr("id", "maxYLegendMap")
+            .attr("font-size", "13px") // Add this line to set the font size
+            .attr("text-anchor", "right") // Center the text horizontally
+            .text(d3.max(filteredData, (d) => d[attributes[1]].toFixed(2)));
+      legend.append("text")
+          .attr("x", -60)
+          .attr("y", 30)
+          .attr("id", "textYLegendMap")
+          .attr("font-size", "15px") // Add this line to set the font size
+          .attr("text-anchor", "middle") // Center the text horizontally
+          .attr("transform", "rotate(90)") // Rotate the text 90 degrees counter-clockwise
+          .text(toName[attributes[1]]);
+      // Draw an arrow body (a line) using a line element
+      legend.append("line")
+        .attr("x1", 15)
+        .attr("y1", -14)
+        .attr("x2", 15)
+        .attr("y2", -118)
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+      // Draw an arrow using a path element
+      legend.append("path")
+        .attr("d", arrowhead)
+        .attr("fill", "black")
+        .attr("transform", " rotate(-90), translate(110,10)");
+
+  // // Append x and y axes to the line chart
+  // legendSvg
+  //     .append("g")
+  //     .attr("class", "x-axis")
+  //     .attr("transform", `translate(10,100)`)
+  //     .call(d3.axisBottom(colorScaleMap1));
+
+  //       // Append x and y axes to the line chart
+  // legendSvg
+  // .append("g")
+  // .attr("class", "y-axis")
+  // .attr("transform", `translate(100,0)`)
+  // .call(d3.axisBottom(colorScaleMap2));
+
+  //   legendSvg
+  //     .selectAll(".x-axis text")
+  //     .attr("transform", "rotate(-45)")
+  //     .style("text-anchor", "end")
+  //     .attr("dx", "-0.8em")
+  //     .attr("dy", "0.15em");
+
+    // // Add tick marks and labels to the legend
+    // for (let index = 0; index <= 1; index+=0.2) {
+    //     // console.log(colorScale1.invert(index))
+    //     legend
+    //     .append("text")
+    //     .attr("x", 0)
+    //     .attr("y", legendHeight - legendHeight * index + 10)
+    //     .text(Math.round(colorScaleMap2.invert(index)));
+    // }
 
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
@@ -453,6 +570,8 @@ function createChoroplethMap() {
 
  // Function to create a line chart
  function createLineChart() {
+  var attributes = Array.from(setButtons);
+
 
   // Create a title for the line chart
   const chartTitle = d3
@@ -460,7 +579,7 @@ function createChoroplethMap() {
     .append("text")
     .attr("x", width / 2)
     .attr("y", margin.top)
-    .text("Data Over Time");
+    .text(`Line chart representing ${toName[attributes[0]]}`);
 
   // Create an SVG element to hold the line chart
   const svg = d3
