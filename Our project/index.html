@@ -5,6 +5,11 @@
         <style>
             h1 {
                 text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 35px;
+                align-content: baseline;
             }
             .container {
                 display: flex;
@@ -13,17 +18,30 @@
                 /* background-color: #ccc; */
             }
             .dashboard {
-                display: grid;
+                display: flex;
+                align-items: flex-start;
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: 1fr;
                 gap: 20px;
                 padding: 20px;
             }
+
+            .chart-container {
+            flex: 1; /* Allows the chart container to take up available space */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align the chart container to the bottom left */
+            }
+
             .visualization {
                 padding: 10px;
             }
             #choroplethTitle, #lineChartTitle {
                 text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
             }
 
             #choroplethLabel {
@@ -31,6 +49,13 @@
                 position: absolute;
                 left: 30px;
                 top: 300px;
+            }
+
+            #lineChart {
+            width: 100%;
+            padding: 10px;
+            align-self: flex-end; /* This aligns the line chart to the bottom of its container */
+            flex-grow: 1; /* This allows it to take up the remaining vertical space */
             }
 
 
@@ -43,6 +68,7 @@
                 bottom: -10px;
                 width: auto;
                 height: auto;
+                background-color: transparent;
             }
             
             /* Show a border when hovering the area the handle responds to*/
@@ -56,7 +82,7 @@
             }
 
             #slider .noUi-connect {
-                background: rgb(0, 149, 255);
+                background: rgb(0,218,190,255);
             }
 
             #slider .noUi-handle {
@@ -71,7 +97,7 @@
                 width: 10px;
                 top: -10px;
                 right:-4px;
-                background: blue;
+                background:  rgb(0,218,190,255);
                 border-color: black;
                 box-shadow: none;
             }
@@ -80,40 +106,35 @@
                 width: 10px;
                 top: -10px;
                 right:-4px;
-                background: blue;
+                background:  rgb(0,218,190,255);
                 border-color: black;
                 box-shadow: none;
             }
+       
+             .container {
+                padding: 20px;
+                background-color: white;
+                border-radius: 15px;
+                text-align: center;
+            } 
 
             
-            .container {
-                padding: 20px;
-                background-color: #f0f0f0;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                text-align: center;
+            #buttonContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             }
 
-            #attributeButtons {
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #fff;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                display: inline-block;
-            }
-
-            #continentFilters {
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #fff;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                display: inline-block;
+            #attributeButtons, #continentFilters {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 15px;
+            display: inline-block;
             }
 
             .my-button {
-                background-color: #007BFF;
+                background-color: rgb(0, 100, 244);
                 color: #fff;
                 border: none;
                 padding: 10px 20px;
@@ -124,11 +145,11 @@
             }
 
             .my-button:hover {
-                background-color: #0056b3;
+                background-color: rgb(0, 100, 244);
             }
 
             .active-pip {
-                color: red; 
+                color:  rgb(0,218,190,255); 
                 border: 2px solid white;
             }
 
@@ -141,19 +162,19 @@
             }
 
             .my-button.active {
-            background-color: #007bff;
+            background-color: rgb(0, 100, 244);
             color: #fff;
             }
 
             #play-button {
-                background: #f08080;
+                background: rgb(255, 196, 20);
                 /* position: relative;
                 right: 15px;
                 top: 5px; */
                 padding-right: 2%;
                 border-radius: 3px;
                 border: none;
-                color: white;
+                color: rgb(0, 42, 76);
                 margin: 0;
                 padding: 0 12px;
                 width: 60px;
@@ -162,7 +183,13 @@
             }
 
             #play-button:hover {
-                background-color: #696969;
+                background-color: rgb(255, 196, 20);
+            }
+
+            body {
+            background-color: rgb(242,242,242,255);
+            margin: 0;
+            padding: 0;
             }
 
 
@@ -175,7 +202,7 @@
         <script src="linked.js"></script>
         <script src="update.js"></script>
     </head>
-    <h1>World Data</h1>
+    <h1>Global birthrate and life expectancy from 1960 to 2016</h1>
     <div class="container" style="display: flex; justify-content: space-between; width: auto;">
         <div style="flex-grow: 1;" >
             <div id="slider"></div>
@@ -193,7 +220,7 @@
             </div>
             <div class="container" id="filters" >
                 <p id="warningMessage" style="display: none; color: red;">You can select a maximum of two values.</p>
-                
+                <div id="buttonContainer">   
                 <!-- Container for attribute buttons -->
                 <div id="attributeButtons">
                     <button class="my-button" id="fertilityR">Fertility Rate</button>
@@ -211,17 +238,19 @@
                     <button class="my-button" id="Americas">Americas</button>
                     <button class="my-button" id="Oceania">Oceania</button>
                 </div>
+                <div>
             </div>
         </div>
 
         <div class="dashboard">
-            <div>
-                <div id="lineChartTitle"></div>             
-                <div  class="container" class="visualisation" id="lineChart"></div>
+            <div class="chart-container">
+                <div id="lineChartTitle"></div>
+                <div class="visualization" id="lineChart"></div>
             </div>
             <div id="legend"></div>
-            <div class="container"  class="visualisation" id="sankeyPlot"></div>
+            <div class="container" class="visualization" id="sankeyPlot"></div>
         </div>
+        
           
     </body>
 </html>

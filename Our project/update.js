@@ -88,24 +88,30 @@ function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
 
-     // Remove the existing legend group
-     d3.select("#lineChart").select(".legend").remove();
+    // Remove the existing y-axis label
+    //svg.select(".y-axis-label").remove();
 
-     // Create a new legend group
-    const legendGroup = svg
-    .append("g")
-    .attr("class", "legend")
-    .attr("transform", `translate(${600}, ${margin.top})`);
+  // Define a fixed color scale for continents
+  const colorScaleLine = d3.scaleOrdinal()
+  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
+  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
 
-    // Define a fixed color scale for continents
-    const colorScaleLine = d3.scaleOrdinal()
-    .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-    .range(['green', 'orange', 'red', 'purple', 'blue', 'grey']);
 
     if (attr) {
+
+
         // If attr is provided or no buttons are selected, use the selected metric
         const attributes = Array.from(setButtons)[0];
-    
+        
+        // Remove the existing legend group
+        d3.select("#lineChart").select(".legend").remove();
+
+        // Create a new legend group
+        const legendGroup = svg
+        .append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(${600}, ${margin.top})`);
+
         // Update the yScale, line, and line chart
         const yScale = d3.scaleLinear()
             .domain([
@@ -125,6 +131,8 @@ function updateLineChart(attr = false) {
             .line()
             .y((d) => yScale(d[attributes]))
             .x((d) => xScale(d.Year));
+
+
 
         // Group the data by continent
         const dataByContinent = d3.group(filteredData, (d) => {
@@ -166,7 +174,6 @@ function updateLineChart(attr = false) {
         .transition().duration(500)
         .call(xAxis);
 
-      // You can also customize the x-axis updates as needed here
         svg
             .selectAll(".x-axis text")
             .attr("transform", "rotate(-45)")
@@ -217,15 +224,18 @@ function updateLineChart(attr = false) {
             .style("text-anchor", "start")
             .text((d) => d);
 
-            if(setButtons.size === 0){
-                d3.select("#lineChartTitle")
-                        .text(`Line chart`);
-            }else{
-                d3.select("#lineChartTitle")
-                        .text(`Line chart representing ${toName[attributes]}`);
-            }
 
-  
+            svg
+            .append("text")
+            .attr("class", "y-axis-label")
+            .attr("text-anchor", "middle")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -(height / 2))
+            .attr("y", margin.left - 50)
+            .text(toName[attributes[1]]);
+        //svg.select("#yAxisTitle").text(toName[attributes[1]]);
+
+
     }
 
 }

@@ -615,6 +615,11 @@ function createChoroplethMap() {
     .y((d) => yScale(d.life_expectancy));
     
 
+  // Define a fixed color scale for continents
+  const colorScaleLine = d3.scaleOrdinal()
+  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
+  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
+
   // Create a group for the line chart elements
   const chartGroup = svg.append("g");
 
@@ -627,10 +632,6 @@ const dataByContinent = d3.group(filteredData, (d) => {
   return continentEntry ? continentEntry.continent : 'Unknown';
 });
 
-  // Define a fixed color scale for continents
-  const colorScaleLine = d3.scaleOrdinal()
-  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-  .range(['green', 'orange', 'red', 'purple', 'blue', 'grey']);
 
 // Iterate through each group (continent) and create a line for each
 dataByContinent.forEach((continentData, continent) => {
@@ -705,23 +706,24 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("transform", `translate(${margin.left}, 0)`)
     .call(yAxis);
   
-  // // Create a title for the x-axis
-  // svg
-  // .append("text")
-  // .attr("class", "axis-title")
-  // .attr("x", width / 2)
-  // .attr("y", height + margin.top + 30)
-  // .text("Year");
+    // Add x-axis label
+  svg
+  .append("text")
+  .attr("class", "x-axis-label")
+  .attr("text-anchor", "middle")
+  .attr("x", width / 2 -20 )
+  .attr("y", height - margin.bottom / 2 + 25)
+  .text("Year");
 
-  // // Create a title for the y-axis
-  // svg
-  // .append("text")
-  // .attr("class", "axis-title")
-  // .attr("x", -height / 2)
-  // .attr("y", -margin.left + 20)
-  // .attr("transform", "rotate(-90)")
-  // .text("Life Expectancy");
-
+  svg
+  .append("text")
+  .attr("class", "y-axis-label")
+  .attr("text-anchor", "middle")
+  .attr("transform", "rotate(-90)")
+  .attr("x", -(height / 2))
+  .attr("y", margin.left - 50)
+  .text(toName[attributes[0]]); 
+  
 }
 
 
