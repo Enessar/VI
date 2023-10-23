@@ -15,6 +15,7 @@ var colorScaleMap2 = null;
 const colorScaleLine = d3.scaleOrdinal()
   .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
   .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
+var xScaleLine = null;
 
 // buttons
 var setButtons = new Set();
@@ -298,15 +299,16 @@ function startDashboard(){
         //TODO maybe convert also globalDataHDI to numbers
 
 
+        xScaleLine = (x => 0);
     createSlider();
     createButtons();
     createFilterButtons();
     
     filterData(); //filter data the first time
     filteredDataYear = filteredData;
-    
     createChoroplethMap();
     createLineChart(); 
+    updateIdioms();
   });
 }
 
@@ -369,8 +371,9 @@ function createChoroplethMap() {
       .attr("d", path)
       .attr("stroke", "black")
       .attr("stroke-width", 0.1) // Adjust this value to make the stroke very thin
-    //   .on("mouseover", handleMouseOver) // Function to handle mouseover event
-    //   .on("mouseout", handleMouseOut)   // Function to handle mouseout event
+      .on("mouseover", handleMouseOverMap) // Function to handle mouseover event
+      .on("mouseout", handleMouseOutMap)   // Function to handle mouseout event
+      .on("mousemove",handleMouseMoveMap)
     //   .on("click", handleMouseClick)
       .append("title")
       .text((d) => d.properties.name);
@@ -571,20 +574,20 @@ function createChoroplethMap() {
     .nice()
     .range([height - margin.bottom, margin.top]);
 
-  const xScale = d3
+  xScaleLine = d3
     .scaleLinear()
     .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
     .range([margin.left, width - margin.right - 100]);
 
   // Add axes
-  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+  const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
   const yAxis = d3.axisLeft(yScale);
   
   
   // Create a line generator
   const line = d3
     .line()
-    .x((d) => xScale(d.Year))
+    .x((d) => xScaleLine(d.Year))
     .y((d) => yScale(d.life_expectancy));
   
 
@@ -600,6 +603,7 @@ const dataByContinent = d3.group(filteredData, (d) => {
   return continentEntry ? continentEntry.continent : 'Unknown';
 });
 
+console.log(dataByContinent)
 
 // Iterate through each group (continent) and create a line for each
 dataByContinent.forEach((continentData, continent) => {
@@ -610,9 +614,22 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", colorScaleLine(continent));
+    .attr("stroke", colorScaleLine(continent))
+    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    // .on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
+    // .on("mousemove",handleMouseMoveLine);
 }
  });
+
+ const currentYearLine = chartGroup
+  .append("line")
+  .attr("class", "current-year-line")
+  .attr("x1", xScaleLine(curYear)) // Position the start of the line
+  .attr("x2", xScaleLine(curYear)) // Position the end of the line
+  .attr("y1", margin.top) // Start at the top of the chart
+  .attr("y2", height - margin.bottom) // Extend to the bottom of the chart
+  .attr("stroke", "red") // Customize the color of the line (you can adjust it)
+  .attr("stroke-width", 2); // Customize the line width
 
   // Create a group for the legend elements
   const legendGroup = svg
@@ -699,7 +716,7 @@ function createButtons(){
     const warningMessage = d3.select("#warningMessage");
 
     // Select button 1 using D3.js
-    var fertilityR = d3.select("#fertilityR");
+    var fertilityR = d3.select("#fertilityR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     fertilityR.on("click", function() {
@@ -716,7 +733,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var lifeExp = d3.select("#lifeExp");
+    var lifeExp = d3.select("#lifeExp").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     lifeExp.on("click", function() {
@@ -738,7 +755,7 @@ function createButtons(){
 
 
     // Select button 1 using D3.js
-    var birthR = d3.select("#HDI");
+    var birthR = d3.select("#HDI").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     birthR.on("click", function() {
@@ -775,7 +792,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var naturalR = d3.select("#naturalR");
+    var naturalR = d3.select("#naturalR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     naturalR.on("click", function() {
@@ -792,7 +809,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var raplacementR = d3.select("#raplacementR");
+    var raplacementR = d3.select("#raplacementR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     raplacementR.on("click", function() {

@@ -147,7 +147,8 @@
 
             .active-pip {
                 color:  rgb(0,218,190,255); 
-                border: 2px solid white;
+                /* border: 2px solid white; */
+                margin-top: 5px;
             }
 
             .my-button {
@@ -156,10 +157,11 @@
             cursor: pointer;
             opacity : 0.3;
             margin: 5px;
+            color: #fff;
             }
 
             .my-button.active {
-            /* background-color: rgb(0, 100, 244); */
+            /* background-color: rgb(244, 69, 0); */
             opacity : 1;
             color: #fff;
             }
@@ -177,39 +179,41 @@
            }
 
 
-                #buttonContainer {
-                display: flex;
-                flex-direction: column ;
-                align-items: center;
-                }
+            #buttonContainer {
+            display: flex;
+            flex-direction: column ;
+            align-items: center;
+            }
 
-                #attributeButtons, #continentFilters {
-                margin: 10px 0;
-                padding: 10px;
-                background-color: white;       
-                border-radius: 15px;
-                display: inline-block;
-                }
+            #attributeButtons, #continentFilters {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;       
+            border-radius: 15px;
+            display: inline-block;
+            }
 
 
             #play-button {
                 background: rgb(255, 196, 20);
-                /* position: relative;
-                right: 15px;
+                /* position: relative;*/
+                /* left: 15px;
                 top: 5px; */
-                padding-right: 2%;
                 border-radius: 3px;
                 border: none;
+                margin-right: 10%;
                 color: rgb(0, 42, 76);
-                margin: 0;
-                padding: 0 12px;
+                margin-right: 1%;
+                /* margin-left: 1%; */
+                /* padding: 0 12px; */
                 width: 60px;
                 cursor: pointer;
                 height: 30px;
             }
 
             #play-button:hover {
-                background-color: rgb(255, 196, 20);
+                /* background-color: rgb(255, 196, 20); */
+                box-shadow:5px 5px #888888;
             }
 
             body {
@@ -229,7 +233,7 @@
         <script src="update.js"></script>
     </head>
     <h1>Global birthrate and life expectancy from 1960 to 2016</h1>
-    <div class="container" style="display: flex; justify-content: space-between; width: auto;">
+    <div  style="display: flex;margin-top: 50px; margin-bottom: 10px; justify-content: space-between; width: auto;">
         <div style="flex-grow: 1;" >
             <div id="slider"></div>
         </div>
