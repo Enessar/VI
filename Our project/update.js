@@ -96,7 +96,7 @@ function updateLineChart(attr = false) {
 
 
         // If attr is provided or no buttons are selected, use the selected metric
-        const attributes = Array.from(setButtons)[0];
+        const attribute = Array.from(setButtons)[0];
         
         // Remove the existing legend group
         d3.select("#lineChart").select(".legend").remove();
@@ -110,8 +110,8 @@ function updateLineChart(attr = false) {
         // Update the yScale, line, and line chart
         const yScale = d3.scaleLinear()
             .domain([
-            d3.min(filteredData, (d) => d[attributes]),
-            d3.max(filteredData, (d) => d[attributes])
+            d3.min(filteredData, (d) => d[attribute]),
+            d3.max(filteredData, (d) => d[attribute])
         ])
         .nice()
         .range([height - margin.bottom, margin.top]);
@@ -124,7 +124,7 @@ function updateLineChart(attr = false) {
         // Update the line generator based on the selected metric
         const line = d3
             .line()
-            .y((d) => yScale(d[attributes]))
+            .y((d) => yScale(d[attribute]))
             .x((d) => xScale(d.Year));
 
 
@@ -219,15 +219,20 @@ function updateLineChart(attr = false) {
             .style("text-anchor", "start")
             .text((d) => d);
 
+        if (setButtons.size >= 1){
+            d3.select("#y-axis-label-LineChart").text(toName[attribute]);
+        } else {
+            d3.select("#y-axis-label-LineChart").text("");
+        }
 
-            svg
-            .append("text")
-            .attr("class", "y-axis-label")
-            .attr("text-anchor", "middle")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -(height / 2))
-            .attr("y", margin.left - 50)
-            .text(toName[attributes[1]]);
+        // svg
+        //     .append("text")
+        //     .attr("class", "y-axis-label")
+        //     .attr("text-anchor", "middle")
+        //     .attr("transform", "rotate(-90)")
+        //     .attr("x", -(height / 2))
+        //     .attr("y", margin.left - 50)
+        //     .text(toName[attributes[0]]);
         //svg.select("#yAxisTitle").text(toName[attributes[1]]);
 
 

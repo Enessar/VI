@@ -530,37 +530,6 @@ function createChoroplethMap() {
         .attr("fill", "black")
         .attr("transform", " rotate(-90), translate(110,10)");
 
-  // // Append x and y axes to the line chart
-  // legendSvg
-  //     .append("g")
-  //     .attr("class", "x-axis")
-  //     .attr("transform", `translate(10,100)`)
-  //     .call(d3.axisBottom(colorScaleMap1));
-
-  //       // Append x and y axes to the line chart
-  // legendSvg
-  // .append("g")
-  // .attr("class", "y-axis")
-  // .attr("transform", `translate(100,0)`)
-  // .call(d3.axisBottom(colorScaleMap2));
-
-  //   legendSvg
-  //     .selectAll(".x-axis text")
-  //     .attr("transform", "rotate(-45)")
-  //     .style("text-anchor", "end")
-  //     .attr("dx", "-0.8em")
-  //     .attr("dy", "0.15em");
-
-    // // Add tick marks and labels to the legend
-    // for (let index = 0; index <= 1; index+=0.2) {
-    //     // console.log(colorScale1.invert(index))
-    //     legend
-    //     .append("text")
-    //     .attr("x", 0)
-    //     .attr("y", legendHeight - legendHeight * index + 10)
-    //     .text(Math.round(colorScaleMap2.invert(index)));
-    // }
-
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
 
@@ -714,7 +683,7 @@ dataByContinent.forEach((continentData, continent) => {
 
   svg
   .append("text")
-  .attr("class", "y-axis-label")
+  .attr("id", "y-axis-label-LineChart")
   .attr("text-anchor", "middle")
   .attr("transform", "rotate(-90)")
   .attr("x", -(height / 2))
