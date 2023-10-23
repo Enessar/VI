@@ -27,6 +27,7 @@ const toName = {
   HDI: "HDI",
   Natural_Rate: "Natural Rate",
   Replacement_Rate: "Replacement Rate",
+  HDI:"HDI",
   // Add more mappings as needed
 };
 
@@ -292,6 +293,7 @@ function startDashboard(){
         d.Fertility_Rate = +d.Fertility_Rate;
         d.Replacement_Rate = +d.Replacement_Rate;
         d.Natural_Rate = +d.Natural_Rate;
+        d.HDI= +d.HDI; 
         });
         //TODO maybe convert also globalDataHDI to numbers
 
@@ -730,6 +732,11 @@ function createButtons(){
             updateIdioms(true);
         }
     });
+
+    // selecteur of the slider
+    var slider = document.getElementById("slider");
+
+
     // Select button 1 using D3.js
     var birthR = d3.select("#HDI");
 
@@ -738,13 +745,33 @@ function createButtons(){
         if (setButtons.has("HDI")){
             setButtons.delete("HDI");
             birthR.classed('active', false);
-            updateIdioms(true);
+            // Change the minimum value of the slider
+            slider.noUiSlider.updateOptions({
+              range: {
+                  min: 1960, // New minimum value
+                  max: 2016, // Keep the maximum value
+              }
+          });
+          filterData();
+          updateIdioms(true);
         } else if (setButtons.size >= 2) {
             
         } else {
             setButtons.add("HDI");
             birthR.classed('active', true);
-            updateIdioms(true);
+            rangeMin = 1990;
+            rangeMax = 2016;
+            curYear = 2010;
+            slider.noUiSlider.set([rangeMin, curYear, rangeMax]);
+            // Change the minimum value of the slider
+            slider.noUiSlider.updateOptions({
+              range: {
+                  min: 1990, // New minimum value
+                  max: 2016, // Keep the maximum value
+              }
+          });
+          filterData();
+          updateIdioms(true);
         }
     });
     // Select button 1 using D3.js
@@ -843,6 +870,8 @@ function createSlider (){
         curYear = values[1];
         rangeMax = values[2];
 
+        updateIdioms();
+
         // Remove the active class from the current pip
         if (activePips[handle]) {
             activePips[handle].classList.remove('active-pip');
@@ -860,14 +889,14 @@ function createSlider (){
         }
     }); 
 
-    var sliderHandleYear = slider.querySelector(".noUi-handle[data-handle='1']");
+    // var sliderHandleYear = slider.querySelector(".noUi-handle[data-handle='1']");
     var sliderHandleMin = slider.querySelector(".noUi-handle[data-handle='0']");
     var sliderHandleMax = slider.querySelector(".noUi-handle[data-handle='2']");
 
     
-    sliderHandleYear.addEventListener("mouseup",function (event) {
-        updateIdioms();
-    });
+    // sliderHandleYear.addEventListener("mouseup",function (event) {
+    //     updateIdioms();
+    // });
     sliderHandleMin.addEventListener("mouseup",function (event) {
         filterData();
         updateIdioms(true);

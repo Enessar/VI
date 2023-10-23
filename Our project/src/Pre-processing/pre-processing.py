@@ -42,6 +42,12 @@ HDI_df = handle_missing_values_table(HDI_df)
 HDI_df.drop(['Country Code'], axis=1, inplace=True)
 HDI_df.to_csv('Our project\src\Final_data\HDI.csv', index=False, header=True)
 HDI_df.rename(columns={'Country name': 'Country_name'}, inplace=True)
+for i in range (1960, 1990):
+    HDI_df[str(i)] = 0
+
+HDI_df = HDI_df.reindex(sorted(HDI_df.columns), axis=1)
+columns = ['Country_name'] + [col for col in HDI_df.columns if col != 'Country_name']
+HDI_df = HDI_df[columns]
 HDI_df.to_csv('Our project\src\All data in one\HDI.csv', index=False, header=True)
 
 # Cleaning reporduction rate
@@ -138,10 +144,20 @@ natural_R_df = pd.DataFrame({
 })
 natural_R_df = natural_R_df.sort_values(by=['Country name', 'Year']).reset_index(drop=True)
 
+HDI_df = HDI_df.melt(id_vars=['Country_name'], var_name='Year', value_name='HDI')
+HDI_df = pd.DataFrame({
+    'Country name': HDI_df['Country_name'].repeat(len(HDI_df.columns) - 2),
+    'Year': HDI_df['Year'].values,
+    'HDI': HDI_df['HDI'].values
+})
+HDI_df = HDI_df .sort_values(by=['Country name', 'Year']).reset_index(drop=True)
+
 
 Q_df = pd.merge(life_exp_df, fertility_rate_df, on=['Country name','Country Code', 'Year'])
 Q_df = pd.merge(Q_df, replacement_R_df, on=['Country name','Country Code', 'Year'])
 Q_df = pd.merge(Q_df, natural_R_df, on=['Country name', 'Year'])
+Q_df = pd.merge(Q_df, HDI_df, on=['Country name', 'Year'])
+
 
 Q_df['Natural Rate'] = Q_df['Natural Rate'].apply(lambda x: float(x.replace(',', '.')))
 Q_df.rename(columns={'Country name' : 'Country_name','Country Code': 'Country_Code',

@@ -49,7 +49,6 @@ function updateChoroplethMap(attr = false){
                 return grayColor; // Set gray fill color for countries not in filteredDataYear
             }
         });
-    
     //axis
     if (attr){
         
@@ -224,18 +223,6 @@ function updateLineChart(attr = false) {
         } else {
             d3.select("#y-axis-label-LineChart").text("");
         }
-
-        // svg
-        //     .append("text")
-        //     .attr("class", "y-axis-label")
-        //     .attr("text-anchor", "middle")
-        //     .attr("transform", "rotate(-90)")
-        //     .attr("x", -(height / 2))
-        //     .attr("y", margin.left - 50)
-        //     .text(toName[attributes[0]]);
-        //svg.select("#yAxisTitle").text(toName[attributes[1]]);
-
-
     }
 
 }
