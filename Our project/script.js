@@ -12,7 +12,9 @@ var colorScaleMap1 = null;
 var colorScaleMap2 = null;
 
 // Variable for the line chart
-var colorScaleLine = null;
+const colorScaleLine = d3.scaleOrdinal()
+  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
+  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
 
 // buttons
 var setButtons = new Set();
@@ -613,12 +615,7 @@ function createChoroplethMap() {
     .line()
     .x((d) => xScale(d.Year))
     .y((d) => yScale(d.life_expectancy));
-    
-
-  // Define a fixed color scale for continents
-  const colorScaleLine = d3.scaleOrdinal()
-  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
+  
 
   // Create a group for the line chart elements
   const chartGroup = svg.append("g");
@@ -993,7 +990,7 @@ function updateIdioms(attr = false){
 function createFilterButtons() {
     const warningMessage = d3.select("#warningMessage");
     // Select button 1 using D3.js
-    var africaBtn = d3.select("#africa");
+    var africaBtn = d3.select("#africa").style("background-color", colorScaleLine('Africa'));
     // Add a click event listener to button 1
     africaBtn.on("click", function() {
       if (setFilter.has("Africa")){
@@ -1011,7 +1008,7 @@ function createFilterButtons() {
     });
   
     // Select button 2 using D3.js
-    var asiaBtn = d3.select("#asia");
+    var asiaBtn = d3.select("#asia").style("background-color", colorScaleLine('Asia'));
     // Add a click event listener to button 2
     asiaBtn.on("click", function() {
       if (setFilter.has("Asia")){
@@ -1029,7 +1026,7 @@ function createFilterButtons() {
   
   
    // Select button 3 using D3.js
-   var europeBtn = d3.select("#europe");
+   var europeBtn = d3.select("#europe").style("background-color", colorScaleLine('Europe'));
    // Add a click event listener to button 3
    europeBtn.on("click", function() {
      if (setFilter.has("Europe")){
@@ -1046,7 +1043,7 @@ function createFilterButtons() {
    });
   
    // Select button 4 using D3.js
-   var AmericaBtn = d3.select("#Americas");
+   var AmericaBtn = d3.select("#Americas").style("background-color", colorScaleLine('Americas'));
    // Add a click event listener to button 4
    AmericaBtn.on("click", function() {
      if (setFilter.has("Americas")){
@@ -1063,7 +1060,7 @@ function createFilterButtons() {
    });
   
    // Select button 5 using D3.js
-   var OceaniaBtn = d3.select("#Oceania");
+   var OceaniaBtn = d3.select("#Oceania").style("background-color", colorScaleLine('Oceania'));
    // Add a click event listener to button 5
    OceaniaBtn.on("click", function() {
      if (setFilter.has("Oceania")){

@@ -91,11 +91,6 @@ function updateLineChart(attr = false) {
     // Remove the existing y-axis label
     //svg.select(".y-axis-label").remove();
 
-  // Define a fixed color scale for continents
-  const colorScaleLine = d3.scaleOrdinal()
-  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
-
 
     if (attr) {
 
