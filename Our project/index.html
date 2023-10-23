@@ -36,7 +36,7 @@
             .visualization {
                 padding: 10px;
             }
-            #choroplethTitle, #lineChartTitle {
+            #choroplethTitle {
                 text-align: center;
                 color: rgb(0, 42, 76);
                 font-family:'Times New Roman', Times, serif;
@@ -44,18 +44,30 @@
                 font-size: 23px;
             }
 
+            #lineChartTitle {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family: 'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
+            #lineChart {
+                width: 100%;
+                padding: 10px;
+                align-self:flex-start; /* Change this to flex-start */
+                flex-grow: 1;
+            }
+
+            .dashboard:last-child {
+                display: flex;
+                flex-direction: column;
+            }
+
             #choroplethLabel {
                 /* background-color: aliceblue; */
                 position: absolute;
                 left: 30px;
                 top: 300px;
-            }
-
-            #lineChart {
-            width: 100%;
-            padding: 10px;
-            align-self: flex-end; /* This aligns the line chart to the bottom of its container */
-            flex-grow: 1; /* This allows it to take up the remaining vertical space */
             }
 
 
@@ -118,25 +130,10 @@
                 text-align: center;
             } 
 
-            
-            #buttonContainer {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            }
-
-            #attributeButtons, #continentFilters {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: white;
-            border-radius: 15px;
-            display: inline-block;
-            }
-
             .my-button {
-                background-color: rgb(0, 100, 244);
-                color: #fff;
+                color: black;
                 border: none;
+                background-color: #ccc;
                 padding: 10px 20px;
                 margin: 5px;
                 cursor: pointer;
@@ -145,7 +142,7 @@
             }
 
             .my-button:hover {
-                background-color: rgb(0, 100, 244);
+                background-color: rgb(0, 42, 76);
             }
 
             .active-pip {
@@ -155,7 +152,6 @@
 
             .my-button {
             padding: 10px 20px;
-            background-color: #ccc;
             border: none;
             cursor: pointer;
             opacity : 0.3;
@@ -167,6 +163,34 @@
             opacity : 1;
             color: #fff;
             }
+
+            .filters-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            background-color: white;
+            border-radius: 15px;
+            width: auto;
+            margin-left: 50px; /* Adjust the margin as needed */
+           }
+
+
+                #buttonContainer {
+                display: flex;
+                flex-direction: column ;
+                align-items: center;
+                }
+
+                #attributeButtons, #continentFilters {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: white;       
+                border-radius: 15px;
+                display: inline-block;
+                }
+
 
             #play-button {
                 background: rgb(255, 196, 20);
@@ -211,6 +235,7 @@
         </div>
         <button id="play-button">Play</button>
     </div>
+
     <body onload="startDashboard()">
         <div class="dashboard">
             <div class="container" style="width: auto;">
@@ -220,35 +245,38 @@
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-            <div class="container" id="filters" >
-                <p id="warningMessage" style="display: none; color: red;">You can select a maximum of two values.</p>
-                <div id="buttonContainer">   
-                <!-- Container for attribute buttons -->
-                <div id="attributeButtons">
-                    <button class="my-button" id="fertilityR">Fertility Rate</button>
-                    <button class="my-button" id="lifeExp">Life Expectancy</button>
-                    <button class="my-button" id="HDI">HDI</button>
-                    <button class="my-button" id="naturalR">Natural Rate</button>
-                    <button class="my-button" id="raplacementR">Replacement Rate</button>
+            <div class="filters-container">
+                <div id="buttonContainer">
+                    <!-- Container for attribute buttons -->
+                    <div id="attributeButtons">
+                        <button class="my-button" id="fertilityR">Fertility Rate</button>
+                        <button class="my-button" id="lifeExp">Life Expectancy</button>
+                        <button class="my-button" id="HDI">HDI</button>
+                        <button class="my-button" id="naturalR">Natural Rate</button>
+                        <button class="my-button" id="raplacementR">Replacement Rate</button>
+                    </div>
+        
+                    <!-- Container for continent buttons -->
+                    <div id="continentFilters">
+                        <button class="my-button" id="africa">Africa</button>
+                        <button class="my-button" id="asia">Asia</button>
+                        <button class="my-button" id="europe">Europe</button>
+                        <button class="my-button" id="Americas">Americas</button>
+                        <button class="my-button" id="Oceania">Oceania</button>
+                    </div>
                 </div>
-                
-                <!-- Container for continent buttons -->
-                <div id="continentFilters">
-                    <button class="my-button" id="africa">Africa</button>
-                    <button class="my-button" id="asia">Asia</button>
-                    <button class="my-button" id="europe">Europe</button>
-                    <button class="my-button" id="Americas">Americas</button>
-                    <button class="my-button" id="Oceania">Oceania</button>
-                </div>
-                <div>
             </div>
         </div>
-
+        
         <div class="dashboard">
-            <div class="chart-container">
-                <div id="lineChartTitle"></div>
-                <div class="visualization" id="lineChart"></div>
-            </div>
+            <div class="container" style="width: auto;">
+                <div>
+                    <div id="lineChartTitle"></div>
+                    <div class="visualization" id="lineChartContainer">
+                        <!-- Place the lineChart inside this container -->
+                        <div id="lineChart"></div>
+                    </div>
+                </div>
             <div id="legend"></div>
             <div class="container" class="visualization" id="sankeyPlot"></div>
         </div>
