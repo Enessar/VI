@@ -271,12 +271,9 @@ const margin = {
   const height = 500 - margin.top - margin.bottom;
 
 function getContinentForCountry(country) {
-    console.log("Country: ", country)
     for (const continentInfo of CONTINENT_MAP) {
-      console.log("Continent Info: ", continentInfo)
         const countries = continentInfo.countries;
         if (countries.includes(country.Country_name)) {
-          console.log("Continent: ", continentInfo.continent)
             return continentInfo.continent;
         }
     }
@@ -1136,37 +1133,37 @@ function createFilterButtons() {
 
 function Development_Level(element) {
   if (element.HDI>0.800){
-    return [8, DevelopmentLevels.HD]
+    return [0, DevelopmentLevels.HD]
   } else if (element.HDI>0.700){
-    return [7, DevelopmentLevels.D]
+    return [1, DevelopmentLevels.D]
   }  else if (element.HDI>0.550){
-    return [5, DevelopmentLevels.UD]
+    return [2, DevelopmentLevels.UD]
   }  else {
-    return [0,DevelopmentLevels.SUD]
+    return [3,DevelopmentLevels.SUD]
   }
 }
 
 function LifeExpectancy_Level(element) {
   if (element.life_expectancy>90){
-    return [8,LifeExpectanyLevels.VH]
+    return [4,LifeExpectanyLevels.VH]
   } else if (element.life_expectancy>80){
-    return [9, LifeExpectanyLevels.H]
+    return [5, LifeExpectanyLevels.H]
   } else if (element.life_expectancy>70){
-    return [4, LifeExpectanyLevels.M]
+    return [6, LifeExpectanyLevels.M]
   } else if (element.life_expectancy>60){
-    return 3 //LifeExpectanyLevels.L
+    return [7,LifeExpectanyLevels.L]
   } else { 
-    return [1, LifeExpectanyLevels.VL]
+    return [8, LifeExpectanyLevels.VL]
   }
 }
 
 function ReplacementRate_Level(element) {
-  if (element.Replacement_Rate<2.1){
-    return [6, ReplacementRateLevels.A]
-  } else if (element.Replacement_Rate==2.1){
+  if (element.Replacement_Rate<2){
+    return [9, ReplacementRateLevels.A]
+  } else if (element.Replacement_Rate>=2 && element.Replacement_Rate<=2.2){
     return [10,ReplacementRateLevels.C]
   } else { 
-    return [2, ReplacementRateLevels.B]
+    return [11, ReplacementRateLevels.B]
   }
 }
 
@@ -1187,19 +1184,18 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
-    sankeyData.nodes.push({ name: source[1] });
+    sankeyData.nodes.push({ name: source[1], order: source[0]});
   }
 
   // Check if the target1 node (Life_Expectancy) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === target1[1])) {
-    sankeyData.nodes.push({ name: target1[1] });
+    sankeyData.nodes.push({ name: target1[1], order: target1[0]});
   }
 
   // Check if the target2 node (Replacement_Rate) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === target2[1])) {
-    sankeyData.nodes.push({ name: target2[1] });
+    sankeyData.nodes.push({ name: target2[1],order: target2[0] });
   }
-  console.log("Continent: ", getContinentForCountry(d));
   color = colorScaleLine(getContinentForCountry(d));
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
@@ -1222,18 +1218,31 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
               
 // Create a Sankey layout
 const sankey = d3.sankey()
-  .nodeWidth(15)
+  .nodeWidth(30)
   .nodePadding(20)
-  .extent([[0, 0], [width, height]]);
+  .extent([[0, 0], [width-100, height]])
+  .nodeSort(null)
+  .linkSort(null) 
+  ;
 
-console.log('Nodes:', sankeyData.nodes);
-console.log('Links:', sankeyData.links);
+  sankeyData.nodes.sort((a, b) => a.order - b.order);
+  sankeyData.links.sort((a, b) => a.order - b.order);
+  
+
+// console.log('Nodes:', sankeyData.nodes);
+// console.log('Links:', sankeyData.links);
 
 const { nodes, links } = sankey({
   nodes:sankeyData.nodes,
   links:sankeyData.links,
 });
 
+console.log(sankey)
+
+
+
+console.log(nodes);
+console.log(links);
 // Create the SVG container
 const svg = d3.select('#sankeyPlot')
   .append('svg')
