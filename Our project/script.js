@@ -31,6 +31,26 @@ const toName = {
   // Add more mappings as needed
 };
 
+const DevelopmentLevels = {
+  HD: "Highly Developed",
+  D: "Developed",
+  UD: "Underdeveloped",
+  SUD: "Strongly Underdeveloped",
+};
+
+const LifeExpectanyLevels = {
+  VH: "Very High",
+  H: "High",
+  M: "Moderate",
+  L: "Low",
+  VL: "Very Low",
+};
+
+const ReplacementRateLevels = {
+  A: "Above Replacement",
+  C: "Constant Replacement",
+  B: "Below Replacement",
+}
 //to put in the dataSet
 const CONTINENT_MAP = [
     {
@@ -306,7 +326,8 @@ function startDashboard(){
     filteredDataYear = filteredData;
     
     createChoroplethMap();
-    createLineChart(); 
+    createLineChart();
+    createSankyPlot(); 
   });
 }
 
@@ -1087,3 +1108,123 @@ function createFilterButtons() {
 
   
   }
+
+function Development_Level(element) {
+  if (element.HDI>0.800){
+    return 6 //DevelopmentLevels.HD
+  } else if (element.HDI>0.700){
+    return 5 //DevelopmentLevels.D
+  }  else if (element.HDI>0.550){
+    return 4 //DevelopmentLevels.UD
+  }  else {
+    return 0 //DevelopmentLevels.SUD
+  }
+}
+
+function LifeExpectancy_Level(element) {
+  if (element.life_expectancy>90){
+    return 8//LifeExpectanyLevels.VH
+  } else if (element.life_expectancy>80){
+    return 7 //LifeExpectanyLevels.H
+  } else if (element.life_expectancy>70){
+    return 3 //LifeExpectanyLevels.M
+  } else if (element.life_expectancy>60){
+    return 2 //LifeExpectanyLevels.L
+  } else { 
+    return 1 //LifeExpectanyLevels.VL
+  }
+}
+
+function ReplacementRate_Level(element) {
+  if (element.Replacement_Rate<2.1){
+    return ReplacementRateLevels.A
+  } else if (element.Replacement_Rate==2.1){
+    return ReplacementRateLevels.C
+  } else { 
+    return ReplacementRateLevels.B
+  }
+}
+
+
+function createSankyPlot(){
+    // Assuming 'filteredData' is an array containing your CSV data
+// Define your Sankey data directly
+const sankeyData = {
+  nodes: [],
+  links: [] };
+console.log('DevelopmentLevels:', DevelopmentLevels);
+filteredData.forEach(function(d) {
+  const source = Development_Level(d);
+  const target = LifeExpectancy_Level(d);
+  const value = 5; // Convert to a number if needed
+  console.log('Development_Level:', source);
+  // Check if the source node (Country_name) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === source)) {
+    sankeyData.nodes.push({ name: source });
+  }
+
+  // Check if the target node (Year) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target)) {
+    sankeyData.nodes.push({ name: target });
+  }
+
+  sankeyData.links.push({
+    source,
+    target,
+    value,
+  });
+});
+              
+// Create a Sankey layout
+const sankey = d3.sankey()
+  .nodeWidth(15)
+  .nodePadding(10)
+  .extent([[0, 0], [400, 200]]);
+
+console.log('Nodes:', sankeyData.nodes);
+console.log('Links:', sankeyData.links);
+
+const { nodes, links } = sankey({
+  nodes:sankeyData.nodes,
+  links:sankeyData.links,
+});
+
+// Create the SVG container
+const svg = d3.select('#sankeyPlot')
+  .append('svg')
+  .attr('width', 400)
+  .attr('height', 200);
+          
+// Draw the links
+svg.append('g')
+  .selectAll('path')
+  .data(links)
+  .enter()
+  .append('path')
+  .attr('d', d3.sankeyLinkHorizontal())
+  .attr('stroke', 'grey')
+  .attr('stroke-width', d => Math.max(1, d.width))
+  .style('fill', 'none');
+
+// Draw the nodes
+const nodeGroup = svg.append('g')
+  .selectAll('g')
+  .data(nodes)
+  .enter()
+  .append('g')
+  .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+
+nodeGroup.append('rect')
+  .attr('height', d => d.y1 - d.y0)
+  .attr('width', d => d.x1 - d.x0)
+  .attr('fill', 'blue');
+
+nodeGroup.append('text')
+  .attr('x', d => (d.x1 - d.x0) / 2)
+  .attr('y', d => (d.y1 - d.y0) / 2)
+  .attr('dy', '0.35em') // Adjust vertical alignment as needed
+  .style('fill', 'black')
+  .text(d => d.name);
+
+}
+  
