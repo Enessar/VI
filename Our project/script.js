@@ -1175,6 +1175,15 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
+function sankeyContinetOrder(continent){
+  if(continent == "Asia"){ return 0}
+  else if(continent == "Europe"){ return 1}
+  else if(continent == "Africa"){ return 2}
+  else if(continent == "Americas"){ return 3}
+  else if(continent == "Oceania"){ return 4}
+  else {return -1}
+}
+
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   const target1 = LifeExpectancy_Level(d);
@@ -1196,6 +1205,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === target2[1])) {
     sankeyData.nodes.push({ name: target2[1],order: target2[0] });
   }
+  console.log("Continent: ", getContinentForCountry(d));
   color = colorScaleLine(getContinentForCountry(d));
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
@@ -1205,6 +1215,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     target,
     value,
     color,
+    order,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1213,6 +1224,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     target,
     value,
     color,
+    order,
   });
 });
               
@@ -1260,6 +1272,7 @@ svg.append('g')
   .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none');
+
 
 
 // Draw the nodes
