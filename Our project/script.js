@@ -567,7 +567,6 @@ function createChoroplethMap() {
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
 
-    // console.log("here");
 
   }
 
@@ -632,7 +631,6 @@ const dataByContinent = d3.group(filteredData, (d) => {
   return continentEntry ? continentEntry.continent : 'Unknown';
 });
 
-console.log(dataByContinent)
 
 // Iterate through each group (continent) and create a line for each
 dataByContinent.forEach((continentData, continent) => {
@@ -1016,7 +1014,6 @@ function filterData(){
 
     function CountryInSelectedContinents(country){
         for (const continentInfo of CONTINENT_MAP) {
-            // console.log(continentInfo);
             const countries = continentInfo.countries;
             if (setFilter.has(continentInfo.continent) && countries.includes(country)) {
                 return true;
@@ -1136,37 +1133,37 @@ function createFilterButtons() {
 
 function Development_Level(element) {
   if (element.HDI>0.800){
-    return 8 //DevelopmentLevels.HD
+    return [8, DevelopmentLevels.HD]
   } else if (element.HDI>0.700){
-    return 7 //DevelopmentLevels.D
+    return [7, DevelopmentLevels.D]
   }  else if (element.HDI>0.550){
-    return 5 //DevelopmentLevels.UD
+    return [5, DevelopmentLevels.UD]
   }  else {
-    return 0 //DevelopmentLevels.SUD
+    return [0,DevelopmentLevels.SUD]
   }
 }
 
 function LifeExpectancy_Level(element) {
   if (element.life_expectancy>90){
-    return 8//LifeExpectanyLevels.VH
+    return [8,LifeExpectanyLevels.VH]
   } else if (element.life_expectancy>80){
-    return 9 //LifeExpectanyLevels.H
+    return [9, LifeExpectanyLevels.H]
   } else if (element.life_expectancy>70){
-    return 4 //LifeExpectanyLevels.M
+    return [4, LifeExpectanyLevels.M]
   } else if (element.life_expectancy>60){
-    return 3 //LifeExpectanyLevels.L
+    return [3, LifeExpectanyLevels.L]
   } else { 
-    return 1 //LifeExpectanyLevels.VL
+    return [1, LifeExpectanyLevels.VL]
   }
 }
 
 function ReplacementRate_Level(element) {
   if (element.Replacement_Rate<2.1){
-    return 6//ReplacementRateLevels.A
+    return [6, ReplacementRateLevels.A]
   } else if (element.Replacement_Rate==2.1){
-    return 10//ReplacementRateLevels.C
+    return [10,ReplacementRateLevels.C]
   } else { 
-    return 2//ReplacementRateLevels.B
+    return [2, ReplacementRateLevels.B]
   }
 }
 
@@ -1178,37 +1175,37 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
-// console.log(filteredData);
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   const target1 = LifeExpectancy_Level(d);
   const target2 = ReplacementRate_Level(d);
   const value = 5; // Convert to a number if needed
 
-  console.log("here");
 
   // Check if the source node (Country_name) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === source)) {
-    sankeyData.nodes.push({ name: source });
+  if (!sankeyData.nodes.find(node => node.name === source[1])) {
+    sankeyData.nodes.push({ name: source[1] });
   }
 
   // Check if the target1 node (Life_Expectancy) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === target1)) {
-    sankeyData.nodes.push({ name: target1 });
+  if (!sankeyData.nodes.find(node => node.name === target1[1])) {
+    sankeyData.nodes.push({ name: target1[1] });
   }
 
   // Check if the target2 node (Replacement_Rate) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === target2)) {
-    sankeyData.nodes.push({ name: target2 });
+  if (!sankeyData.nodes.find(node => node.name === target2[1])) {
+    sankeyData.nodes.push({ name: target2[1] });
   }
-  target = target1;
+  // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
+  source = sankeyData.nodes.find(node=> node.name === source[1]);
+  target = sankeyData.nodes.find(node=> node.name === target1[1]);
   sankeyData.links.push({
     source,
     target,
     value,
   });
-  source = target1;
-  target = target2;
+  source = sankeyData.nodes.find(node=> node.name === target1[1]);
+  target = sankeyData.nodes.find(node=> node.name === target2[1]);
   sankeyData.links.push({
     source,
     target,
@@ -1219,11 +1216,11 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 // Create a Sankey layout
 const sankey = d3.sankey()
   .nodeWidth(15)
-  .nodePadding(10)
+  .nodePadding(20)
   .extent([[0, 0], [width, height]]);
 
-// console.log('Nodes:', sankeyData.nodes);
-// console.log('Links:', sankeyData.links);
+console.log('Nodes:', sankeyData.nodes);
+console.log('Links:', sankeyData.links);
 
 const { nodes, links } = sankey({
   nodes:sankeyData.nodes,
