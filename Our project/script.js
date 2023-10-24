@@ -1111,11 +1111,11 @@ function createFilterButtons() {
 
 function Development_Level(element) {
   if (element.HDI>0.800){
-    return 6 //DevelopmentLevels.HD
+    return 8 //DevelopmentLevels.HD
   } else if (element.HDI>0.700){
-    return 5 //DevelopmentLevels.D
+    return 7 //DevelopmentLevels.D
   }  else if (element.HDI>0.550){
-    return 4 //DevelopmentLevels.UD
+    return 5 //DevelopmentLevels.UD
   }  else {
     return 0 //DevelopmentLevels.SUD
   }
@@ -1125,11 +1125,11 @@ function LifeExpectancy_Level(element) {
   if (element.life_expectancy>90){
     return 8//LifeExpectanyLevels.VH
   } else if (element.life_expectancy>80){
-    return 7 //LifeExpectanyLevels.H
+    return 9 //LifeExpectanyLevels.H
   } else if (element.life_expectancy>70){
-    return 3 //LifeExpectanyLevels.M
+    return 4 //LifeExpectanyLevels.M
   } else if (element.life_expectancy>60){
-    return 2 //LifeExpectanyLevels.L
+    return 3 //LifeExpectanyLevels.L
   } else { 
     return 1 //LifeExpectanyLevels.VL
   }
@@ -1137,11 +1137,11 @@ function LifeExpectancy_Level(element) {
 
 function ReplacementRate_Level(element) {
   if (element.Replacement_Rate<2.1){
-    return ReplacementRateLevels.A
+    return 6//ReplacementRateLevels.A
   } else if (element.Replacement_Rate==2.1){
-    return ReplacementRateLevels.C
+    return 10//ReplacementRateLevels.C
   } else { 
-    return ReplacementRateLevels.B
+    return 2//ReplacementRateLevels.B
   }
 }
 
@@ -1153,8 +1153,9 @@ const sankeyData = {
   nodes: [],
   links: [] };
 filteredData.forEach(function(d) {
-  const source = Development_Level(d);
-  const target = LifeExpectancy_Level(d);
+  source = Development_Level(d);
+  const target1 = LifeExpectancy_Level(d);
+  const target2 = ReplacementRate_Level(d);
   const value = 5; // Convert to a number if needed
 
   // Check if the source node (Country_name) already exists, if not, add it
@@ -1162,32 +1163,23 @@ filteredData.forEach(function(d) {
     sankeyData.nodes.push({ name: source });
   }
 
-  // Check if the target node (Year) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === target)) {
-    sankeyData.nodes.push({ name: target });
+  // Check if the target1 node (Life_Expectancy) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target1)) {
+    sankeyData.nodes.push({ name: target1 });
   }
 
+  // Check if the target2 node (Replacement_Rate) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target2)) {
+    sankeyData.nodes.push({ name: target2 });
+  }
+  target = target1;
   sankeyData.links.push({
     source,
     target,
     value,
   });
-
-
-  source = LifeExpectancy_Level(d);
-  target = ReplacementRate_Level(d);
-  value = 5; // Convert to a number if needed
-
-  // Check if the source node (Country_name) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === source)) {
-    sankeyData.nodes.push({ name: source });
-  }
-
-  // Check if the target node (Year) already exists, if not, add it
-  if (!sankeyData.nodes.find(node => node.name === target)) {
-    sankeyData.nodes.push({ name: target });
-  }
-
+  source = target1;
+  target = target2;
   sankeyData.links.push({
     source,
     target,
