@@ -16,6 +16,7 @@ const colorScaleLine = d3.scaleOrdinal()
   .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
   .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
 var xScaleLine = null;
+var dataByContinent = null;
 
 // buttons
 var setButtons = new Set();
@@ -320,10 +321,17 @@ function startDashboard(){
 
 
         xScaleLine = (x => 0);
+
+    dataByContinent= d3.group(globalData, (d) => {
+      const country = d.Country_name;
+      const continentEntry = CONTINENT_MAP.find((entry) =>
+        entry.countries.includes(country)
+      );
+      return continentEntry ? continentEntry.continent : 'Unknown';
+    });
     createSlider();
     createButtons();
     createFilterButtons();
-    
     filterData(); //filter data the first time
     filteredDataYear = filteredData;
     createChoroplethMap();
@@ -1169,11 +1177,15 @@ function createSankyPlot(){
 const sankeyData = {
   nodes: [],
   links: [] };
-filteredData.forEach(function(d) {
+
+// console.log(filteredData);
+filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   const target1 = LifeExpectancy_Level(d);
   const target2 = ReplacementRate_Level(d);
   const value = 5; // Convert to a number if needed
+
+  console.log("here");
 
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source)) {
@@ -1208,10 +1220,10 @@ filteredData.forEach(function(d) {
 const sankey = d3.sankey()
   .nodeWidth(15)
   .nodePadding(10)
-  .extent([[0, 0], [400, 200]]);
+  .extent([[0, 0], [width, height]]);
 
-console.log('Nodes:', sankeyData.nodes);
-console.log('Links:', sankeyData.links);
+// console.log('Nodes:', sankeyData.nodes);
+// console.log('Links:', sankeyData.links);
 
 const { nodes, links } = sankey({
   nodes:sankeyData.nodes,
@@ -1221,8 +1233,8 @@ const { nodes, links } = sankey({
 // Create the SVG container
 const svg = d3.select('#sankeyPlot')
   .append('svg')
-  .attr('width', 400)
-  .attr('height', 200);
+  .attr('width', width)
+  .attr('height', height);
           
 // Draw the links
 svg.append('g')

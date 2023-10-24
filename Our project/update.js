@@ -128,14 +128,14 @@ function updateLineChart(attr = false) {
 
 
 
-        // Group the data by continent
-        const dataByContinent = d3.group(filteredData, (d) => {
-            const country = d.Country_name;
-            const continentEntry = CONTINENT_MAP.find((entry) =>
-                entry.countries.includes(country)
-            );
-            return continentEntry ? continentEntry.continent : 'Unknown';
-        } );
+        // // Group the data by continent
+        // const dataByContinent = d3.group(filteredData, (d) => {
+        //     const country = d.Country_name;
+        //     const continentEntry = CONTINENT_MAP.find((entry) =>
+        //         entry.countries.includes(country)
+        //     );
+        //     return continentEntry ? continentEntry.continent : 'Unknown';
+        // } );
         
 
         // Extract the currently displayed continents
