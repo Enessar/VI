@@ -270,10 +270,13 @@ const margin = {
   const width = 800 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-  function getContinentForCountry(country) {
+function getContinentForCountry(country) {
+    console.log("Country: ", country)
     for (const continentInfo of CONTINENT_MAP) {
+      console.log("Continent Info: ", continentInfo)
         const countries = continentInfo.countries;
-        if (countries.includes(country)) {
+        if (countries.includes(country.Country_name)) {
+          console.log("Continent: ", continentInfo.continent)
             return continentInfo.continent;
         }
     }
@@ -1151,7 +1154,7 @@ function LifeExpectancy_Level(element) {
   } else if (element.life_expectancy>70){
     return [4, LifeExpectanyLevels.M]
   } else if (element.life_expectancy>60){
-    return [3, LifeExpectanyLevels.L]
+    return 3 //LifeExpectanyLevels.L
   } else { 
     return [1, LifeExpectanyLevels.VL]
   }
@@ -1196,6 +1199,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === target2[1])) {
     sankeyData.nodes.push({ name: target2[1] });
   }
+  console.log("Continent: ", getContinentForCountry(d));
+  color = colorScaleLine(getContinentForCountry(d));
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -1203,6 +1208,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
+    color,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1210,6 +1216,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
+    color,
   });
 });
               
@@ -1232,7 +1239,8 @@ const svg = d3.select('#sankeyPlot')
   .append('svg')
   .attr('width', width)
   .attr('height', height);
-          
+   
+
 // Draw the links
 svg.append('g')
   .selectAll('path')
@@ -1240,7 +1248,7 @@ svg.append('g')
   .enter()
   .append('path')
   .attr('d', d3.sankeyLinkHorizontal())
-  .attr('stroke', d => colorScaleLine(d.source.name))
+  .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none');
 
