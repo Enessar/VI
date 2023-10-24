@@ -1205,8 +1205,10 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === target2[1])) {
     sankeyData.nodes.push({ name: target2[1],order: target2[0] });
   }
-  console.log("Continent: ", getContinentForCountry(d));
-  color = colorScaleLine(getContinentForCountry(d));
+  c = getContinentForCountry(d);
+  color = colorScaleLine(c);
+  order= sankeyContinetOrder(c);
+
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
