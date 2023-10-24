@@ -270,10 +270,13 @@ const margin = {
   const width = 800 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-  function getContinentForCountry(country) {
+function getContinentForCountry(country) {
+    console.log("Country: ", country)
     for (const continentInfo of CONTINENT_MAP) {
+      console.log("Continent Info: ", continentInfo)
         const countries = continentInfo.countries;
-        if (countries.includes(country)) {
+        if (countries.includes(country.Country_name)) {
+          console.log("Continent: ", continentInfo.continent)
             return continentInfo.continent;
         }
     }
@@ -1140,7 +1143,7 @@ function Development_Level(element) {
   } else if (element.HDI>0.700){
     return 7 //DevelopmentLevels.D
   }  else if (element.HDI>0.550){
-    return 5 //DevelopmentLevels.UD
+    return 3 //DevelopmentLevels.UD
   }  else {
     return 0 //DevelopmentLevels.SUD
   }
@@ -1154,7 +1157,7 @@ function LifeExpectancy_Level(element) {
   } else if (element.life_expectancy>70){
     return 4 //LifeExpectanyLevels.M
   } else if (element.life_expectancy>60){
-    return 3 //LifeExpectanyLevels.L
+    return 5 //LifeExpectanyLevels.L
   } else { 
     return 1 //LifeExpectanyLevels.VL
   }
@@ -1184,9 +1187,6 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   const target1 = LifeExpectancy_Level(d);
   const target2 = ReplacementRate_Level(d);
   const value = 5; // Convert to a number if needed
-
-  console.log("here");
-
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source)) {
     sankeyData.nodes.push({ name: source });
@@ -1202,17 +1202,23 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     sankeyData.nodes.push({ name: target2 });
   }
   target = target1;
+  console.log("Continent: ", getContinentForCountry(d));
+  color = colorScaleLine(getContinentForCountry(d));
+  
   sankeyData.links.push({
     source,
     target,
     value,
+    color,
   });
+  sankeyData.nodes.indexOf(target1)
   source = target1;
   target = target2;
   sankeyData.links.push({
     source,
     target,
     value,
+    color,
   });
 });
               
@@ -1222,8 +1228,8 @@ const sankey = d3.sankey()
   .nodePadding(10)
   .extent([[0, 0], [width, height]]);
 
-// console.log('Nodes:', sankeyData.nodes);
-// console.log('Links:', sankeyData.links);
+console.log('Nodes:', sankeyData.nodes);
+console.log('Links:', sankeyData.links);
 
 const { nodes, links } = sankey({
   nodes:sankeyData.nodes,
@@ -1235,7 +1241,8 @@ const svg = d3.select('#sankeyPlot')
   .append('svg')
   .attr('width', width)
   .attr('height', height);
-          
+   
+
 // Draw the links
 svg.append('g')
   .selectAll('path')
@@ -1243,7 +1250,7 @@ svg.append('g')
   .enter()
   .append('path')
   .attr('d', d3.sankeyLinkHorizontal())
-  .attr('stroke', d => colorScaleLine(d.source.name))
+  .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none');
 
