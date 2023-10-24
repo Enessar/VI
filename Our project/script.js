@@ -1152,12 +1152,32 @@ function createSankyPlot(){
 const sankeyData = {
   nodes: [],
   links: [] };
-console.log('DevelopmentLevels:', DevelopmentLevels);
 filteredData.forEach(function(d) {
   const source = Development_Level(d);
   const target = LifeExpectancy_Level(d);
   const value = 5; // Convert to a number if needed
-  console.log('Development_Level:', source);
+
+  // Check if the source node (Country_name) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === source)) {
+    sankeyData.nodes.push({ name: source });
+  }
+
+  // Check if the target node (Year) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target)) {
+    sankeyData.nodes.push({ name: target });
+  }
+
+  sankeyData.links.push({
+    source,
+    target,
+    value,
+  });
+
+
+  source = LifeExpectancy_Level(d);
+  target = ReplacementRate_Level(d);
+  value = 5; // Convert to a number if needed
+
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source)) {
     sankeyData.nodes.push({ name: source });
@@ -1202,9 +1222,10 @@ svg.append('g')
   .enter()
   .append('path')
   .attr('d', d3.sankeyLinkHorizontal())
-  .attr('stroke', 'grey')
+  .attr('stroke', d => colorScaleLine(d.source.name))
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none');
+
 
 // Draw the nodes
 const nodeGroup = svg.append('g')
