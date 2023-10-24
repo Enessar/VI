@@ -271,12 +271,9 @@ const margin = {
   const height = 500 - margin.top - margin.bottom;
 
 function getContinentForCountry(country) {
-    console.log("Country: ", country)
     for (const continentInfo of CONTINENT_MAP) {
-      console.log("Continent Info: ", continentInfo)
         const countries = continentInfo.countries;
         if (countries.includes(country.Country_name)) {
-          console.log("Continent: ", continentInfo.continent)
             return continentInfo.continent;
         }
     }
@@ -1178,6 +1175,15 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
+function sankeyContinetOrder(continent){
+  if(continent == "Asia"){ return 0}
+  else if(continent == "Europe"){ return 1}
+  else if(continent == "Africa"){ return 2}
+  else if(continent == "Americas"){ return 3}
+  else if(continent == "Oceania"){ return 4}
+  else {return -1}
+}
+
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   const target1 = LifeExpectancy_Level(d);
@@ -1199,8 +1205,10 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === target2[1])) {
     sankeyData.nodes.push({ name: target2[1] });
   }
-  console.log("Continent: ", getContinentForCountry(d));
-  color = colorScaleLine(getContinentForCountry(d));
+
+  c= getContinentForCountry(d)
+  color = colorScaleLine(c);
+  order = sankeyContinetOrder(c)
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -1209,6 +1217,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     target,
     value,
     color,
+    order,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1217,6 +1226,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     target,
     value,
     color,
+    order,
   });
 });
               
@@ -1224,7 +1234,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 const sankey = d3.sankey()
   .nodeWidth(15)
   .nodePadding(20)
-  .extent([[0, 0], [width, height]]);
+  .extent([[0, 0], [width, height]])
+  .;
 
 console.log('Nodes:', sankeyData.nodes);
 console.log('Links:', sankeyData.links);
@@ -1251,6 +1262,7 @@ svg.append('g')
   .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none');
+
 
 
 // Draw the nodes
