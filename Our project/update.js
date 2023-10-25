@@ -245,9 +245,8 @@ function updateSankyPlot(attr = false){
       
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
-            const target1 = LifeExpectancy_Level(d);
-            const target2 = ReplacementRate_Level(d);
-            const value = 5; // Convert to a number if needed
+            var [target1,target2] = SankeyLayers(Array.from(setButtons),d)
+            value = 5; // Convert to a number if needed
         
         
             // Check if the source node (Country_name) already exists, if not, add it
@@ -322,27 +321,53 @@ function updateSankyPlot(attr = false){
             .data(nodes);
 
         // Enter selection
-        var nodeEnter = node.enter().append("g");
+        var nodeEnter = node.enter().append("g")
+        .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+                // .attr('x', d => d.x0)
+                // .attr('y', d => d.y0)
+  ;
 
         // Append a rectangle to the enter selection
         nodeEnter.append("rect")
-            .attr('x', d => d.x0)
-            .attr('y', d => d.y0)
+            // .attr('x', 0)
+            // .attr('y', 0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
             .attr('fill', 'blue');
 
-        // Merge the enter and update selections
-        node = node.merge(nodeEnter);
+        // // Merge the enter and update selections
+        // node = node.merge(nodeEnter);
 
+        nodeEnter.append("text")
+            .attr('x', d => (d.x1 - d.x0) / 2)
+            .attr('y', d => (d.y1 - d.y0) / 2)
+            .attr('dy', '0.35em') // Adjust vertical alignment as needed
+            .style('fill', 'black')
+            .text(d => d.name);
+
+
+        node
+            .transition()
+            .duration(750)
+            .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+
+        
         // Update the position and size of the rectangles
         node.select("rect")
             .transition()
             .duration(750)
-            .attr('x', d => d.x0)
-            .attr('y', d => d.y0)
+            // .attr('x', 0)
+            // .attr('y', 0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0);
+
+        // Update the position and size of the rectangles
+        node.select("text")
+        .transition()
+        .duration(750)
+        .attr('x', d => (d.x1 - d.x0) / 2)
+        .attr('y', d => (d.y1 - d.y0) / 2)
+        .text(d => d.name);
 
         // Remove any exiting nodes
         node.exit().remove();
