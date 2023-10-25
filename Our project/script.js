@@ -1436,5 +1436,32 @@ const nodeLayers = ['Developpment Level', 'Fertility Rate', 'Replacement Rate'];
    'rotate(-90)' : null;
 });
 
+  //title for axis
+  svg.append("text")
+    .attr("x", 50)
+    .attr("y", 20)
+    .attr("id", "attr0SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text("HDI");
+
+    //title for axis
+  svg.append("text")
+    .attr("x", (width - 100 - 40)/2 + 40)
+    .attr("y", 20)
+    .attr("id", "attr1SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text(toName[attributes[0]]);
+
+      //title for axis
+  svg.append("text")
+    .attr("x", width -100 -10)
+    .attr("y", 20)
+    .attr("id", "attr2SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text(toName[attributes[1]]);
+
 }
   
