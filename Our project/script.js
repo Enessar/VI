@@ -29,6 +29,7 @@ const colorScaleLine = d3.scaleOrdinal()
 var xScaleLine = null;
 var dataByContinent = null;
 
+
 // buttons
 var setButtons = new Set();
 var setFilter = new Set();
@@ -653,9 +654,9 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("d", line)
     .attr("fill", "none")
     .attr("stroke", colorScaleLine(continent))
-    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
-    // .on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
-    // .on("mousemove",handleMouseMoveLine);
+    //.on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    //.on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
+    //.on("mousemove",handleMouseMoveLine);
 }
  });
 
@@ -1188,7 +1189,6 @@ const sankeyData = {
   links: [] };
 
 
-
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   const target1 = LifeExpectancy_Level(d);
@@ -1221,8 +1221,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1230,8 +1230,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
 });
               

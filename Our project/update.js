@@ -86,10 +86,13 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-    // Remove the existing y-axis label
-    //svg.select(".y-axis-label").remove();
-    d3.select(".current-year-line").attr("x1", xScaleLine(curYear)).attr("x2", xScaleLine(curYear));
 
+    d3.select(".current-year-line")
+    .attr("x1", xScaleLine(curYear))
+    .attr("x2", xScaleLine(curYear))
+    .attr("stroke", "red") // Customize the color of the line (you can adjust it)
+    .attr("stroke-width", 2); // Customize the line width
+  
     if (attr) {
 
         // If attr is provided or no buttons are selected, use the selected metric
@@ -227,6 +230,8 @@ function updateLineChart(attr = false) {
         }
     }
 
+
+
 }
 
 function updateSankyPlot(attr = false){
@@ -270,8 +275,8 @@ function updateSankyPlot(attr = false){
                 source,
                 target,
                 value,
-                color,
                 order,
+                color,
             });
             source = sankeyData.nodes.find(node=> node.name === target1[1]);
             target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -279,8 +284,8 @@ function updateSankyPlot(attr = false){
                 source,
                 target,
                 value,
-                color,
                 order,
+                color,
             });
         });
         sankeyData.nodes.sort((a, b) => a.order - b.order);

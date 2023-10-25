@@ -51,7 +51,7 @@ function handleMouseMoveMap(event){
 function handleMouseOutMap(event, item){
     const countryName =item.properties.name
 
-      // Remove the tooltip
+// Remove the tooltip
   d3.select(".tooltip")
   .transition()
   .duration(200)
@@ -70,16 +70,23 @@ function handleMouseOutMap(event, item){
     .attr("stroke-width","0.1");
 }
 
-// function handleMouseOverLine(event, item){
-//     const countryName =item.properties.name
-//     const countryData = filteredData.find((d) => d.Country_name    === countryName);
-//     // console.log(filteredDataYear);
-//     if (countryData != undefined){
-//         // Create and display a tooltip with country information
-//         const tooltip = d3.select("body").append("div")
-//           .attr("class", "tooltip")
-//           .style("position", "absolute")
-//           .style("opacity", 0);
+// function handleMouseOverLine(event, item) {
+//     // Retrieve the country name from the data passed as "item"
+//     const countryName = item.name;
+  
+//     // Find the data for the selected country
+//     const countryData = filteredData.find((d) => d.Country_name === countryName);
+  
+//     if (countryData !== undefined) {
+//       // Create and display a tooltip with country information
+//       const tooltip = d3.select("#lineChartTooltip");
+
+//         tooltip.style("position", "absolute")
+//             .style("opacity", 0)
+//             .style("background-color", "rgba(128, 128, 128, 0.7)")
+//             .style("padding", "8px")
+//             .style("border", "1px solid #333")
+//             .style("border-radius", "15px");
 
 //           // Populate the tooltip with information
 //         tooltip.html(
@@ -99,7 +106,7 @@ function handleMouseOutMap(event, item){
 //         .duration(200)
 //         .style("opacity", 0.9);
 
-//         d3.select("#choropleth")
+//         d3.select("#lineChart")
 //             .select("svg")
 //             .select("g")
 //             .selectAll(".country")
@@ -111,8 +118,17 @@ function handleMouseOutMap(event, item){
 //     }
 // }
 
-// function handleMouseMoveLine(event){
-// }
+//     // Event listener for mousemove to update the tooltip position
+//     function handleMouseMoveLine(event) {
+//         const tooltip = d3.select("#lineChartTooltip");
+//         tooltip.style("left", (event.pageX + 10) + "px");
+//         tooltip.style("top", (event.pageY - 120) + "px");
+//     }
 
-// function handleMouseOutLine(event, item){
-// }
+//     // Event listener for mouseout to hide the tooltip
+//     function handleMouseOutLine(event, item) {
+//         d3.select("#lineChartTooltip")
+//             .transition()
+//             .duration(200)
+//             .style("opacity", 0);
+//     }
