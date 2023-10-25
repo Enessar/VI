@@ -92,7 +92,6 @@ function updateLineChart(attr = false) {
 
     if (attr) {
 
-
         // If attr is provided or no buttons are selected, use the selected metric
         const attribute = Array.from(setButtons)[0];
         
@@ -162,6 +161,7 @@ function updateLineChart(attr = false) {
         const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
         const yAxis = d3.axisLeft(yScale);
         
+
         svg
         .select(".x-axis")
         .transition().duration(500)
@@ -216,11 +216,14 @@ function updateLineChart(attr = false) {
             .attr("dy", ".35em")
             .style("text-anchor", "start")
             .text((d) => d);
+            
 
         if (setButtons.size >= 1){
+            d3.select("#lineChartTitle").text(`Line chart representing ${toName[attribute]}`);
             d3.select("#y-axis-label-LineChart").text(toName[attribute]);
         } else {
             d3.select("#y-axis-label-LineChart").text("");
+            d3.select("#lineChartTitle").text("");
         }
     }
 

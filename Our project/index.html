@@ -131,9 +131,10 @@
             } 
 
             .my-button {
-                color: black;
+                color: white;
+                font-weight: bold;
                 border: none;
-                background-color: #ccc;
+                background-color: rgb(0, 42, 76);
                 padding: 10px 20px;
                 margin: 5px;
                 cursor: pointer;
@@ -155,7 +156,7 @@
             padding: 10px 20px;
             border: none;
             cursor: pointer;
-            opacity : 0.3;
+            opacity : 0.5;
             margin: 5px;
             color: #fff;
             }
@@ -166,7 +167,7 @@
             color: #fff;
             }
 
-            .filters-container {
+            /* .filters-container {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -176,7 +177,7 @@
             border-radius: 15px;
             width: auto;
             margin-left: 50px; /* Adjust the margin as needed */
-           }
+    
 
 
             #buttonContainer {
@@ -185,27 +186,26 @@
             align-items: center;
             }
 
-            #attributeButtons, #continentFilters {
-            margin: 10px 0;
-            padding: 10px;
-            background-color: white;       
-            border-radius: 15px;
-            display: inline-block;
-            }
+                #attributeButtons, #continentFilters {
+                margin: 10px 0;
+                padding: 10px;
+                background-color: white;       
+                border-radius: 15px;
+                flex-direction: column;
+                text-align: center;
+                }
 
 
             #play-button {
                 background: rgb(255, 196, 20);
-                /* position: relative;*/
-                /* left: 15px;
-                top: 5px; */
+                color: white;
+                font-weight: bold;
+                padding-right: 2%;
                 border-radius: 3px;
                 border: none;
-                margin-right: 10%;
                 color: rgb(0, 42, 76);
-                margin-right: 1%;
-                /* margin-left: 1%; */
-                /* padding: 0 12px; */
+                margin: 0;
+                padding: 0 12px;
                 width: 60px;
                 cursor: pointer;
                 height: 30px;
@@ -251,7 +251,7 @@
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-            <div class="filters-container">
+            <!-- <div class="filters-container"> -->
                 <div id="buttonContainer">
                     <!-- Container for attribute buttons -->
                     <div id="attributeButtons">
@@ -271,7 +271,7 @@
                         <button class="my-button" id="Oceania">Oceania</button>
                     </div>
                 </div>
-            </div>
+            <!-- </div> -->
         </div>
         
         <div class="dashboard">
