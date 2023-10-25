@@ -1224,33 +1224,82 @@ function NaturalRate_Level(element) {
 
 function SankeyLayers(attributes){
   
-  if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
+  // if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
+  //   functionToUse1 = LifeExpectancy_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }
+  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //     functionToUse2 = FertilityRate_Level;
+  //   }
+  //   else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
+  //     functionToUse2 = NaturalRate_Level;
+  //   } else{functionToUse2=(d) => null;}
+  // }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
+  //   functionToUse1 = NaturalRate_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }
+  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //     functionToUse2 = FertilityRate_Level;
+  //   }else{functionToUse2=(d) => null;}
+  // }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //   target1 = FertilityRate_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }else{functionToUse2= (d) => null;}
+  // }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //   functionToUse1 = ReplacementRate_Level;
+  //   functionToUse2 =(d) => null;
+  // }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
+
+  if(attributes[0] == "life_expectancy"){
     functionToUse1 = LifeExpectancy_Level;
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    if(attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
     }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+    else if(attributes[1] =="Fertility_Rate"){
       functionToUse2 = FertilityRate_Level;
     }
-    else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
+    else if(attributes[1] =="Natural_Rate"){
       functionToUse2 = NaturalRate_Level;
     } else{functionToUse2=(d) => null;}
-  }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
+
+  }else if(attributes[0] == "Natural_Rate"){
     functionToUse1 = NaturalRate_Level;
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    if(attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
     }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+    else if(attributes[1] =="Fertility_Rate"){
       functionToUse2 = FertilityRate_Level;
-    }else{functionToUse2=(d) => null;}
-  }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    target1 = FertilityRate_Level;
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    }
+    else if(attributes[1] =="life_expectancy"){
+      functionToUse2 = LifeExpectancy_Level;
+    } else{functionToUse2=(d) => null;}
+
+  }else if(attributes[0] == "Fertility_Rate"){
+    functionToUse1 = FertilityRate_Level;
+    if(attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
-    }else{functionToUse2= (d) => null;}
-  }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    functionToUse1 = ReplacementRate_Level;
-    functionToUse2 =(d) => null;
+    }
+    else if(attributes[1] =="life_expectancy"){
+      functionToUse2 = LifeExpectancy_Level;
+    }
+    else if(attributes[1] =="Natural_Rate"){
+      functionToUse2 = NaturalRate_Level;
+    } else{functionToUse2=(d) => null;}
+
+  } else if(attributes[0] == "Replacement_Rate"){
+      functionToUse1 = ReplacementRate_Level;
+      if(attributes[1] =="life_expectancy"){
+        functionToUse2 = LifeExpectancy_Level;
+      }
+      else if(attributes[1] =="Fertility_Rate"){
+        functionToUse2 = FertilityRate_Level;
+      }
+      else if(attributes[1] =="Natural_Rate"){
+        functionToUse2 = NaturalRate_Level;
+      } else{functionToUse2=(d) => null;}
   }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
 }
 
