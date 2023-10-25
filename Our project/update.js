@@ -240,9 +240,7 @@ function updateSankyPlot(attr = false){
       
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
-            t = SankeyLayers(d, Array.from(setButtons))
-            target1 = t[0];
-            target2 = t[1];
+            var [target1,target2] = SankeyLayers(Array.from(setButtons),d)
             value = 5; // Convert to a number if needed
         
         
