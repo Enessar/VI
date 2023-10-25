@@ -45,10 +45,10 @@ const toName = {
 };
 
 const DevelopmentLevels = {
-  HD: "Highly Developed",
+  HD: "Highly D",
   D: "Developed",
   UD: "Underdeveloped",
-  SUD: "Strongly Underdeveloped",
+  SUD: "Strongly UD",
 };
 
 const LifeExpectanyLevels = {
@@ -60,7 +60,7 @@ const LifeExpectanyLevels = {
 };
 
 const ReplacementRateLevels = {
-  A: "Above Replacement",
+  A: "Above",
   C: "Constant Replacement",
   B: "Below Replacement",
 }
@@ -1187,14 +1187,55 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
+var attributes = Array.from(setButtons);
+    // Create a title for the choropleth map
+/*const chartTitle = d3
+      .select("#choroplethTitle")
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", margin.top)
+      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);*/
 
+function sankeyContinetOrder(continent){
+  if(continent == "Asia"){ return 0}
+  else if(continent == "Europe"){ return 1}
+  else if(continent == "Africa"){ return 2}
+  else if(continent == "Americas"){ return 3}
+  else if(continent == "Oceania"){ return 4}
+  else {return -1}
+}
+console.log("attributes[0]= ", attributes[0]);
+console.log("attributes[1]= ", attributes[1]);
 
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
-  const target1 = LifeExpectancy_Level(d);
-  const target2 = ReplacementRate_Level(d);
   const value = 5; // Convert to a number if needed
 
+  if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
+    const target1 = LifeExpectancy_Level(d);
+    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+      const target2 = ReplacementRate_Level(d);
+    }
+    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+      const target2 = FertilityRate_Level(d);
+    }
+    else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
+      const target2 = NaturalRate_Level(d);
+    } else{const target2=null;}
+}else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
+    const target1 = NaturalRate_Level(d);
+    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    const target2 = ReplacementRate_Level(d);
+    }
+    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+    const target2 = FertilityRate_Level(d);
+  }else{const target2=null;}
+}else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  const target1 = FertilityRate_Level(d)
+  if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    const target2 = ReplacementRate_Level(d);
+  }else{const target2=null;}
+} else{return}
 
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
@@ -1238,8 +1279,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 // Create a Sankey layout
 sankey = d3.sankey()
   .nodeWidth(30)
-  .nodePadding(20)
-  .extent([[0, 0], [width-100, height]])
+  .nodePadding(40)
+  .extent([[40, 40], [width-100, height]])
   .nodeSort(null)
   .linkSort(null) 
   ;
@@ -1302,12 +1343,89 @@ nodeGroup.append('rect')
   .attr('width', d => d.x1 - d.x0)
   .attr('fill', 'blue');
 
+
+// Define the layers of nodes (assuming you have an array of layers)
+const nodeLayers = ['Developpment Level', 'Fertility Rate', 'Replacement Rate']; // Replace with your actual layer names
+
+/*
+nodeGroup.append('rect')
+  .attr('x', -60)
+  .attr('y', 0)
+  .attr('width', 120)
+  .attr('height', 30)
+  .style('fill', 'lightgray');
+  */
+ // Add text with vertical rotation
+ nodeGroup.append('text')
+ .text(d => d.name) // Set the text to the node name or label
+ .attr('x', function(d) {
+  if (d.name === 'Above') {
+    // Adjust the x position for the "Above" node
+    return -(d.y1 - d.y0)+23; // Modify the position as needed
+  } else if (d.name === 'Highly D') {
+    // Adjust the x position for the "Highly D" node
+    return -(d.y1 - d.y0)+50; // Modify the position as needed
+  } else {
+    return -(d.y1 - d.y0) / 2; // Default x position for other nodes
+  }
+})
+ //.attr('x', d => -(d.y1 - d.y0)/2) // Adjust the x position
+ .attr('y', function(d) {
+  if (d.name === 'Above') {
+    // Adjust the x position for the "Above" node
+    return (d.x1 - d.x0)-12; // Modify the position as needed
+  } else if (d.name === 'Highly D') {
+    // Adjust the x position for the "Highly D" node
+    return 5+(d.x1 - d.x0); // Modify the position as needed
+  } else {
+    return (d.x1 - d.x0) / 2; // Default x position for other nodes
+  }
+})
+ //.attr('y', d => (d.x1 - d.x0)/2) // Adjust the y position
+ .attr('dy', '0.35em') // Adjust the vertical alignment
+ .style('font-size', '12px') // Set the font size as needed
+ .style('text-anchor', 'middle') // Center-align the text
+ .style('fill', d => (d.name === 'Above' || d.name === 'Highly D') ? 'black' : 'white') // Set text color
+ .attr('transform', function(d) {
+  // Conditionally rotate the text
+  return (d.name !== 'Above' && d.name !== 'Highly D') ? 'rotate(-90)' : null;
+});
+
+/*
+
 nodeGroup.append('text')
   .attr('x', d => (d.x1 - d.x0) / 2)
   .attr('y', d => (d.y1 - d.y0) / 2)
   .attr('dy', '0.35em') // Adjust vertical alignment as needed
   .style('fill', 'black')
-  .text(d => d.name);
+  .text(d => d.name)
+  .style('font-size', '15px') // Set the font size as needed
+  .style('text-anchor', 'end');// Align text to the end (left) of the node
+
+
+
+  // Now, add titles with background boxes to the nodes
+svg
+.selectAll('.node')
+.each(function(d) {
+  const node = d3.select(this);
+
+  node.append('rect')
+    .attr('x', -60)
+    .attr('y', -15)
+    .attr('width', 120)
+    .attr('height', 30)
+    .style('fill', 'lightgray');
+
+  node.append('text')
+    .text(d => d.name)
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('dy', '0.35em')
+    .style('font-size', '12px')
+    .style('text-anchor', 'middle');
+});
+*/
 
 }
   
