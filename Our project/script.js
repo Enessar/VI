@@ -1290,9 +1290,14 @@ const nodeGroup = svg.append('g')
   .data(nodes)
   .enter()
   .append('g')
-  .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+  .attr('transform', d => `translate(${d.x0}, ${d.y0})`)
+  // .attr('x', d => d.x0)
+  // .attr('y', d => d.y0)
+  ;
 
 nodeGroup.append('rect')
+  // .attr('x', d => d.x0)
+  // .attr('y', d => d.y0)
   .attr('height', d => d.y1 - d.y0)
   .attr('width', d => d.x1 - d.x0)
   .attr('fill', 'blue');
