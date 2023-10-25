@@ -234,6 +234,8 @@ function updateLineChart(attr = false) {
 
 }
 
+
+
 function updateSankyPlot(attr = false){
 
     if ( sankey != null){
@@ -241,11 +243,13 @@ function updateSankyPlot(attr = false){
             nodes: [],
             links: [] };
         
-      
-      
+        SankeyLayers(Array.from(setButtons));   
+
+
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
-            var [target1,target2] = SankeyLayers(Array.from(setButtons),d);
+            target1 = functionToUse1(d);
+            target2 = functionToUse2(d);
             value = 5; // Convert to a number if needed
 
         
@@ -253,12 +257,13 @@ function updateSankyPlot(attr = false){
             if (!sankeyData.nodes.find(node => node.name === source[1])) {
             sankeyData.nodes.push({ name: source[1], order: source[0]});
             }
-        
+            
+            //sankeyData.nodes.length = 0;
             // Check if the target1 node (Life_Expectancy) already exists, if not, add it
             if (!sankeyData.nodes.find(node => node.name === target1[1])) {
             sankeyData.nodes.push({ name: target1[1], order: target1[0]});
             }
-        
+            //sankeyData.nodes.length = 0;
             // Check if the target2 node (Replacement_Rate) already exists, if not, add it
             if (target2 != null && !sankeyData.nodes.find(node => node.name === target2[1])) {
             sankeyData.nodes.push({ name: target2[1],order: target2[0] });
