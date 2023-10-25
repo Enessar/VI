@@ -64,6 +64,20 @@ const ReplacementRateLevels = {
   C: "Constant Replacement",
   B: "Below Replacement",
 }
+
+const FertilityRateLevels = {
+  VHF: "Very High Fertility",
+  HF: "High Fertility",
+  MF: "Moderate Fertility",
+  LF: "Low Fertility",
+  VLF: "Very Low Fertility",
+};
+
+const NaturalRateLevels = {
+  A: "Population Growth",
+  C: "Maintaining",
+  B: "Population Decline",
+};
 //to put in the dataSet
 const CONTINENT_MAP = [
     {
@@ -1179,6 +1193,56 @@ function ReplacementRate_Level(element) {
   }
 }
 
+function FertilityRate_Level(element) {
+  if (element.Fertility_Rate>4){
+    return [12, FertilityRateLevels.VHF]
+  } else if (element.Fertility_Rate>3){
+    return [13, FertilityRateLevels.HF]
+  } else if (element.Fertility_Rate>2.1){
+    return [14, FertilityRateLevels.MF]
+  } else if (element.Fertility_Rate>1.5){
+    return [15, FertilityRateLevels.LF]
+} else {return [16, FertilityRateLevels.VLF]}
+}
+
+function NaturalRate_Level(element) {
+  if (element.Natural_Rate<2){
+    return [9, ReplacementRateLevels.A]
+  } else if (element.Replacement_Rate>=2 && element.Replacement_Rate<=2.2){
+    return [10,ReplacementRateLevels.C]
+  } else { 
+    return [11, ReplacementRateLevels.B]
+  }
+}
+
+function SankeyLayers(attributes){
+  if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
+    const target1 = LifeExpectancy_Level(d);
+    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+      const target2 = ReplacementRate_Level(d);
+    }
+    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+      const target2 = FertilityRate_Level(d);
+    }
+    else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
+      const target2 = NaturalRate_Level(d);
+    } else{const target2=null;}
+  }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
+    const target1 = NaturalRate_Level(d);
+    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    const target2 = ReplacementRate_Level(d);
+    }
+    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+    const target2 = FertilityRate_Level(d);
+  }else{const target2=null;}
+}else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  const target1 = FertilityRate_Level(d)
+  if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    const target2 = ReplacementRate_Level(d);
+  }else{const target2=null;}
+} else{return null,null}
+return target1, target2
+}
 
 function createSankyPlot(){
     // Assuming 'filteredData' is an array containing your CSV data
@@ -1187,7 +1251,6 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
-var attributes = Array.from(setButtons);
     // Create a title for the choropleth map
 /*const chartTitle = d3
       .select("#choroplethTitle")
@@ -1209,33 +1272,8 @@ console.log("attributes[1]= ", attributes[1]);
 
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
-  const value = 5; // Convert to a number if needed
-
-  if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
-    const target1 = LifeExpectancy_Level(d);
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      const target2 = ReplacementRate_Level(d);
-    }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-      const target2 = FertilityRate_Level(d);
-    }
-    else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
-      const target2 = NaturalRate_Level(d);
-    } else{const target2=null;}
-}else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
-    const target1 = NaturalRate_Level(d);
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    const target2 = ReplacementRate_Level(d);
-    }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    const target2 = FertilityRate_Level(d);
-  }else{const target2=null;}
-}else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-  const target1 = FertilityRate_Level(d)
-  if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    const target2 = ReplacementRate_Level(d);
-  }else{const target2=null;}
-} else{return}
+  target1,target2 = SankeyLayers(Array.from(setButtons))
+  value = 5; // Convert to a number if needed
 
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
