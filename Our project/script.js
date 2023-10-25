@@ -21,8 +21,6 @@ function sankeyContinetOrder(continent){
   else if(continent == "Oceania"){ return 4}
   else {return -1}
 }
-let functionToUse1;
-let functionToUse2;
 
 // Variable for the line chart
 const colorScaleLine = d3.scaleOrdinal()
@@ -1220,7 +1218,8 @@ function NaturalRate_Level(element) {
   }
 }
 
-
+let functionToUse1;
+let functionToUse2;
 
 function SankeyLayers(attributes){
   
@@ -1234,7 +1233,7 @@ function SankeyLayers(attributes){
     }
     else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
       functionToUse2 = NaturalRate_Level;
-    } else{target2=(d) => null;}
+    } else{target2=null;}
   }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
     functionToUse1 = NaturalRate_Level;
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
@@ -1242,16 +1241,13 @@ function SankeyLayers(attributes){
     }
     else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
       functionToUse2 = FertilityRate_Level;
-    }else{functionToUse2=(d) => null;}
+    }else{functionToUse2=null;}
   }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
     target1 = FertilityRate_Level;
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
-    }else{functionToUse2= (d) => null;}
-  }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    functionToUse1 = ReplacementRate_Level;
-    functionToUse2 =(d) => null;
-  }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
+    }else{functionToUse2=null;}
+  } else{functionToUse1=null;functionToUse2=null;}
 }
 
 function createSankyPlot(){
@@ -1261,15 +1257,13 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
-  var attributes = Array.from(setButtons);
-
     // Create a title for the choropleth map
-const chartTitle = d3
-      .select("#sankeyPlotTitle")
+/*const chartTitle = d3
+      .select("#choroplethTitle")
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
-      .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
+      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);*/
 
 function sankeyContinetOrder(continent){
   if(continent == "Asia"){ return 0}
@@ -1279,8 +1273,8 @@ function sankeyContinetOrder(continent){
   else if(continent == "Oceania"){ return 4}
   else {return -1}
 }
-// console.log("attributes[0]= ", attributes[0]);
-// console.log("attributes[1]= ", attributes[1]);
+console.log("attributes[0]= ", attributes[0]);
+console.log("attributes[1]= ", attributes[1]);
 
 
 SankeyLayers(Array.from(setButtons));   
@@ -1289,9 +1283,9 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
   target1 = functionToUse1(d);
   target2 = functionToUse2(d);
-  // console.log(setButtons);
-  // console.log(target1);
-  // console.log(target2);
+  console.log(setButtons);
+  console.log(target1);3
+  console.log(target2);
 
   value = 5; // Convert to a number if needed
 
