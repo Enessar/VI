@@ -327,7 +327,7 @@ function createChoroplethMap() {
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width + 200)
+      .attr("width", width + 800)
       .attr("height", height);
   
     // Create a group to hold the map elements
