@@ -1248,7 +1248,10 @@ function SankeyLayers(attributes){
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
     }else{functionToUse2= (d) => null;}
-  } else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
+  }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+    functionToUse1 = ReplacementRate_Level;
+    functionToUse2 =(d) => null;
+  }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
 }
 
 function createSankyPlot(){
@@ -1258,13 +1261,15 @@ const sankeyData = {
   nodes: [],
   links: [] };
 
+  var attributes = Array.from(setButtons);
+
     // Create a title for the choropleth map
-/*const chartTitle = d3
-      .select("#choroplethTitle")
+const chartTitle = d3
+      .select("#sankeyPlotTitle")
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
-      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);*/
+      .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
 
 function sankeyContinetOrder(continent){
   if(continent == "Asia"){ return 0}

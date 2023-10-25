@@ -260,7 +260,7 @@ function updateSankyPlot(attr = false){
             
             //sankeyData.nodes.length = 0;
             // Check if the target1 node (Life_Expectancy) already exists, if not, add it
-            if (!sankeyData.nodes.find(node => node.name === target1[1])) {
+            if (target1 != null && !sankeyData.nodes.find(node => node.name === target1[1])) {
             sankeyData.nodes.push({ name: target1[1], order: target1[0]});
             }
             //sankeyData.nodes.length = 0;
@@ -272,6 +272,7 @@ function updateSankyPlot(attr = false){
             color = colorScaleLine(c);
             order= sankeyContinetOrder(c);
         
+            if (target1 != null){
             // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
             source = sankeyData.nodes.find(node=> node.name === source[1]);
             target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -282,6 +283,7 @@ function updateSankyPlot(attr = false){
                 order,
                 color,
             });
+        }
             if (target2 != null){
                 source = sankeyData.nodes.find(node=> node.name === target1[1]);
                 target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -415,5 +417,37 @@ function updateSankyPlot(attr = false){
 
         // Remove any exiting nodes
         node.exit().remove();
+
+    if (attr){
+        
+        if (attributes.length === 0){
+            d3.select("#sankeyPlotTitle")
+                .text(`Sankey plot`);
+
+            // d3.select('#minXLegendMap').text("");
+            // d3.select('#maxXLegendMap').text("");
+            // d3.select('#textXLegendMap').text("");
+        } else {
+            // d3.select('#minXLegendMap').text(d3.min(filteredData, (d) => d[attributes[0]]).toFixed(2));
+            // d3.select('#maxXLegendMap').text(d3.max(filteredData, (d) => d[attributes[0]]).toFixed(2));
+            // d3.select('#textXLegendMap').text(toName[attributes[0]]);
+        
+            if (attributes.length === 2) {
+                d3.select("#sankeyPlotTitle")
+                    .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
+                    
+                // d3.select('#minYLegendMap').text(d3.min(filteredData, (d) => d[attributes[1]]).toFixed(2));
+                // d3.select('#maxYLegendMap').text(d3.max(filteredData, (d) => d[attributes[1]]).toFixed(2));
+                // d3.select('#textYLegendMap').text(toName[attributes[1]]);
+            } else {
+                d3.select("#sankeyPlotTitle")
+                .text(`Sankey plot representing ${toName[attributes[0]]}`);
+
+                // d3.select('#minYLegendMap').text("");
+                // d3.select('#maxYLegendMap').text("");
+                // d3.select('#textYLegendMap').text("");
+            }
+        }
     }
+}
 }

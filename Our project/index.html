@@ -36,15 +36,8 @@
             .visualization {
                 padding: 10px;
             }
-            #choroplethTitle {
-                text-align: center;
-                color: rgb(0, 42, 76);
-                font-family:'Times New Roman', Times, serif;
-                font-weight: bold;
-                font-size: 23px;
-            }
 
-            #lineChartTitle {
+            #lineChartTitle, #choroplethTitle, #sankeyPlotTitle {
                 text-align: center;
                 color: rgb(0, 42, 76);
                 font-family: 'Times New Roman', Times, serif;
@@ -283,9 +276,12 @@
                         <!-- Place the lineChart inside this container -->
                         <div id="lineChart"></div>
                     </div>
+                    <div id="legend"></div>
                 </div>
-            <div id="legend"></div>
-            <div class="container" class="visualization" id="sankeyPlot"></div>
+            <div>
+                <div id="sankeyPlotTitle"></div>
+                <div class="container" class="visualization" id="sankeyPlot"></div>
+            </div>
         </div>
         
           
