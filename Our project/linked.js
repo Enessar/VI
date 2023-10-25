@@ -71,7 +71,8 @@ function handleMouseOutMap(event, item){
 }
 
 function handleMouseOverSankey(event, item){
-    const countryName =item.properties.name
+    console.log(item);
+    const countryName =item.country;
     const countryData = filteredDataYear.find((d) => d.Country_name    === countryName);
 
     // console.log(filteredDataYear);
@@ -99,10 +100,7 @@ function handleMouseOverSankey(event, item){
         d3.select("#sankeyPlotTitle")
             .select("svg")
             .select("g")
-            .selectAll(".country")
-            .filter(function (d) {
-                return d.properties.name === countryName;
-            })
+            .selectAll("path")
             .attr("stroke-width","1");
 
     }
@@ -117,8 +115,6 @@ function handleMouseMoveSankey(event){
 }
 
 function handleMouseOutSankey(event, item){
-    const countryName =item.properties.name
-
 // Remove the tooltip
   d3.select(".tooltip")
   .transition()
@@ -132,9 +128,6 @@ function handleMouseOutSankey(event, item){
     .select("svg")
     .select("g")
     .selectAll(".country")
-    .filter(function (d) {
-        return d.properties.name === countryName;
-    })
     .attr("stroke-width","0.1");
 }
 

@@ -25,12 +25,17 @@ let functionToUse1;
 let functionToUse2;
 
 // Variable for the line chart
-const colorScaleLine = d3.scaleOrdinal()
-  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
-var xScaleLine = null;
-var dataByContinent = null;
+function colorScaleLine(c){
+  if(c=='Asia'){return 'rgb(6,95,244,255)'}
+  else if(c =='Africa'){return 'rgb(250, 194, 34)'}
+  else if(c =='Europe'){return 'rgb(27, 213, 170)'}
+  else if(c =='Americas'){return 'rgb(249, 112, 11, 1)'}
+  else if(c =='Oceania'){return 'rgb(0, 42, 76)'}
+  else{return 'rgb(136, 111, 54)'}
+}
 
+  var xScaleLine = null;
+var dataByContinent = null;
 
 // buttons
 var setButtons = new Set();
@@ -1357,7 +1362,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   c = getContinentForCountry(d);
   color = colorScaleLine(c);
   order= sankeyContinetOrder(c);
-
+  country = d.Country_name;
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -1367,6 +1372,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     value,
     order,
     color,
+    country,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1376,6 +1382,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     value,
     order,
     color,
+    country,
   });
 });
               

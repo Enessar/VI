@@ -238,7 +238,7 @@ function updateLineChart(attr = false) {
 
 function updateSankyPlot(attr = false){
 
-    if ( sankey != null){
+    if (sankey != null){
         const sankeyData = {
             nodes: [],
             links: [] };
@@ -271,7 +271,7 @@ function updateSankyPlot(attr = false){
             c = getContinentForCountry(d);
             color = colorScaleLine(c);
             order= sankeyContinetOrder(c);
-        
+            country = d.Country_name;
             if (target1 != null){
             // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
             source = sankeyData.nodes.find(node=> node.name === source[1]);
@@ -282,6 +282,7 @@ function updateSankyPlot(attr = false){
                 value,
                 order,
                 color,
+                country,
             });
         }
             if (target2 != null){
@@ -293,6 +294,7 @@ function updateSankyPlot(attr = false){
                     value,
                     order,
                     color,
+                    country,
                 });
             }
         });
@@ -317,7 +319,10 @@ function updateSankyPlot(attr = false){
                             .attr("d", d3.sankeyLinkHorizontal())
                             .attr('stroke', d => d.color)
                             .attr('stroke-width', d => Math.max(1, d.width))
-                            .style('fill', 'none');
+                            .style('fill', 'none')
+                            .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event
+                            .on("mouseout", handleMouseOutSankey)   // Function to handle mouseout event
+                            .on("mousemove",handleMouseMoveSankey);
 
         link.transition().duration(750).ease(d3.easeLinear)
             .attr("d", d3.sankeyLinkHorizontal())
