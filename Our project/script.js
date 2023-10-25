@@ -1215,33 +1215,36 @@ function NaturalRate_Level(element) {
   }
 }
 
-function SankeyLayers(attributes){
+function SankeyLayers(attributes, d){
+  var target1;
+  var target2;
   if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
-    const target1 = LifeExpectancy_Level(d);
+    target1 = LifeExpectancy_Level(d);
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      const target2 = ReplacementRate_Level(d);
+      target2 = ReplacementRate_Level(d);
     }
     else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-      const target2 = FertilityRate_Level(d);
+      target2 = FertilityRate_Level(d);
     }
     else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
-      const target2 = NaturalRate_Level(d);
-    } else{const target2=null;}
+      target2 = NaturalRate_Level(d);
+    } else{target2=null;}
   }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
-    const target1 = NaturalRate_Level(d);
+    target1 = NaturalRate_Level(d);
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    const target2 = ReplacementRate_Level(d);
+    target2 = ReplacementRate_Level(d);
     }
     else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    const target2 = FertilityRate_Level(d);
-  }else{const target2=null;}
-}else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-  const target1 = FertilityRate_Level(d)
-  if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    const target2 = ReplacementRate_Level(d);
-  }else{const target2=null;}
-} else{return null,null}
-return target1, target2
+    target2 = FertilityRate_Level(d);
+    }else{target2=null;}
+  }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+    target1 = FertilityRate_Level(d)
+    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+      target2 = ReplacementRate_Level(d);
+    }else{target2=null;}
+  } else{return null,null;}
+
+  return [target1, target2];
 }
 
 function createSankyPlot(){
@@ -1272,14 +1275,17 @@ console.log("attributes[1]= ", attributes[1]);
 
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
-  target1,target2 = SankeyLayers(Array.from(setButtons))
+  var [target1,target2] = SankeyLayers(Array.from(setButtons), d);
+  console.log(setButtons);
+  console.log(target1);
+  console.log(target2);
+
   value = 5; // Convert to a number if needed
 
   // Check if the source node (Country_name) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
     sankeyData.nodes.push({ name: source[1], order: source[0]});
   }
-
   // Check if the target1 node (Life_Expectancy) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === target1[1])) {
     sankeyData.nodes.push({ name: target1[1], order: target1[0]});
