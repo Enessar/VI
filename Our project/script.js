@@ -1215,36 +1215,36 @@ function NaturalRate_Level(element) {
   }
 }
 
-function SankeyLayers(attributes, d){
-  var target1;
-  var target2;
+let functionToUse1;
+let functionToUse2;
+
+function SankeyLayers(attributes){
+  
   if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
-    target1 = LifeExpectancy_Level(d);
+    functionToUse1 = LifeExpectancy_Level;
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      target2 = ReplacementRate_Level(d);
+      functionToUse2 = ReplacementRate_Level;
     }
     else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-      target2 = FertilityRate_Level(d);
+      functionToUse2 = FertilityRate_Level;
     }
     else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
-      target2 = NaturalRate_Level(d);
+      functionToUse2 = NaturalRate_Level;
     } else{target2=null;}
   }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
-    target1 = NaturalRate_Level(d);
+    functionToUse1 = NaturalRate_Level;
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    target2 = ReplacementRate_Level(d);
+      functionToUse2 = ReplacementRate_Level;
     }
     else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    target2 = FertilityRate_Level(d);
-    }else{target2=null;}
+      functionToUse2 = FertilityRate_Level;
+    }else{functionToUse2=null;}
   }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    target1 = FertilityRate_Level(d)
+    target1 = FertilityRate_Level;
     if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      target2 = ReplacementRate_Level(d);
-    }else{target2=null;}
-  } else{return null,null;}
-
-  return [target1, target2];
+      functionToUse2 = ReplacementRate_Level;
+    }else{functionToUse2=null;}
+  } else{functionToUse1=null;functionToUse2=null;}
 }
 
 function createSankyPlot(){
@@ -1264,8 +1264,8 @@ const sankeyData = {
 
 function sankeyContinetOrder(continent){
   if(continent == "Asia"){ return 0}
-  else if(continent == "Europe"){ return 1}
-  else if(continent == "Africa"){ return 2}
+  else if(continent == "Africa"){ return 1}
+  else if(continent == "Europe"){ return 2}
   else if(continent == "Americas"){ return 3}
   else if(continent == "Oceania"){ return 4}
   else {return -1}
@@ -1273,9 +1273,13 @@ function sankeyContinetOrder(continent){
 console.log("attributes[0]= ", attributes[0]);
 console.log("attributes[1]= ", attributes[1]);
 
+
+SankeyLayers(Array.from(setButtons));   
+
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
-  var [target1,target2] = SankeyLayers(Array.from(setButtons), d);
+  target1 = functionToUse1(d);
+  target2 = functionToUse2(d);
   console.log(setButtons);
   console.log(target1);
   console.log(target2);
@@ -1286,6 +1290,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
     sankeyData.nodes.push({ name: source[1], order: source[0]});
   }
+  
   // Check if the target1 node (Life_Expectancy) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === target1[1])) {
     sankeyData.nodes.push({ name: target1[1], order: target1[0]});
