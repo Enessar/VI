@@ -240,9 +240,8 @@ function updateSankyPlot(attr = false){
       
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
-            const target1 = LifeExpectancy_Level(d);
-            const target2 = ReplacementRate_Level(d);
-            const value = 5; // Convert to a number if needed
+            target1,target2 = SankeyLayers(Array.from(setButtons))
+            value = 5; // Convert to a number if needed
         
         
             // Check if the source node (Country_name) already exists, if not, add it
