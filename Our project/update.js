@@ -86,13 +86,11 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-    console.log(xScaleLine);
     // Remove the existing y-axis label
     //svg.select(".y-axis-label").remove();
     d3.select(".current-year-line").attr("x1", xScaleLine(curYear)).attr("x2", xScaleLine(curYear));
 
     if (attr) {
-
 
         // If attr is provided or no buttons are selected, use the selected metric
         const attribute = Array.from(setButtons)[0];
@@ -129,13 +127,13 @@ function updateLineChart(attr = false) {
 
 
         // // Group the data by continent
-        // const dataByContinent = d3.group(filteredData, (d) => {
-        //     const country = d.Country_name;
-        //     const continentEntry = CONTINENT_MAP.find((entry) =>
-        //         entry.countries.includes(country)
-        //     );
-        //     return continentEntry ? continentEntry.continent : 'Unknown';
-        // } );
+        dataByContinent = d3.group(filteredData, (d) => {
+            const country = d.Country_name;
+            const continentEntry = CONTINENT_MAP.find((entry) =>
+                entry.countries.includes(country)
+            );
+            return continentEntry ? continentEntry.continent : 'Unknown';
+        } );
         
 
         // Extract the currently displayed continents
@@ -163,6 +161,7 @@ function updateLineChart(attr = false) {
         const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
         const yAxis = d3.axisLeft(yScale);
         
+
         svg
         .select(".x-axis")
         .transition().duration(500)
@@ -217,13 +216,130 @@ function updateLineChart(attr = false) {
             .attr("dy", ".35em")
             .style("text-anchor", "start")
             .text((d) => d);
+            
 
         if (setButtons.size >= 1){
+            d3.select("#lineChartTitle").text(`Line chart representing ${toName[attribute]}`);
             d3.select("#y-axis-label-LineChart").text(toName[attribute]);
         } else {
             d3.select("#y-axis-label-LineChart").text("");
+            d3.select("#lineChartTitle").text("");
         }
     }
 
 }
 
+function updateSankyPlot(attr = false){
+
+    if (!attr && sankey != null){
+        const sankeyData = {
+            nodes: [],
+            links: [] };
+        
+      
+      
+        filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
+            source = Development_Level(d);
+            const target1 = LifeExpectancy_Level(d);
+            const target2 = ReplacementRate_Level(d);
+            const value = 5; // Convert to a number if needed
+        
+        
+            // Check if the source node (Country_name) already exists, if not, add it
+            if (!sankeyData.nodes.find(node => node.name === source[1])) {
+            sankeyData.nodes.push({ name: source[1], order: source[0]});
+            }
+        
+            // Check if the target1 node (Life_Expectancy) already exists, if not, add it
+            if (!sankeyData.nodes.find(node => node.name === target1[1])) {
+            sankeyData.nodes.push({ name: target1[1], order: target1[0]});
+            }
+        
+            // Check if the target2 node (Replacement_Rate) already exists, if not, add it
+            if (!sankeyData.nodes.find(node => node.name === target2[1])) {
+            sankeyData.nodes.push({ name: target2[1],order: target2[0] });
+            }
+            c = getContinentForCountry(d);
+            color = colorScaleLine(c);
+            order= sankeyContinetOrder(c);
+        
+            // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
+            source = sankeyData.nodes.find(node=> node.name === source[1]);
+            target = sankeyData.nodes.find(node=> node.name === target1[1]);
+            sankeyData.links.push({
+                source,
+                target,
+                value,
+                color,
+                order,
+            });
+            source = sankeyData.nodes.find(node=> node.name === target1[1]);
+            target = sankeyData.nodes.find(node=> node.name === target2[1]);
+            sankeyData.links.push({
+                source,
+                target,
+                value,
+                color,
+                order,
+            });
+        });
+        sankeyData.nodes.sort((a, b) => a.order - b.order);
+        sankeyData.links.sort((a, b) => a.order - b.order);
+
+        // console.log(sankey);
+        const { nodes, links } = sankey({
+            nodes:sankeyData.nodes,
+            links:sankeyData.links,
+          });
+
+        console.log(nodes);
+        console.log(links);
+
+        const link = d3.select(".links-sankey")
+                        .selectAll("path")
+                        .data(links);
+
+
+        var linkEnter = link.enter().append("path")
+                            .attr("d", d3.sankeyLinkHorizontal())
+                            .attr('stroke', d => d.color)
+                            .attr('stroke-width', d => Math.max(1, d.width))
+                            .style('fill', 'none');
+
+        link.transition().duration(750).ease(d3.easeLinear)
+            .attr("d", d3.sankeyLinkHorizontal())
+            .attr("stroke-width", function(d) { return Math.max(1, d.width); });
+
+        link.exit().remove();
+
+        // Select the nodes and bind data
+        var node = d3.select(".nodes-sankey").selectAll("g")
+            .data(nodes);
+
+        // Enter selection
+        var nodeEnter = node.enter().append("g");
+
+        // Append a rectangle to the enter selection
+        nodeEnter.append("rect")
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
+            .attr('height', d => d.y1 - d.y0)
+            .attr('width', d => d.x1 - d.x0)
+            .attr('fill', 'blue');
+
+        // Merge the enter and update selections
+        node = node.merge(nodeEnter);
+
+        // Update the position and size of the rectangles
+        node.select("rect")
+            .transition()
+            .duration(750)
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
+            .attr('height', d => d.y1 - d.y0)
+            .attr('width', d => d.x1 - d.x0);
+
+        // Remove any exiting nodes
+        node.exit().remove();
+    }
+}

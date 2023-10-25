@@ -11,6 +11,17 @@ var rangeMax;
 var colorScaleMap1 = null;
 var colorScaleMap2 = null;
 
+//variable for sankeyplot
+var sankey = null;
+function sankeyContinetOrder(continent){
+  if(continent == "Asia"){ return 0}
+  else if(continent == "Europe"){ return 1}
+  else if(continent == "Africa"){ return 2}
+  else if(continent == "Americas"){ return 3}
+  else if(continent == "Oceania"){ return 4}
+  else {return -1}
+}
+
 // Variable for the line chart
 const colorScaleLine = d3.scaleOrdinal()
   .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
@@ -358,7 +369,7 @@ function createChoroplethMap() {
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width + 200)
+      .attr("width", width + 800)
       .attr("height", height);
   
     // Create a group to hold the map elements
@@ -1026,6 +1037,7 @@ function filterData(){
 function updateIdioms(attr = false){
     updateChoroplethMap(attr);
     updateLineChart(attr);
+    updateSankyPlot(attr);
 }
 
 function createFilterButtons() {
@@ -1265,7 +1277,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 });
               
 // Create a Sankey layout
-const sankey = d3.sankey()
+sankey = d3.sankey()
   .nodeWidth(30)
   .nodePadding(40)
   .extent([[40, 40], [width-100, height]])
@@ -1285,12 +1297,12 @@ const { nodes, links } = sankey({
   links:sankeyData.links,
 });
 
-console.log(sankey)
+// console.log(sankey)
 
 
 
-console.log(nodes);
-console.log(links);
+// console.log(nodes);
+// console.log(links);
 // Create the SVG container
 const svg = d3.select('#sankeyPlot')
   .append('svg')
@@ -1300,6 +1312,7 @@ const svg = d3.select('#sankeyPlot')
 
 // Draw the links
 svg.append('g')
+  .attr("class", "links-sankey")
   .selectAll('path')
   .data(links)
   .enter()
@@ -1313,6 +1326,7 @@ svg.append('g')
 
 // Draw the nodes
 const nodeGroup = svg.append('g')
+  .attr("class", "nodes-sankey")
   .selectAll('g')
   .data(nodes)
   .enter()
