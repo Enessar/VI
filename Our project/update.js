@@ -238,7 +238,7 @@ function updateLineChart(attr = false) {
 
 function updateSankyPlot(attr = false){
 
-    if (attr && sankey != null){
+    if (sankey != null){
         const sankeyData = {
             nodes: [],
             links: [] };

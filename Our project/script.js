@@ -1220,8 +1220,6 @@ function NaturalRate_Level(element) {
   }
 }
 
-
-
 function SankeyLayers(attributes){
   
   if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
@@ -1376,7 +1374,10 @@ svg.append('g')
   .attr('d', d3.sankeyLinkHorizontal())
   .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
-  .style('fill', 'none');
+  .style('fill', 'none')
+  .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event
+  .on("mouseout", handleMouseOutSankey)   // Function to handle mouseout event
+  .on("mousemove",handleMouseMoveSankey);
 
 
 
