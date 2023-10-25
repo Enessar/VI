@@ -29,6 +29,7 @@ const colorScaleLine = d3.scaleOrdinal()
 var xScaleLine = null;
 var dataByContinent = null;
 
+
 // buttons
 var setButtons = new Set();
 var setFilter = new Set();
@@ -667,9 +668,9 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("d", line)
     .attr("fill", "none")
     .attr("stroke", colorScaleLine(continent))
-    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
-    // .on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
-    // .on("mousemove",handleMouseMoveLine);
+    //.on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    //.on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
+    //.on("mousemove",handleMouseMoveLine);
 }
  });
 
@@ -1164,7 +1165,9 @@ function Development_Level(element) {
     return [1, DevelopmentLevels.D]
   }  else if (element.HDI>0.550){
     return [2, DevelopmentLevels.UD]
-  }  else {
+  }  else if (element.HDI === 0){
+    return [4, "No information"]
+  } else {
     return [3,DevelopmentLevels.SUD]
   }
 }
@@ -1311,8 +1314,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1320,8 +1323,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
 });
               
@@ -1380,6 +1383,8 @@ const nodeGroup = svg.append('g')
   .data(nodes)
   .enter()
   .append('g')
+  // .attr('height', d => d.y1 - d.y0)
+  // .attr('width', d => d.x1 - d.x0)
   .attr('transform', d => `translate(${d.x0}, ${d.y0})`)
   // .attr('x', d => d.x0)
   // .attr('y', d => d.y0)
@@ -1390,91 +1395,40 @@ nodeGroup.append('rect')
   // .attr('y', d => d.y0)
   .attr('height', d => d.y1 - d.y0)
   .attr('width', d => d.x1 - d.x0)
-  .attr('fill', 'blue');
+  .attr('fill', 'grey');
 
 
 // Define the layers of nodes (assuming you have an array of layers)
 const nodeLayers = ['Developpment Level', 'Fertility Rate', 'Replacement Rate']; // Replace with your actual layer names
 
-/*
-nodeGroup.append('rect')
-  .attr('x', -60)
-  .attr('y', 0)
-  .attr('width', 120)
-  .attr('height', 30)
-  .style('fill', 'lightgray');
-  */
+
  // Add text with vertical rotation
  nodeGroup.append('text')
  .text(d => d.name) // Set the text to the node name or label
  .attr('x', function(d) {
-  if (d.name === 'Above') {
-    // Adjust the x position for the "Above" node
-    return -(d.y1 - d.y0)+23; // Modify the position as needed
-  } else if (d.name === 'Highly D') {
-    // Adjust the x position for the "Highly D" node
-    return -(d.y1 - d.y0)+50; // Modify the position as needed
+    if (this.getBBox().width < (d.y1 - d.y0)){
+    return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
   } else {
-    return -(d.y1 - d.y0) / 2; // Default x position for other nodes
+    return (d.x1 - d.x0) / 2;
   }
-})
- //.attr('x', d => -(d.y1 - d.y0)/2) // Adjust the x position
+  })
  .attr('y', function(d) {
-  if (d.name === 'Above') {
-    // Adjust the x position for the "Above" node
-    return (d.x1 - d.x0)-12; // Modify the position as needed
-  } else if (d.name === 'Highly D') {
-    // Adjust the x position for the "Highly D" node
-    return 5+(d.x1 - d.x0); // Modify the position as needed
-  } else {
+  if ( (this.getBBox().width < (d.y1 - d.y0))){
     return (d.x1 - d.x0) / 2; // Default x position for other nodes
+  } else {
+    return (d.y1 - d.y0) / 2
   }
-})
- //.attr('y', d => (d.x1 - d.x0)/2) // Adjust the y position
+  })
  .attr('dy', '0.35em') // Adjust the vertical alignment
  .style('font-size', '12px') // Set the font size as needed
  .style('text-anchor', 'middle') // Center-align the text
- .style('fill', d => (d.name === 'Above' || d.name === 'Highly D') ? 'black' : 'white') // Set text color
+ .style('fill', 'black') // Set text color
+ .style('font-weight', 'bold') // Set the font-weight to 'bold'
  .attr('transform', function(d) {
   // Conditionally rotate the text
-  return (d.name !== 'Above' && d.name !== 'Highly D') ? 'rotate(-90)' : null;
+  return (this.getBBox().width < (d.y1 - d.y0)) ? 
+   'rotate(-90)' : null;
 });
-
-/*
-
-nodeGroup.append('text')
-  .attr('x', d => (d.x1 - d.x0) / 2)
-  .attr('y', d => (d.y1 - d.y0) / 2)
-  .attr('dy', '0.35em') // Adjust vertical alignment as needed
-  .style('fill', 'black')
-  .text(d => d.name)
-  .style('font-size', '15px') // Set the font size as needed
-  .style('text-anchor', 'end');// Align text to the end (left) of the node
-
-
-
-  // Now, add titles with background boxes to the nodes
-svg
-.selectAll('.node')
-.each(function(d) {
-  const node = d3.select(this);
-
-  node.append('rect')
-    .attr('x', -60)
-    .attr('y', -15)
-    .attr('width', 120)
-    .attr('height', 30)
-    .style('fill', 'lightgray');
-
-  node.append('text')
-    .text(d => d.name)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('dy', '0.35em')
-    .style('font-size', '12px')
-    .style('text-anchor', 'middle');
-});
-*/
 
 }
   

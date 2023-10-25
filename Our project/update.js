@@ -86,10 +86,13 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-    // Remove the existing y-axis label
-    //svg.select(".y-axis-label").remove();
-    d3.select(".current-year-line").attr("x1", xScaleLine(curYear)).attr("x2", xScaleLine(curYear));
 
+    d3.select(".current-year-line")
+    .attr("x1", xScaleLine(curYear))
+    .attr("x2", xScaleLine(curYear))
+    .attr("stroke", "red") // Customize the color of the line (you can adjust it)
+    .attr("stroke-width", 2); // Customize the line width
+  
     if (attr) {
 
         // If attr is provided or no buttons are selected, use the selected metric
@@ -227,13 +230,15 @@ function updateLineChart(attr = false) {
         }
     }
 
+
+
 }
 
 
 
 function updateSankyPlot(attr = false){
 
-    if (sankey != null){
+    if ( sankey != null){
         const sankeyData = {
             nodes: [],
             links: [] };
@@ -274,8 +279,8 @@ function updateSankyPlot(attr = false){
                 source,
                 target,
                 value,
-                color,
                 order,
+                color,
             });
             source = sankeyData.nodes.find(node=> node.name === target1[1]);
             target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -283,8 +288,8 @@ function updateSankyPlot(attr = false){
                 source,
                 target,
                 value,
-                color,
                 order,
+                color,
             });
         });
         sankeyData.nodes.sort((a, b) => a.order - b.order);
@@ -296,8 +301,8 @@ function updateSankyPlot(attr = false){
             links:sankeyData.links,
           });
 
-        console.log(nodes);
-        console.log(links);
+        // console.log(nodes);
+        // console.log(links);
 
         const link = d3.select(".links-sankey")
                         .selectAll("path")
@@ -333,17 +338,37 @@ function updateSankyPlot(attr = false){
             // .attr('y', 0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
-            .attr('fill', 'blue');
+            .attr('fill', 'grey');
 
         // // Merge the enter and update selections
         // node = node.merge(nodeEnter);
 
         nodeEnter.append("text")
-            .attr('x', d => (d.x1 - d.x0) / 2)
-            .attr('y', d => (d.y1 - d.y0) / 2)
-            .attr('dy', '0.35em') // Adjust vertical alignment as needed
-            .style('fill', 'black')
-            .text(d => d.name);
+            .text(d => d.name) // Set the text to the node name or label
+            .style('font-weight', 'bold') // Set the font-weight to 'bold'
+            .attr('x', function(d) {
+            if (this.getBBox().width < (d.y1 - d.y0)){
+            return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
+            } else {
+            return (d.x1 - d.x0) / 2;
+            }
+            })
+            .attr('y', function(d) {
+            if ( (this.getBBox().width < (d.y1 - d.y0))){
+            return (d.x1 - d.x0) / 2; // Default x position for other nodes
+            } else {
+            return (d.y1 - d.y0) / 2
+            }
+            })
+            .attr('dy', '0.35em') // Adjust the vertical alignment
+            .style('font-size', '12px') // Set the font size as needed
+            .style('text-anchor', 'middle') // Center-align the text
+            .style('fill', 'black') // Set text color
+            .attr('transform', function(d) {
+                // Conditionally rotate the text
+                return (this.getBBox().width < (d.y1 - d.y0)) ? 
+                'rotate(-90)' : null;
+            });
 
 
         node
@@ -365,8 +390,25 @@ function updateSankyPlot(attr = false){
         node.select("text")
         .transition()
         .duration(750)
-        .attr('x', d => (d.x1 - d.x0) / 2)
-        .attr('y', d => (d.y1 - d.y0) / 2)
+        .attr('x', function(d) {
+            if (this.getBBox().width < (d.y1 - d.y0)){
+            return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
+          } else {
+            return (d.x1 - d.x0) / 2;
+          }
+          })
+         .attr('y', function(d) {
+          if ( (this.getBBox().width < (d.y1 - d.y0))){
+            return (d.x1 - d.x0) / 2; // Default x position for other nodes
+          } else {
+            return (d.y1 - d.y0) / 2
+          }
+          })
+          .attr('transform', function(d) {
+            // Conditionally rotate the text
+            return (this.getBBox().width < (d.y1 - d.y0)) ? 
+             'rotate(-90)' : null;
+          })
         .text(d => d.name);
 
         // Remove any exiting nodes
