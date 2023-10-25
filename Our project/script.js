@@ -29,6 +29,7 @@ const colorScaleLine = d3.scaleOrdinal()
 var xScaleLine = null;
 var dataByContinent = null;
 
+
 // buttons
 var setButtons = new Set();
 var setFilter = new Set();
@@ -667,9 +668,9 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("d", line)
     .attr("fill", "none")
     .attr("stroke", colorScaleLine(continent))
-    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
-    // .on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
-    // .on("mousemove",handleMouseMoveLine);
+    //.on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    //.on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
+    //.on("mousemove",handleMouseMoveLine);
 }
  });
 
@@ -1209,11 +1210,11 @@ function FertilityRate_Level(element) {
 
 function NaturalRate_Level(element) {
   if (element.Natural_Rate<2){
-    return [9, ReplacementRateLevels.A]
-  } else if (element.Replacement_Rate>=2 && element.Replacement_Rate<=2.2){
-    return [10,ReplacementRateLevels.C]
+    return [9, NaturalRateLevels.B]
+  } else if (element.Natural_Rate>=2 && element.Natural_Rate<=2.2){
+    return [10,NaturalRateLevels.C]
   } else { 
-    return [11, ReplacementRateLevels.B]
+    return [11, NaturalRateLevels.A]
   }
 }
 
@@ -1303,8 +1304,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1312,8 +1313,8 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     source,
     target,
     value,
-    color,
     order,
+    color,
   });
 });
               
