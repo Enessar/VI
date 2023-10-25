@@ -226,3 +226,9 @@ function updateLineChart(attr = false) {
     }
 
 }
+
+function updateSankeyPlot(attr = false) {
+    const svg = d3.select('#sankeyPlot'); // Replace with the actual selector for your SVG
+    svg.remove();
+    createSankyPlot();
+} 
