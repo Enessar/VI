@@ -247,7 +247,7 @@ function updateSankyPlot(attr = false){
             source = Development_Level(d);
             var [target1,target2] = SankeyLayers(Array.from(setButtons),d);
             value = 5; // Convert to a number if needed
-        
+
         
             // Check if the source node (Country_name) already exists, if not, add it
             if (!sankeyData.nodes.find(node => node.name === source[1])) {
@@ -260,7 +260,7 @@ function updateSankyPlot(attr = false){
             }
         
             // Check if the target2 node (Replacement_Rate) already exists, if not, add it
-            if (!sankeyData.nodes.find(node => node.name === target2[1])) {
+            if (target2 != null && !sankeyData.nodes.find(node => node.name === target2[1])) {
             sankeyData.nodes.push({ name: target2[1],order: target2[0] });
             }
             c = getContinentForCountry(d);
@@ -277,15 +277,17 @@ function updateSankyPlot(attr = false){
                 order,
                 color,
             });
-            source = sankeyData.nodes.find(node=> node.name === target1[1]);
-            target = sankeyData.nodes.find(node=> node.name === target2[1]);
-            sankeyData.links.push({
-                source,
-                target,
-                value,
-                order,
-                color,
-            });
+            if (target2 != null){
+                source = sankeyData.nodes.find(node=> node.name === target1[1]);
+                target = sankeyData.nodes.find(node=> node.name === target2[1]);
+                sankeyData.links.push({
+                    source,
+                    target,
+                    value,
+                    order,
+                    color,
+                });
+            }
         });
         sankeyData.nodes.sort((a, b) => a.order - b.order);
         sankeyData.links.sort((a, b) => a.order - b.order);
