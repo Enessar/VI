@@ -15,6 +15,8 @@ var colorScaleMap2 = null;
 const colorScaleLine = d3.scaleOrdinal()
   .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
   .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
+var xScaleLine = null;
+var dataByContinent = null;
 
 // buttons
 var setButtons = new Set();
@@ -31,6 +33,26 @@ const toName = {
   // Add more mappings as needed
 };
 
+const DevelopmentLevels = {
+  HD: "Highly Developed",
+  D: "Developed",
+  UD: "Underdeveloped",
+  SUD: "Strongly Underdeveloped",
+};
+
+const LifeExpectanyLevels = {
+  VH: "Very High",
+  H: "High",
+  M: "Moderate",
+  L: "Low",
+  VL: "Very Low",
+};
+
+const ReplacementRateLevels = {
+  A: "Above Replacement",
+  C: "Constant Replacement",
+  B: "Below Replacement",
+}
 //to put in the dataSet
 const CONTINENT_MAP = [
     {
@@ -248,10 +270,10 @@ const margin = {
   const width = 800 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
-  function getContinentForCountry(country) {
+function getContinentForCountry(country) {
     for (const continentInfo of CONTINENT_MAP) {
         const countries = continentInfo.countries;
-        if (countries.includes(country)) {
+        if (countries.includes(country.Country_name)) {
             return continentInfo.continent;
         }
     }
@@ -298,15 +320,24 @@ function startDashboard(){
         //TODO maybe convert also globalDataHDI to numbers
 
 
+        xScaleLine = (x => 0);
+
+    dataByContinent= d3.group(globalData, (d) => {
+      const country = d.Country_name;
+      const continentEntry = CONTINENT_MAP.find((entry) =>
+        entry.countries.includes(country)
+      );
+      return continentEntry ? continentEntry.continent : 'Unknown';
+    });
     createSlider();
     createButtons();
     createFilterButtons();
-    
     filterData(); //filter data the first time
     filteredDataYear = filteredData;
-    
     createChoroplethMap();
-    createLineChart(); 
+    createLineChart();
+    createSankyPlot(); 
+    updateIdioms();
   });
 }
 
@@ -369,8 +400,9 @@ function createChoroplethMap() {
       .attr("d", path)
       .attr("stroke", "black")
       .attr("stroke-width", 0.1) // Adjust this value to make the stroke very thin
-    //   .on("mouseover", handleMouseOver) // Function to handle mouseover event
-    //   .on("mouseout", handleMouseOut)   // Function to handle mouseout event
+      .on("mouseover", handleMouseOverMap) // Function to handle mouseover event
+      .on("mouseout", handleMouseOutMap)   // Function to handle mouseout event
+      .on("mousemove",handleMouseMoveMap)
     //   .on("click", handleMouseClick)
       .append("title")
       .text((d) => d.properties.name);
@@ -535,7 +567,6 @@ function createChoroplethMap() {
     // Position the legend on the page
     legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
 
-    // console.log("here");
 
   }
 
@@ -571,20 +602,20 @@ function createChoroplethMap() {
     .nice()
     .range([height - margin.bottom, margin.top]);
 
-  const xScale = d3
+  xScaleLine = d3
     .scaleLinear()
     .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
     .range([margin.left, width - margin.right - 100]);
 
   // Add axes
-  const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+  const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
   const yAxis = d3.axisLeft(yScale);
   
   
   // Create a line generator
   const line = d3
     .line()
-    .x((d) => xScale(d.Year))
+    .x((d) => xScaleLine(d.Year))
     .y((d) => yScale(d.life_expectancy));
   
 
@@ -610,9 +641,22 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("class", "line")
     .attr("d", line)
     .attr("fill", "none")
-    .attr("stroke", colorScaleLine(continent));
+    .attr("stroke", colorScaleLine(continent))
+    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    // .on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
+    // .on("mousemove",handleMouseMoveLine);
 }
  });
+
+ const currentYearLine = chartGroup
+  .append("line")
+  .attr("class", "current-year-line")
+  .attr("x1", xScaleLine(curYear)) // Position the start of the line
+  .attr("x2", xScaleLine(curYear)) // Position the end of the line
+  .attr("y1", margin.top) // Start at the top of the chart
+  .attr("y2", height - margin.bottom) // Extend to the bottom of the chart
+  .attr("stroke", "red") // Customize the color of the line (you can adjust it)
+  .attr("stroke-width", 2); // Customize the line width
 
   // Create a group for the legend elements
   const legendGroup = svg
@@ -699,7 +743,7 @@ function createButtons(){
     const warningMessage = d3.select("#warningMessage");
 
     // Select button 1 using D3.js
-    var fertilityR = d3.select("#fertilityR");
+    var fertilityR = d3.select("#fertilityR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     fertilityR.on("click", function() {
@@ -716,7 +760,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var lifeExp = d3.select("#lifeExp");
+    var lifeExp = d3.select("#lifeExp").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     lifeExp.on("click", function() {
@@ -738,7 +782,7 @@ function createButtons(){
 
 
     // Select button 1 using D3.js
-    var birthR = d3.select("#HDI");
+    var birthR = d3.select("#HDI").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     birthR.on("click", function() {
@@ -775,7 +819,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var naturalR = d3.select("#naturalR");
+    var naturalR = d3.select("#naturalR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     naturalR.on("click", function() {
@@ -792,7 +836,7 @@ function createButtons(){
         }
     });
     // Select button 1 using D3.js
-    var raplacementR = d3.select("#raplacementR");
+    var raplacementR = d3.select("#raplacementR").style('background-color','rgb(244, 69, 0)');
 
     // Add a click event listener to button 1
     raplacementR.on("click", function() {
@@ -970,7 +1014,6 @@ function filterData(){
 
     function CountryInSelectedContinents(country){
         for (const continentInfo of CONTINENT_MAP) {
-            // console.log(continentInfo);
             const countries = continentInfo.countries;
             if (setFilter.has(continentInfo.continent) && countries.includes(country)) {
                 return true;
@@ -1087,3 +1130,172 @@ function createFilterButtons() {
 
   
   }
+
+function Development_Level(element) {
+  if (element.HDI>0.800){
+    return [0, DevelopmentLevels.HD]
+  } else if (element.HDI>0.700){
+    return [1, DevelopmentLevels.D]
+  }  else if (element.HDI>0.550){
+    return [2, DevelopmentLevels.UD]
+  }  else {
+    return [3,DevelopmentLevels.SUD]
+  }
+}
+
+function LifeExpectancy_Level(element) {
+  if (element.life_expectancy>90){
+    return [4,LifeExpectanyLevels.VH]
+  } else if (element.life_expectancy>80){
+    return [5, LifeExpectanyLevels.H]
+  } else if (element.life_expectancy>70){
+    return [6, LifeExpectanyLevels.M]
+  } else if (element.life_expectancy>60){
+    return [7,LifeExpectanyLevels.L]
+  } else { 
+    return [8, LifeExpectanyLevels.VL]
+  }
+}
+
+function ReplacementRate_Level(element) {
+  if (element.Replacement_Rate<2){
+    return [9, ReplacementRateLevels.A]
+  } else if (element.Replacement_Rate>=2 && element.Replacement_Rate<=2.2){
+    return [10,ReplacementRateLevels.C]
+  } else { 
+    return [11, ReplacementRateLevels.B]
+  }
+}
+
+
+function createSankyPlot(){
+    // Assuming 'filteredData' is an array containing your CSV data
+// Define your Sankey data directly
+const sankeyData = {
+  nodes: [],
+  links: [] };
+
+function sankeyContinetOrder(continent){
+  if(continent == "Asia"){ return 0}
+  else if(continent == "Europe"){ return 1}
+  else if(continent == "Africa"){ return 2}
+  else if(continent == "Americas"){ return 3}
+  else if(continent == "Oceania"){ return 4}
+  else {return -1}
+}
+
+filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
+  source = Development_Level(d);
+  const target1 = LifeExpectancy_Level(d);
+  const target2 = ReplacementRate_Level(d);
+  const value = 5; // Convert to a number if needed
+
+
+  // Check if the source node (Country_name) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === source[1])) {
+    sankeyData.nodes.push({ name: source[1], order: source[0]});
+  }
+
+  // Check if the target1 node (Life_Expectancy) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target1[1])) {
+    sankeyData.nodes.push({ name: target1[1], order: target1[0]});
+  }
+
+  // Check if the target2 node (Replacement_Rate) already exists, if not, add it
+  if (!sankeyData.nodes.find(node => node.name === target2[1])) {
+    sankeyData.nodes.push({ name: target2[1],order: target2[0] });
+  }
+  c = getContinentForCountry(d);
+  color = colorScaleLine(c);
+  order= sankeyContinetOrder(c);
+
+  // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
+  source = sankeyData.nodes.find(node=> node.name === source[1]);
+  target = sankeyData.nodes.find(node=> node.name === target1[1]);
+  sankeyData.links.push({
+    source,
+    target,
+    value,
+    color,
+    order,
+  });
+  source = sankeyData.nodes.find(node=> node.name === target1[1]);
+  target = sankeyData.nodes.find(node=> node.name === target2[1]);
+  sankeyData.links.push({
+    source,
+    target,
+    value,
+    color,
+    order,
+  });
+});
+              
+// Create a Sankey layout
+const sankey = d3.sankey()
+  .nodeWidth(30)
+  .nodePadding(20)
+  .extent([[0, 0], [width-100, height]])
+  .nodeSort(null)
+  .linkSort(null) 
+  ;
+
+  sankeyData.nodes.sort((a, b) => a.order - b.order);
+  sankeyData.links.sort((a, b) => a.order - b.order);
+  
+
+// console.log('Nodes:', sankeyData.nodes);
+// console.log('Links:', sankeyData.links);
+
+const { nodes, links } = sankey({
+  nodes:sankeyData.nodes,
+  links:sankeyData.links,
+});
+
+console.log(sankey)
+
+
+
+console.log(nodes);
+console.log(links);
+// Create the SVG container
+const svg = d3.select('#sankeyPlot')
+  .append('svg')
+  .attr('width', width)
+  .attr('height', height);
+   
+
+// Draw the links
+svg.append('g')
+  .selectAll('path')
+  .data(links)
+  .enter()
+  .append('path')
+  .attr('d', d3.sankeyLinkHorizontal())
+  .attr('stroke', d => d.color)
+  .attr('stroke-width', d => Math.max(1, d.width))
+  .style('fill', 'none');
+
+
+
+// Draw the nodes
+const nodeGroup = svg.append('g')
+  .selectAll('g')
+  .data(nodes)
+  .enter()
+  .append('g')
+  .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+
+nodeGroup.append('rect')
+  .attr('height', d => d.y1 - d.y0)
+  .attr('width', d => d.x1 - d.x0)
+  .attr('fill', 'blue');
+
+nodeGroup.append('text')
+  .attr('x', d => (d.x1 - d.x0) / 2)
+  .attr('y', d => (d.y1 - d.y0) / 2)
+  .attr('dy', '0.35em') // Adjust vertical alignment as needed
+  .style('fill', 'black')
+  .text(d => d.name);
+
+}
+  

@@ -86,10 +86,10 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-
+    console.log(xScaleLine);
     // Remove the existing y-axis label
     //svg.select(".y-axis-label").remove();
-
+    d3.select(".current-year-line").attr("x1", xScaleLine(curYear)).attr("x2", xScaleLine(curYear));
 
     if (attr) {
 
@@ -114,7 +114,7 @@ function updateLineChart(attr = false) {
         .nice()
         .range([height - margin.bottom, margin.top]);
 
-        const xScale = d3
+        xScaleLine = d3
         .scaleLinear()
         .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
         .range([margin.left, width - margin.right - 100]);
@@ -123,18 +123,18 @@ function updateLineChart(attr = false) {
         const line = d3
             .line()
             .y((d) => yScale(d[attribute]))
-            .x((d) => xScale(d.Year));
+            .x((d) => xScaleLine(d.Year));
 
 
 
-        // Group the data by continent
-        const dataByContinent = d3.group(filteredData, (d) => {
-            const country = d.Country_name;
-            const continentEntry = CONTINENT_MAP.find((entry) =>
-                entry.countries.includes(country)
-            );
-            return continentEntry ? continentEntry.continent : 'Unknown';
-        } );
+        // // Group the data by continent
+        // const dataByContinent = d3.group(filteredData, (d) => {
+        //     const country = d.Country_name;
+        //     const continentEntry = CONTINENT_MAP.find((entry) =>
+        //         entry.countries.includes(country)
+        //     );
+        //     return continentEntry ? continentEntry.continent : 'Unknown';
+        // } );
         
 
         // Extract the currently displayed continents
@@ -159,7 +159,7 @@ function updateLineChart(attr = false) {
         
 
         // Add axes
-        const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
+        const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
         const yAxis = d3.axisLeft(yScale);
         
 

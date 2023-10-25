@@ -148,7 +148,8 @@
 
             .active-pip {
                 color:  rgb(0,218,190,255); 
-                border: 2px solid white;
+                /* border: 2px solid white; */
+                margin-top: 5px;
             }
 
             .my-button {
@@ -157,10 +158,11 @@
             cursor: pointer;
             opacity : 0.5;
             margin: 5px;
+            color: #fff;
             }
 
             .my-button.active {
-            /* background-color: rgb(0, 100, 244); */
+            /* background-color: rgb(244, 69, 0); */
             opacity : 1;
             color: #fff;
             }
@@ -178,11 +180,11 @@
     
 
 
-                #buttonContainer {
-                display: flex;
-                flex-direction: column ;
-                align-items: center;
-                }
+            #buttonContainer {
+            display: flex;
+            flex-direction: column ;
+            align-items: center;
+            }
 
                 #attributeButtons, #continentFilters {
                 margin: 10px 0;
@@ -201,6 +203,7 @@
                 padding-right: 2%;
                 border-radius: 3px;
                 border: none;
+                color: rgb(0, 42, 76);
                 margin: 0;
                 padding: 0 12px;
                 width: 60px;
@@ -209,7 +212,8 @@
             }
 
             #play-button:hover {
-                background-color: rgb(255, 196, 20);
+                /* background-color: rgb(255, 196, 20); */
+                box-shadow:5px 5px #888888;
             }
 
             body {
@@ -222,6 +226,8 @@
         </style>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+        <script src="https://unpkg.com/d3-sankey@0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.js"></script>
         <script src="script.js"></script>
@@ -229,7 +235,7 @@
         <script src="update.js"></script>
     </head>
     <h1>Global birthrate and life expectancy from 1960 to 2016</h1>
-    <div class="container" style="display: flex; justify-content: space-between; width: auto;">
+    <div  style="display: flex;margin-top: 50px; margin-bottom: 10px; justify-content: space-between; width: auto;">
         <div style="flex-grow: 1;" >
             <div id="slider"></div>
         </div>
