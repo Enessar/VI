@@ -234,40 +234,45 @@ function updateLineChart(attr = false) {
 
 }
 
+
+
 function updateSankyPlot(attr = false){
 
-    if (!attr && sankey != null){
+    if (sankey != null){
         const sankeyData = {
             nodes: [],
             links: [] };
         
-      
-      
+        SankeyLayers(Array.from(setButtons));   
+
+
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
-            const target1 = LifeExpectancy_Level(d);
-            const target2 = ReplacementRate_Level(d);
-            const value = 5; // Convert to a number if needed
-        
+            target1 = functionToUse1(d);
+            target2 = functionToUse2(d);
+            value = 5; // Convert to a number if needed
+
         
             // Check if the source node (Country_name) already exists, if not, add it
             if (!sankeyData.nodes.find(node => node.name === source[1])) {
             sankeyData.nodes.push({ name: source[1], order: source[0]});
             }
-        
+            
+            //sankeyData.nodes.length = 0;
             // Check if the target1 node (Life_Expectancy) already exists, if not, add it
-            if (!sankeyData.nodes.find(node => node.name === target1[1])) {
+            if (target1 != null && !sankeyData.nodes.find(node => node.name === target1[1])) {
             sankeyData.nodes.push({ name: target1[1], order: target1[0]});
             }
-        
+            //sankeyData.nodes.length = 0;
             // Check if the target2 node (Replacement_Rate) already exists, if not, add it
-            if (!sankeyData.nodes.find(node => node.name === target2[1])) {
+            if (target2 != null && !sankeyData.nodes.find(node => node.name === target2[1])) {
             sankeyData.nodes.push({ name: target2[1],order: target2[0] });
             }
             c = getContinentForCountry(d);
             color = colorScaleLine(c);
             order= sankeyContinetOrder(c);
-        
+            country = d.Country_name;
+            if (target1 != null){
             // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
             source = sankeyData.nodes.find(node=> node.name === source[1]);
             target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -277,16 +282,22 @@ function updateSankyPlot(attr = false){
                 value,
                 color,
                 order,
-            });
-            source = sankeyData.nodes.find(node=> node.name === target1[1]);
-            target = sankeyData.nodes.find(node=> node.name === target2[1]);
-            sankeyData.links.push({
-                source,
-                target,
-                value,
                 color,
-                order,
+                country,
             });
+        }
+            if (target2 != null){
+                source = sankeyData.nodes.find(node=> node.name === target1[1]);
+                target = sankeyData.nodes.find(node=> node.name === target2[1]);
+                sankeyData.links.push({
+                    source,
+                    target,
+                    value,
+                    order,
+                    color,
+                    country,
+                });
+            }
         });
         sankeyData.nodes.sort((a, b) => a.order - b.order);
         sankeyData.links.sort((a, b) => a.order - b.order);
@@ -297,8 +308,8 @@ function updateSankyPlot(attr = false){
             links:sankeyData.links,
           });
 
-        console.log(nodes);
-        console.log(links);
+        // console.log(nodes);
+        // console.log(links);
 
         const link = d3.select(".links-sankey")
                         .selectAll("path")
@@ -309,7 +320,10 @@ function updateSankyPlot(attr = false){
                             .attr("d", d3.sankeyLinkHorizontal())
                             .attr('stroke', d => d.color)
                             .attr('stroke-width', d => Math.max(1, d.width))
-                            .style('fill', 'none');
+                            .style('fill', 'none')
+                            .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event
+                            .on("mouseout", handleMouseOutSankey)   // Function to handle mouseout event
+                            .on("mousemove",handleMouseMoveSankey);
 
         link.transition().duration(750).ease(d3.easeLinear)
             .attr("d", d3.sankeyLinkHorizontal())
@@ -330,11 +344,45 @@ function updateSankyPlot(attr = false){
             .attr('y', d => d.y0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
-            .attr('fill', 'blue');
+            .attr('fill', 'grey');
 
-        // Merge the enter and update selections
-        node = node.merge(nodeEnter);
+        // // Merge the enter and update selections
+        // node = node.merge(nodeEnter);
 
+        nodeEnter.append("text")
+            .text(d => d.name) // Set the text to the node name or label
+            .style('font-weight', 'bold') // Set the font-weight to 'bold'
+            .attr('x', function(d) {
+            if (this.getBBox().width < (d.y1 - d.y0)){
+            return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
+            } else {
+            return (d.x1 - d.x0) / 2;
+            }
+            })
+            .attr('y', function(d) {
+            if ( (this.getBBox().width < (d.y1 - d.y0))){
+            return (d.x1 - d.x0) / 2; // Default x position for other nodes
+            } else {
+            return (d.y1 - d.y0) / 2
+            }
+            })
+            .attr('dy', '0.35em') // Adjust the vertical alignment
+            .style('font-size', '12px') // Set the font size as needed
+            .style('text-anchor', 'middle') // Center-align the text
+            .style('fill', 'black') // Set text color
+            .attr('transform', function(d) {
+                // Conditionally rotate the text
+                return (this.getBBox().width < (d.y1 - d.y0)) ? 
+                'rotate(-90)' : null;
+            });
+
+
+        node
+            .transition()
+            .duration(750)
+            .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
+
+        
         // Update the position and size of the rectangles
         node.select("rect")
             .transition()
@@ -344,7 +392,59 @@ function updateSankyPlot(attr = false){
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0);
 
+        // Update the position and size of the rectangles
+        node.select("text")
+        .transition()
+        .duration(750)
+        .attr('x', function(d) {
+            if (this.getBBox().width < (d.y1 - d.y0)){
+            return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
+          } else {
+            return (d.x1 - d.x0) / 2;
+          }
+          })
+         .attr('y', function(d) {
+          if ( (this.getBBox().width < (d.y1 - d.y0))){
+            return (d.x1 - d.x0) / 2; // Default x position for other nodes
+          } else {
+            return (d.y1 - d.y0) / 2
+          }
+          })
+          .attr('transform', function(d) {
+            // Conditionally rotate the text
+            return (this.getBBox().width < (d.y1 - d.y0)) ? 
+             'rotate(-90)' : null;
+          })
+        .text(d => d.name);
+
         // Remove any exiting nodes
         node.exit().remove();
+
+    if (attr){
+        
+        if (attributes.length === 0){
+            d3.select("#sankeyPlotTitle")
+                .text(`Sankey plot`);
+
+            d3.select('#attr0SankeyPlotTitle').text("");
+            d3.select('#attr1SankeyPlotTitle').text("");
+            d3.select('#attr2SankeyPlotTitle').text("");
+        } else if (attributes.length === 1){
+            d3.select("#sankeyPlotTitle")
+                .text(`Sankey plot representing ${toName[attributes[0]]}`);
+
+            d3.select('#attr0SankeyPlotTitle').text("HDI");
+            d3.select('#attr1SankeyPlotTitle').text("");
+            d3.select('#attr2SankeyPlotTitle').text(toName[attributes[0]]);
+        
+        } else {
+            d3.select("#sankeyPlotTitle")
+                    .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
+                    
+                d3.select('#attr0SankeyPlotTitle').text("HDI");
+                d3.select('#attr1SankeyPlotTitle').text(toName[attributes[0]]);
+                d3.select('#attr2SankeyPlotTitle').text(toName[attributes[1]]);
+        }
     }
+}
 }

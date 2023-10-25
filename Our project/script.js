@@ -21,14 +21,21 @@ function sankeyContinetOrder(continent){
   else if(continent == "Oceania"){ return 4}
   else {return -1}
 }
+let functionToUse1;
+let functionToUse2;
 
 // Variable for the line chart
-const colorScaleLine = d3.scaleOrdinal()
-  .domain(['Asia', 'Africa', 'Europe', 'Americas', 'Oceania', 'Unknown'])
-  .range(['rgb(6,95,244,255)', 'rgb(250, 194, 34)', 'rgb(27, 213, 170)', 'rgb(249, 112, 11, 1)', 'rgb(0, 42, 76)', 'rgb(136, 111, 54)']);
-var xScaleLine = null;
-var dataByContinent = null;
+function colorScaleLine(c){
+  if(c=='Asia'){return 'rgb(6,95,244,255)'}
+  else if(c =='Africa'){return 'rgb(250, 194, 34)'}
+  else if(c =='Europe'){return 'rgb(27, 213, 170)'}
+  else if(c =='Americas'){return 'rgb(249, 112, 11, 1)'}
+  else if(c =='Oceania'){return 'rgb(0, 42, 76)'}
+  else{return 'rgb(136, 111, 54)'}
+}
 
+  var xScaleLine = null;
+var dataByContinent = null;
 
 // buttons
 var setButtons = new Set();
@@ -1178,7 +1185,9 @@ function Development_Level(element) {
     return [1, DevelopmentLevels.D]
   }  else if (element.HDI>0.550){
     return [2, DevelopmentLevels.UD]
-  }  else {
+  }  else if (element.HDI === 0){
+    return [4, "No information"]
+  } else {
     return [3,DevelopmentLevels.SUD]
   }
 }
@@ -1229,36 +1238,85 @@ function NaturalRate_Level(element) {
   }
 }
 
-function SankeyLayers(attributes, d){
-  var target1;
-  var target2;
-  if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
-    target1 = LifeExpectancy_Level(d);
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      target2 = ReplacementRate_Level(d);
-    }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-      target2 = FertilityRate_Level(d);
-    }
-    else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
-      target2 = NaturalRate_Level(d);
-    } else{target2=null;}
-  }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
-    target1 = NaturalRate_Level(d);
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-    target2 = ReplacementRate_Level(d);
-    }
-    else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    target2 = FertilityRate_Level(d);
-    }else{target2=null;}
-  }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-    target1 = FertilityRate_Level(d)
-    if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-      target2 = ReplacementRate_Level(d);
-    }else{target2=null;}
-  } else{return null,null;}
+function SankeyLayers(attributes){
+  
+  // if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
+  //   functionToUse1 = LifeExpectancy_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }
+  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //     functionToUse2 = FertilityRate_Level;
+  //   }
+  //   else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
+  //     functionToUse2 = NaturalRate_Level;
+  //   } else{functionToUse2=(d) => null;}
+  // }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
+  //   functionToUse1 = NaturalRate_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }
+  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //     functionToUse2 = FertilityRate_Level;
+  //   }else{functionToUse2=(d) => null;}
+  // }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
+  //   target1 = FertilityRate_Level;
+  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //     functionToUse2 = ReplacementRate_Level;
+  //   }else{functionToUse2= (d) => null;}
+  // }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
+  //   functionToUse1 = ReplacementRate_Level;
+  //   functionToUse2 =(d) => null;
+  // }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
 
-  return [target1, target2];
+  if(attributes[0] == "life_expectancy"){
+    functionToUse1 = LifeExpectancy_Level;
+    if(attributes[1] =="Replacement_Rate"){
+      functionToUse2 = ReplacementRate_Level;
+    }
+    else if(attributes[1] =="Fertility_Rate"){
+      functionToUse2 = FertilityRate_Level;
+    }
+    else if(attributes[1] =="Natural_Rate"){
+      functionToUse2 = NaturalRate_Level;
+    } else{functionToUse2=(d) => null;}
+
+  }else if(attributes[0] == "Natural_Rate"){
+    functionToUse1 = NaturalRate_Level;
+    if(attributes[1] =="Replacement_Rate"){
+      functionToUse2 = ReplacementRate_Level;
+    }
+    else if(attributes[1] =="Fertility_Rate"){
+      functionToUse2 = FertilityRate_Level;
+    }
+    else if(attributes[1] =="life_expectancy"){
+      functionToUse2 = LifeExpectancy_Level;
+    } else{functionToUse2=(d) => null;}
+
+  }else if(attributes[0] == "Fertility_Rate"){
+    functionToUse1 = FertilityRate_Level;
+    if(attributes[1] =="Replacement_Rate"){
+      functionToUse2 = ReplacementRate_Level;
+    }
+    else if(attributes[1] =="life_expectancy"){
+      functionToUse2 = LifeExpectancy_Level;
+    }
+    else if(attributes[1] =="Natural_Rate"){
+      functionToUse2 = NaturalRate_Level;
+    } else{functionToUse2=(d) => null;}
+
+  } else if(attributes[0] == "Replacement_Rate"){
+      functionToUse1 = ReplacementRate_Level;
+      if(attributes[1] =="life_expectancy"){
+        functionToUse2 = LifeExpectancy_Level;
+      }
+      else if(attributes[1] =="Fertility_Rate"){
+        functionToUse2 = FertilityRate_Level;
+      }
+      else if(attributes[1] =="Natural_Rate"){
+        functionToUse2 = NaturalRate_Level;
+      } else{functionToUse2=(d) => null;}
+  }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
 }
 
 function createSankyPlot(){
@@ -1267,32 +1325,36 @@ function createSankyPlot(){
 const sankeyData = {
   nodes: [],
   links: [] };
+  var attributes = Array.from(setButtons)
 
     // Create a title for the choropleth map
-/*const chartTitle = d3
-      .select("#choroplethTitle")
+const chartTitle = d3
+      .select("#sankeyPlotTitle")
       .append("text")
       .attr("x", width / 2)
       .attr("y", margin.top)
-      .text(`Main map representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);*/
+      .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
 
 function sankeyContinetOrder(continent){
   if(continent == "Asia"){ return 0}
-  else if(continent == "Europe"){ return 1}
-  else if(continent == "Africa"){ return 2}
+  else if(continent == "Africa"){ return 1}
+  else if(continent == "Europe"){ return 2}
   else if(continent == "Americas"){ return 3}
   else if(continent == "Oceania"){ return 4}
   else {return -1}
 }
-console.log("attributes[0]= ", attributes[0]);
-console.log("attributes[1]= ", attributes[1]);
+// console.log("attributes[0]= ", attributes[0]);
+// console.log("attributes[1]= ", attributes[1]);
+
+SankeyLayers(attributes);   
 
 filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   source = Development_Level(d);
-  var [target1,target2] = SankeyLayers(Array.from(setButtons), d);
-  console.log(setButtons);
-  console.log(target1);
-  console.log(target2);
+  target1 = functionToUse1(d);
+  target2 = functionToUse2(d);
+  // console.log(setButtons);
+  // console.log(target1);
+  // console.log(target2);
 
   value = 5; // Convert to a number if needed
 
@@ -1300,6 +1362,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   if (!sankeyData.nodes.find(node => node.name === source[1])) {
     sankeyData.nodes.push({ name: source[1], order: source[0]});
   }
+  
   // Check if the target1 node (Life_Expectancy) already exists, if not, add it
   if (!sankeyData.nodes.find(node => node.name === target1[1])) {
     sankeyData.nodes.push({ name: target1[1], order: target1[0]});
@@ -1312,7 +1375,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   c = getContinentForCountry(d);
   color = colorScaleLine(c);
   order= sankeyContinetOrder(c);
-
+  country = d.Country_name;
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -1322,6 +1385,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     value,
     order,
     color,
+    country,
   });
   source = sankeyData.nodes.find(node=> node.name === target1[1]);
   target = sankeyData.nodes.find(node=> node.name === target2[1]);
@@ -1331,6 +1395,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
     value,
     order,
     color,
+    country,
   });
 });
               
@@ -1378,7 +1443,10 @@ svg.append('g')
   .attr('d', d3.sankeyLinkHorizontal())
   .attr('stroke', d => d.color)
   .attr('stroke-width', d => Math.max(1, d.width))
-  .style('fill', 'none');
+  .style('fill', 'none')
+  .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event
+  .on("mouseout", handleMouseOutSankey)   // Function to handle mouseout event
+  .on("mousemove",handleMouseMoveSankey);
 
 
 
@@ -1389,6 +1457,8 @@ const nodeGroup = svg.append('g')
   .data(nodes)
   .enter()
   .append('g')
+  // .attr('height', d => d.y1 - d.y0)
+  // .attr('width', d => d.x1 - d.x0)
   .attr('transform', d => `translate(${d.x0}, ${d.y0})`)
   // .attr('x', d => d.x0)
   // .attr('y', d => d.y0)
@@ -1399,91 +1469,67 @@ nodeGroup.append('rect')
   // .attr('y', d => d.y0)
   .attr('height', d => d.y1 - d.y0)
   .attr('width', d => d.x1 - d.x0)
-  .attr('fill', 'blue');
+  .attr('fill', 'grey');
 
 
 // Define the layers of nodes (assuming you have an array of layers)
 const nodeLayers = ['Developpment Level', 'Fertility Rate', 'Replacement Rate']; // Replace with your actual layer names
 
-/*
-nodeGroup.append('rect')
-  .attr('x', -60)
-  .attr('y', 0)
-  .attr('width', 120)
-  .attr('height', 30)
-  .style('fill', 'lightgray');
-  */
+
  // Add text with vertical rotation
  nodeGroup.append('text')
  .text(d => d.name) // Set the text to the node name or label
  .attr('x', function(d) {
-  if (d.name === 'Above') {
-    // Adjust the x position for the "Above" node
-    return -(d.y1 - d.y0)+23; // Modify the position as needed
-  } else if (d.name === 'Highly D') {
-    // Adjust the x position for the "Highly D" node
-    return -(d.y1 - d.y0)+50; // Modify the position as needed
+    if (this.getBBox().width < (d.y1 - d.y0)){
+    return -(d.y1 - d.y0) / 2 ; // Default x position for other nodes
   } else {
-    return -(d.y1 - d.y0) / 2; // Default x position for other nodes
+    return (d.x1 - d.x0) / 2;
   }
-})
- //.attr('x', d => -(d.y1 - d.y0)/2) // Adjust the x position
+  })
  .attr('y', function(d) {
-  if (d.name === 'Above') {
-    // Adjust the x position for the "Above" node
-    return (d.x1 - d.x0)-12; // Modify the position as needed
-  } else if (d.name === 'Highly D') {
-    // Adjust the x position for the "Highly D" node
-    return 5+(d.x1 - d.x0); // Modify the position as needed
-  } else {
+  if ( (this.getBBox().width < (d.y1 - d.y0))){
     return (d.x1 - d.x0) / 2; // Default x position for other nodes
+  } else {
+    return (d.y1 - d.y0) / 2
   }
-})
- //.attr('y', d => (d.x1 - d.x0)/2) // Adjust the y position
+  })
  .attr('dy', '0.35em') // Adjust the vertical alignment
  .style('font-size', '12px') // Set the font size as needed
  .style('text-anchor', 'middle') // Center-align the text
- .style('fill', d => (d.name === 'Above' || d.name === 'Highly D') ? 'black' : 'white') // Set text color
+ .style('fill', 'black') // Set text color
+ .style('font-weight', 'bold') // Set the font-weight to 'bold'
  .attr('transform', function(d) {
   // Conditionally rotate the text
-  return (d.name !== 'Above' && d.name !== 'Highly D') ? 'rotate(-90)' : null;
+  return (this.getBBox().width < (d.y1 - d.y0)) ? 
+   'rotate(-90)' : null;
 });
 
-/*
+  //title for axis
+  svg.append("text")
+    .attr("x", 40 + sankey.nodePadding()/2)
+    .attr("y", 20)
+    .attr("id", "attr0SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text("HDI");
 
-nodeGroup.append('text')
-  .attr('x', d => (d.x1 - d.x0) / 2)
-  .attr('y', d => (d.y1 - d.y0) / 2)
-  .attr('dy', '0.35em') // Adjust vertical alignment as needed
-  .style('fill', 'black')
-  .text(d => d.name)
-  .style('font-size', '15px') // Set the font size as needed
-  .style('text-anchor', 'end');// Align text to the end (left) of the node
+    //title for axis
+  svg.append("text")
+    .attr("x", (width - 100 - 40)/2 + 40)
+    .attr("y", 20)
+    .attr("id", "attr1SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text(toName[attributes[0]]);
 
-
-
-  // Now, add titles with background boxes to the nodes
-svg
-.selectAll('.node')
-.each(function(d) {
-  const node = d3.select(this);
-
-  node.append('rect')
-    .attr('x', -60)
-    .attr('y', -15)
-    .attr('width', 120)
-    .attr('height', 30)
-    .style('fill', 'lightgray');
-
-  node.append('text')
-    .text(d => d.name)
-    .attr('x', 0)
-    .attr('y', 0)
-    .attr('dy', '0.35em')
-    .style('font-size', '12px')
-    .style('text-anchor', 'middle');
-});
-*/
+      //title for axis
+  svg.append("text")
+    .attr("x", width -100 -sankey.nodePadding()/2)
+    .attr("y", 20)
+    .attr("id", "attr2SankeyPlotTitle")
+    .attr("font-size", "15px") // Add this line to set the font size
+    .attr("text-anchor", "middle") // Center the text horizontally
+    .text(toName[attributes[1]]);
 
 }
   
