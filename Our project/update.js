@@ -86,10 +86,10 @@ function updateChoroplethMap(attr = false){
 function updateLineChart(attr = false) {
     const chartGroup = d3.select("#lineChart").select("svg").select("g");
     const svg = d3.select("#lineChart").select("svg");
-
     d3.select(".current-year-line")
     .attr("x1", xScaleLine(curYear))
     .attr("x2", xScaleLine(curYear))
+    
     .attr("stroke", "red") // Customize the color of the line (you can adjust it)
     .attr("stroke-width", 2); // Customize the line width
   
@@ -286,6 +286,7 @@ function updateSankyPlot(attr = false){
                 source,
                 target,
                 value,
+                color,
                 order,
                 color,
                 country,
@@ -346,16 +347,12 @@ function updateSankyPlot(attr = false){
             .data(nodes);
 
         // Enter selection
-        var nodeEnter = node.enter().append("g")
-        .attr('transform', d => `translate(${d.x0}, ${d.y0})`);
-                // .attr('x', d => d.x0)
-                // .attr('y', d => d.y0)
-  ;
+        var nodeEnter = node.enter().append("g");
 
         // Append a rectangle to the enter selection
         nodeEnter.append("rect")
-            // .attr('x', 0)
-            // .attr('y', 0)
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0)
             .attr('fill', 'grey');
@@ -401,8 +398,8 @@ function updateSankyPlot(attr = false){
         node.select("rect")
             .transition()
             .duration(750)
-            // .attr('x', 0)
-            // .attr('y', 0)
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
             .attr('height', d => d.y1 - d.y0)
             .attr('width', d => d.x1 - d.x0);
 

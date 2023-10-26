@@ -775,6 +775,12 @@ dataByContinent.forEach((continentData, continent) => {
 function createButtons(){
     const warningMessage = d3.select("#warningMessage");
 
+    // Add a title for the buttons
+    d3.select("#attributeButtons")
+        .append("div")
+        .attr("class", "button-title")
+        //.text("Selected attributes:");
+
     // Select button 1 using D3.js
     var fertilityR = d3.select("#fertilityR").style('background-color','rgb(244, 69, 0)');
 
@@ -1064,6 +1070,13 @@ function updateIdioms(attr = false){
 
 function createFilterButtons() {
     const warningMessage = d3.select("#warningMessage");
+
+    // Add a title for the buttons
+    d3.select("#continentFilters")
+        .append("div")
+        .attr("class", "filter-title")
+        //.text("Selected continents:");
+
     // Select button 1 using D3.js
     var africaBtn = d3.select("#africa").style("background-color", colorScaleLine('Africa'));
     // Add a click event listener to button 1

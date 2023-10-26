@@ -26,13 +26,6 @@
                 padding: 20px;
             }
 
-            .chart-container {
-            flex: 1; /* Allows the chart container to take up available space */
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start; /* Align the chart container to the bottom left */
-            }
-
             .visualization {
                 padding: 10px;
             }
@@ -126,17 +119,22 @@
             .my-button {
                 color: white;
                 font-weight: bold;
+                font-size: 18px;
+                text-align: center;
                 border: none;
+                flex-direction: column;
                 background-color: rgb(0, 42, 76);
                 padding: 10px 20px;
                 margin: 5px;
                 cursor: pointer;
                 border-radius: 5px;
-                transition: background-color 0.3s;
+                /* transition: background-color 0.3s; */
             }
+            
 
             .my-button:hover {
                 background-color: rgb(0, 42, 76);
+                flex-direction: column;
             }
 
             .active-pip {
@@ -146,47 +144,95 @@
             }
 
             .my-button {
+            color: white;
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
             padding: 10px 20px;
+            width: 110px;
+            height: 50px;
             border: none;
             cursor: pointer;
             opacity : 0.5;
-            margin: 5px;
-            color: #fff;
+            margin: 10px 5px;
+            flex-direction: column;
+            }
+
+            .my-button1 {
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            border-radius: 5px;
+            padding: 10px 20px;
+            width: 110px;
+            height: 50px;
+            border: none;
+            cursor: pointer;
+            opacity : 0.5;
+            margin: 10px 5px;
+            flex-direction: column;
             }
 
             .my-button.active {
             /* background-color: rgb(244, 69, 0); */
             opacity : 1;
             color: #fff;
+            flex-direction: column;
             }
 
-            /* .filters-container {
-            display: flex;
+            .my-button1.active {
+            /* background-color: rgb(244, 69, 0); */
+            opacity : 1;
+            color: #fff;
             flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            padding: 10px;
-            background-color: white;
-            border-radius: 15px;
-            width: auto;
-            margin-left: 50px; /* Adjust the margin as needed */
-    
-
+            }
 
             #buttonContainer {
-            display: flex;
-            flex-direction: column ;
-            align-items: center;
+                margin: 0 20px;
+                background-color: white;       
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 90px; 
+                height: 200%;
             }
-
-                #attributeButtons, #continentFilters {
-                margin: 10px 0;
-                padding: 10px;
+            
+            #continentFilters {
+                margin: 0 20px;
                 background-color: white;       
                 border-radius: 15px;
                 flex-direction: column;
                 text-align: center;
+                align-items: center;
+                width: 90px; 
+                height: 200%;
                 }
+            
+                #sankeyPlot {
+                width: 100%;
+                padding: 10px;
+                align-self: flex-start;
+                flex-grow: 1;
+            }
+
+
+            .filter-title {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
+            .button-title {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
 
 
             #play-button {
@@ -227,7 +273,7 @@
         <script src="linked.js"></script>
         <script src="update.js"></script>
     </head>
-    <h1>Global birthrate and life expectancy from 1960 to 2016</h1>
+    <h1>Key Demographic and Development Indicators from 1960 to 2016</h1>
     <div  style="display: flex;margin-top: 50px; margin-bottom: 10px; justify-content: space-between; width: auto;">
         <div style="flex-grow: 1;" >
             <div id="slider"></div>
@@ -244,33 +290,32 @@
                 </div>
                 <div class="visualization" id="choroplethLabel"></div>
             </div>
-            <!-- <div class="filters-container"> -->
-                <div id="buttonContainer">
-                    <!-- Container for attribute buttons -->
-                    <div id="attributeButtons">
-                        <button class="my-button" id="fertilityR">Fertility Rate</button>
-                        <button class="my-button" id="lifeExp">Life Expectancy</button>
-                        <button class="my-button" id="HDI">HDI</button>
-                        <button class="my-button" id="naturalR">Natural Rate</button>
-                        <button class="my-button" id="raplacementR">Replacement Rate</button>
-                    </div>
-        
-                    <!-- Container for continent buttons -->
-                    <div id="continentFilters">
-                        <button class="my-button" id="africa">Africa</button>
-                        <button class="my-button" id="asia">Asia</button>
-                        <button class="my-button" id="europe">Europe</button>
-                        <button class="my-button" id="Americas">Americas</button>
-                        <button class="my-button" id="Oceania">Oceania</button>
-                    </div>
-                </div>
-            <!-- </div> -->
+           <!-- Move the buttons and continents here -->
+           <div class="container" id="buttonContainer">
+            <div class="button-title">Selected attributes:</div>
+            <div id="attributeButtons">
+                <button class="my-button" id="fertilityR">Fertility Rate</button>
+                <button class="my-button" id="lifeExp">Life Expectancy</button>
+                <button class="my-button" id="HDI">HDI</button>
+                <button class="my-button" id="naturalR">Natural Rate</button>
+                <button class="my-button" id="raplacementR">Replacement Rate</button>
+            </div>
         </div>
-        
+        <div class="container" id="continentFilters">
+            <div class="filter-title">Selected continents:</div>
+            <div id="continentButtons">
+                <button class="my-button1" id="africa">Africa</button>
+                <button class="my-button1" id="asia">Asia</button>
+                <button class="my-button1" id="europe">Europe</button>
+                <button class="my-button1" id="Americas">Americas</button>
+                <button class="my-button1" id="Oceania">Oceania</button>
+            </div>
+        </div>
+    </div>
+
         <div class="dashboard">
             <div class="container" style="width: auto;">
                 <div>
-                    <div class="tooltip" id="lineChartTooltip"></div>
                     <div id="lineChartTitle"></div>
                     <div class="visualization" id="lineChartContainer">
                         <!-- Place the lineChart inside this container -->
@@ -278,12 +323,17 @@
                     </div>
                     <div id="legend"></div>
                 </div>
-            <div>
-                <div id="sankeyPlotTitle"></div>
-                <div class="container" class="visualization" id="sankeyPlot"></div>
             </div>
         </div>
-        
-          
+        <div class="dashboard">
+            <div class="container" style="width: auto;">
+                <div>
+                    <div id="sankeyPlotTitle"></div>
+                    <div class="visualization" id="sankeyPlotContainer">
+                        <div id="sankeyPlot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </body>
-</html>
+    </html>
