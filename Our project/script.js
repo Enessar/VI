@@ -1226,37 +1226,7 @@ function NaturalRate_Level(element) {
 }
 
 function SankeyLayers(attributes){
-  
-  // if(attributes[0] == "life_expectancy"  || attributes[1] =="life_expectancy"){
-  //   functionToUse1 = LifeExpectancy_Level;
-  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-  //     functionToUse2 = ReplacementRate_Level;
-  //   }
-  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-  //     functionToUse2 = FertilityRate_Level;
-  //   }
-  //   else if(attributes[0] == "Natural_Rate" || attributes[1] =="Natural_Rate"){
-  //     functionToUse2 = NaturalRate_Level;
-  //   } else{functionToUse2=(d) => null;}
-  // }else if(attributes[0] == "Natural_Rate"  || attributes[1] =="Natural_Rate"){
-  //   functionToUse1 = NaturalRate_Level;
-  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-  //     functionToUse2 = ReplacementRate_Level;
-  //   }
-  //   else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-  //     functionToUse2 = FertilityRate_Level;
-  //   }else{functionToUse2=(d) => null;}
-  // }else if(attributes[0] == "Fertility_Rate" || attributes[1] =="Fertility_Rate"){
-  //   target1 = FertilityRate_Level;
-  //   if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-  //     functionToUse2 = ReplacementRate_Level;
-  //   }else{functionToUse2= (d) => null;}
-  // }else if(attributes[0] == "Replacement_Rate" || attributes[1] =="Replacement_Rate"){
-  //   functionToUse1 = ReplacementRate_Level;
-  //   functionToUse2 =(d) => null;
-  // }else{functionToUse1=(d) => null;functionToUse2=(d) => null;}
-
-  if(attributes[0] == "life_expectancy"){
+   if(attributes[0] == "life_expectancy"){
     functionToUse1 = LifeExpectancy_Level;
     if(attributes[1] =="Replacement_Rate"){
       functionToUse2 = ReplacementRate_Level;
@@ -1363,6 +1333,11 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
   color = colorScaleLine(c);
   order= sankeyContinetOrder(c);
   country = d.Country_name;
+
+  // console.log(country)
+  // console.log(c)
+  // console.log(color)
+  
   // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
   source = sankeyData.nodes.find(node=> node.name === source[1]);
   target = sankeyData.nodes.find(node=> node.name === target1[1]);
@@ -1428,7 +1403,10 @@ svg.append('g')
   .enter()
   .append('path')
   .attr('d', d3.sankeyLinkHorizontal())
-  .attr('stroke', d => d.color)
+  .attr('stroke',d =>  {
+    console.log(d.color);
+    return d.color;
+  })
   .attr('stroke-width', d => Math.max(1, d.width))
   .style('fill', 'none')
   .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event

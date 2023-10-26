@@ -245,7 +245,7 @@ function updateSankyPlot(attr = false){
         
         SankeyLayers(Array.from(setButtons));   
 
-
+        // console.log("new")
         filteredDataYear.filter((element) => element.Year === curYear).forEach(function(d) {
             source = Development_Level(d);
             target1 = functionToUse1(d);
@@ -272,6 +272,12 @@ function updateSankyPlot(attr = false){
             color = colorScaleLine(c);
             order= sankeyContinetOrder(c);
             country = d.Country_name;
+
+            
+            // console.log(country)
+            // console.log(c)
+            // console.log(color)
+
             if (target1 != null){
             // console.log(sankeyData.nodes.find(node=> node.name === source[1]))
             source = sankeyData.nodes.find(node=> node.name === source[1]);
@@ -317,7 +323,9 @@ function updateSankyPlot(attr = false){
 
         var linkEnter = link.enter().append("path")
                             .attr("d", d3.sankeyLinkHorizontal())
-                            .attr('stroke', d => d.color)
+                            .attr('stroke', d => {
+                                // console.log(d);
+                                return d.color})
                             .attr('stroke-width', d => Math.max(1, d.width))
                             .style('fill', 'none')
                             .on("mouseover", handleMouseOverSankey) // Function to handle mouseover event
@@ -326,6 +334,9 @@ function updateSankyPlot(attr = false){
 
         link.transition().duration(750).ease(d3.easeLinear)
             .attr("d", d3.sankeyLinkHorizontal())
+            .attr('stroke', d => {
+                // console.log(d);
+                return d.color})
             .attr("stroke-width", function(d) { return Math.max(1, d.width); });
 
         link.exit().remove();

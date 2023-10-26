@@ -71,7 +71,7 @@ function handleMouseOutMap(event, item){
 }
 
 function handleMouseOverSankey(event, item){
-    console.log(item);
+    // console.log(item);
     const countryName =item.country;
     const countryData = filteredDataYear.find((d) => d.Country_name    === countryName);
 
