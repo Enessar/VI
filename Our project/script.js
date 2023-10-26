@@ -300,7 +300,7 @@ const margin = {
     bottom: 50,
     left: 80,
   };
-  const width = 800 - margin.left - margin.right;
+  const width = 1020 - margin.left - margin.right;
   const height = 500 - margin.top - margin.bottom;
 
 function getContinentForCountry(country) {
@@ -391,7 +391,10 @@ function createChoroplethMap() {
     const svg = d3
       .select("#choropleth")
       .append("svg")
-      .attr("width", width + 800)
+      .attr("width", 
+      '100%'
+      // width + 800
+      )
       .attr("height", height);
   
     // Create a group to hold the map elements
@@ -597,8 +600,6 @@ function createChoroplethMap() {
         .attr("fill", "black")
         .attr("transform", " rotate(-90), translate(110,10)");
 
-    // Position the legend on the page
-    legendSvg.attr("transform", "translate(10, 20)"); // Adjust the translation as needed
 
 
   }
@@ -614,7 +615,7 @@ function createChoroplethMap() {
   const chartTitle = d3
     .select("#lineChartTitle")
     .append("text")
-    .attr("x", width / 2)
+    .attr("x", 20)
     .attr("y", margin.top)
     .text(`Line chart representing ${toName[attributes[0]]}`);
 
@@ -622,7 +623,9 @@ function createChoroplethMap() {
   const svg = d3
     .select("#lineChart")
     .append("svg")
-    .attr("width", width + 200)
+    .attr("width", 
+    width
+    )
     .attr("height", height );
 
 
@@ -638,7 +641,7 @@ function createChoroplethMap() {
   xScaleLine = d3
     .scaleLinear()
     .domain([rangeMin, rangeMax]) // Adjust the domain based on your data
-    .range([margin.left, width - margin.right - 100]);
+    .range([margin.left, width - margin.right -100]);
 
   // Add axes
   const xAxis = d3.axisBottom(xScaleLine).tickFormat(d3.format("d"));
@@ -675,7 +678,7 @@ dataByContinent.forEach((continentData, continent) => {
     .attr("d", line)
     .attr("fill", "none")
     .attr("stroke", colorScaleLine(continent))
-    //.on("mouseover", handleMouseOverLine) // Function to handle mouseover event
+    // .on("mouseover", handleMouseOverLine) // Function to handle mouseover event
     //.on("mouseout", handleMouseOutLine)   // Function to handle mouseout event
     //.on("mousemove",handleMouseMoveLine);
 }
@@ -695,7 +698,7 @@ dataByContinent.forEach((continentData, continent) => {
   const legendGroup = svg
   .append("g")
   .attr("class", "legend")
-  .attr("transform", `translate(${600}, ${margin.top})`);
+  .attr("transform", `translate(${830}, ${margin.top})`);
 
   // Extract a list of all unique continents, including 'Unknown'
   const uniqueContinents = Array.from(dataByContinent.keys()).filter((continent) => continent !== 'Unknown');
@@ -1378,7 +1381,7 @@ filteredData.filter((element) => element.Year === curYear).forEach(function(d) {
 sankey = d3.sankey()
   .nodeWidth(30)
   .nodePadding(40)
-  .extent([[40, 40], [width-100, height]])
+  .extent([[40, 40], [width-50, height-10]])
   .nodeSort(null)
   .linkSort(null) 
   ;
@@ -1417,7 +1420,7 @@ svg.append('g')
   .append('path')
   .attr('d', d3.sankeyLinkHorizontal())
   .attr('stroke',d =>  {
-    console.log(d.color);
+    // console.log(d.color);
     return d.color;
   })
   .attr('stroke-width', d => Math.max(1, d.width))
