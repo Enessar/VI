@@ -104,7 +104,7 @@ function updateLineChart(attr = false) {
         const legendGroup = svg
         .append("g")
         .attr("class", "legend")
-        .attr("transform", `translate(${600}, ${margin.top})`);
+        .attr("transform", `translate(${830}, ${margin.top})`);
 
         // Update the yScale, line, and line chart
         const yScale = d3.scaleLinear()
@@ -443,6 +443,13 @@ function updateSankyPlot(attr = false){
             d3.select('#attr0SankeyPlotTitle').text("");
             d3.select('#attr1SankeyPlotTitle').text("");
             d3.select('#attr2SankeyPlotTitle').text("");
+        } else if (attributes.length === 1 && attributes[0] === "HDI"){
+            d3.select("#sankeyPlotTitle")
+            .text(`Sankey plot`);
+
+            d3.select('#attr0SankeyPlotTitle').text("");
+            d3.select('#attr1SankeyPlotTitle').text("");
+            d3.select('#attr2SankeyPlotTitle').text("");
         } else if (attributes.length === 1){
             d3.select("#sankeyPlotTitle")
                 .text(`Sankey plot representing ${toName[attributes[0]]}`);
@@ -452,12 +459,27 @@ function updateSankyPlot(attr = false){
             d3.select('#attr2SankeyPlotTitle').text(toName[attributes[0]]);
         
         } else {
-            d3.select("#sankeyPlotTitle")
+            if (attributes[0] === "HDI"){
+                d3.select("#sankeyPlotTitle")
+                    .text(`Sankey plot representing ${toName[attributes[1]]}`);
+            } else if (attributes[1] === "HDI"){
+                d3.select("#sankeyPlotTitle")
+                .text(`Sankey plot representing ${toName[attributes[0]]}`);
+            }else {
+                d3.select("#sankeyPlotTitle")
                     .text(`Sankey plot representing ${toName[attributes[0]]} and ${toName[attributes[1]]}`);
-                    
-                d3.select('#attr0SankeyPlotTitle').text("HDI");
+            }
+            d3.select('#attr0SankeyPlotTitle').text("HDI");
+            if (attributes[0] === "HDI"){
+                d3.select('#attr1SankeyPlotTitle').text("");
+            } else {
                 d3.select('#attr1SankeyPlotTitle').text(toName[attributes[0]]);
-                d3.select('#attr2SankeyPlotTitle').text(toName[attributes[1]]);
+            }
+            if (attributes[1] === "HDI"){
+                d3.select('#attr2SankeyPlotTitle').text(toName[attributes[0]]);
+                d3.select('#attr1SankeyPlotTitle').text("");
+
+            } else {d3.select('#attr2SankeyPlotTitle').text(toName[attributes[1]]);}
         }
     }
 }

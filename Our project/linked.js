@@ -68,6 +68,7 @@ function handleMouseOutMap(event, item){
         return d.properties.name === countryName;
     })
     .attr("stroke-width","0.1");
+
 }
 
 function handleMouseOverSankey(event, item){
