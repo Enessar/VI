@@ -46,7 +46,8 @@
             .dashboard:last-child {
                 display: flex;
                 flex-direction: row;
-                width: fit-content;
+                /* width: fit-content; */
+                justify-content: space-between;
             }
 
             #choroplethLabel {
@@ -296,7 +297,7 @@
         </div>
 
         <div class="dashboard">
-            <div class="container" style="width: min-content;flex-wrap: wrap;margin: 0 20px;">
+            <div class="container" style="    width: -webkit-fill-available;flex-wrap: wrap;margin: 0 20px;justify-content: center;">
                 <div>
                     <div id="lineChartTitle"></div>
                     <div class="visualization" id="lineChartContainer">
@@ -306,7 +307,7 @@
                     <div id="legend"></div>
                 </div>
             </div>
-            <div class="container" style="width: min-content;flex-wrap: wrap;margin: 0 20px;">
+            <div class="container" style="    width: -webkit-fill-available;flex-wrap: wrap;margin: 0 20px;justify-content: center;">
                 <div>
                     <div id="sankeyPlotTitle"></div>
                     <div class="visualization" id="sankeyPlotContainer">
