@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>VI project</title>
+        <style>
+            h1 {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 35px;
+                align-content: baseline;
+            }
+            .container {
+                display: flex;
+
+                /* background-color: #ccc; */
+            }
+            .dashboard {
+                display: flex;
+                /* align-items: flex-start; */
+                /* grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr; */
+                /* gap: 20px; */
+                padding: 20px;
+            }
+
+            .visualization {
+                padding: 10px;
+            }
+
+            #lineChartTitle, #choroplethTitle, #sankeyPlotTitle {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family: 'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
+            #lineChart {
+                width: 100%;
+                padding: 10px;
+                align-self:flex-start; /* Change this to flex-start */
+                flex-grow: 1;
+            }
+
+            .dashboard:last-child {
+                display: flex;
+                flex-direction: row;
+                /* width: fit-content; */
+                justify-content: space-between;
+            }
+
+            #choroplethLabel {
+                /* background-color: aliceblue; */
+                position: absolute;
+                left: 70px;
+                top: 515px;
+            }
+
+
+            #slider .noUi-handle .noUi-touch-area {
+                border: 1px solid transparent;
+                position: absolute;
+                top: -10px;
+                left: -10px;
+                right: -10px;
+                bottom: -10px;
+                width: auto;
+                height: auto;
+                background-color: transparent;
+            }
+            
+            /* Show a border when hovering the area the handle responds to*/
+            /* #slider .noUi-handle:hover .noUi-touch-area {
+                border: 1px dashed #7f7f7f;
+            } */
+            #slider {
+                height: 10px;
+                width: 95%;
+                left: 2%;
+            }
+
+            #slider .noUi-connect {
+                background: rgb(0,218,190,255);
+            }
+
+            #slider .noUi-handle {
+                height: 18px;
+                width: 18px;
+                top: -5px;
+                right: -9px; 
+                border-radius: 9px;
+            }
+            #slider .noUi-handle[data-handle="0"] {
+                height: 30px;
+                width: 10px;
+                top: -10px;
+                right:-4px;
+                background:  rgb(0,218,190,255);
+                border-color: black;
+                box-shadow: none;
+            }
+            #slider .noUi-handle[data-handle="2"] {
+                height: 30px;
+                width: 10px;
+                top: -10px;
+                right:-4px;
+                background:  rgb(0,218,190,255);
+                border-color: black;
+                box-shadow: none;
+            }
+       
+             .container {
+                padding: 20px;
+                background-color: white;
+                border-radius: 15px;
+                text-align: center;
+            } 
+
+            
+
+            .my-button:hover {
+                background-color: rgb(0, 42, 76);
+            }
+
+            .active-pip {
+                color:  rgb(0,218,190,255); 
+                /* border: 2px solid white; */
+                margin-top: 5px;
+            }
+
+            .my-button {
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            padding: 10px 20px;
+            width: 90%;
+            height: 15%;
+            border: none;
+            cursor: pointer;
+            opacity : 0.5;
+            margin: 10px 5px;
+            }
+
+            .my-button1 {
+            font-size: 13px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            padding: 10px 20px;
+            width: 90%;
+            height: 15%;
+            border: none;
+            cursor: pointer;
+            opacity : 0.5;
+            margin: 10px 5px;
+            }
+
+            .my-button.active {
+            /* background-color: rgb(244, 69, 0); */
+            opacity : 1;
+            color: #fff;
+            }
+
+            .my-button1.active {
+            /* background-color: rgb(244, 69, 0); */
+            opacity : 1;
+            color: #fff;
+            }
+
+            #buttonContainer {
+                margin: 0 20px;
+                background-color: white;       
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 10%; 
+                height: auto;
+                justify-content: space-evenly;
+            }
+            
+            #continentFilters {
+                margin: 0 20px;
+                background-color: white;       
+                border-radius: 15px;
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+                width: 10%; 
+                height: auto;
+                justify-content: space-evenly;
+                }
+            
+                #sankeyPlot {
+                width: 100%;
+                padding: 10px;
+                align-self: flex-start;
+                flex-grow: 1;
+            }
+
+
+            .filter-title {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
+            .button-title {
+                text-align: center;
+                color: rgb(0, 42, 76);
+                font-family:'Times New Roman', Times, serif;
+                font-weight: bold;
+                font-size: 23px;
+            }
+
+
+            #play-button {
+                background: rgb(255, 196, 20);
+                color: white;
+                font-weight: bold;
+                padding-right: 2%;
+                border-radius: 3px;
+                border: none;
+                color: rgb(0, 42, 76);
+                margin: 0;
+                padding: 0 12px;
+                width: 60px;
+                cursor: pointer;
+                height: 30px;
+            }
+
+            #play-button:hover {
+                /* background-color: rgb(255, 196, 20); */
+                box-shadow:5px 5px #888888;
+            }
+
+            body {
+            background-color: rgb(242,242,242,255);
+            margin: 0;
+            padding: 0;
+            }
+
+
+        </style>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+        <script src="https://unpkg.com/d3-sankey@0"></script>
+        <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.1/nouislider.min.js"></script>
+        <script src="script.js"></script>
+        <script src="linked.js"></script>
+        <script src="update.js"></script>
+    </head>
+    <h1>Key Demographic and Development Indicators from 1960 to 2016</h1>
+    <div  style="display: flex;margin-top: 50px; margin-bottom: 30px; justify-content:space-evenly; align-items: center;">
+        <div style="flex-grow: 0.95;" >
+            <div id="slider"></div>
+        </div>
+        <button id="play-button">Play</button>
+    </div>
+
+    <body onload="startDashboard()">
+        <div class="dashboard">
+            <div class="container" style="width: 80%; margin: 0 20px;">
+                <div style="width: 100%;">
+                    <div id="choroplethTitle"></div>
+                    <div class="visualization" id="choropleth"></div>
+                </div>
+                <div class="visualization" id="choroplethLabel"></div>
+            </div>
+            <!-- Move the buttons and continents here -->
+            <div class="container" id="buttonContainer">
+            <div class="button-title">Selected attributes:</div>
+                <div id="attributeButtons">
+                    <button class="my-button" id="fertilityR">Fertility Rate</button>
+                    <button class="my-button" id="lifeExp">Life Expectancy</button>
+                    <button class="my-button" id="HDI">HDI</button>
+                    <button class="my-button" id="naturalR">Natural Rate</button>
+                    <button class="my-button" id="raplacementR">Replacement Rate</button>
+                </div>
+            </div>
+            <div class="container" id="continentFilters">
+                <div class="filter-title">Selected continents:</div>
+                <div id="continentButtons">
+                    <button class="my-button1" id="africa">Africa</button>
+                    <button class="my-button1" id="asia">Asia</button>
+                    <button class="my-button1" id="europe">Europe</button>
+                    <button class="my-button1" id="Americas">Americas</button>
+                    <button class="my-button1" id="Oceania">Oceania</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="container" style="    width: -webkit-fill-available;flex-wrap: wrap;margin: 0 20px;justify-content: center;">
+                <div>
+                    <div id="lineChartTitle"></div>
+                    <div class="visualization" id="lineChartContainer">
+                        <!-- Place the lineChart inside this container -->
+                        <div id="lineChart"></div>
+                    </div>
+                    <div id="legend"></div>
+                </div>
+            </div>
+            <div class="container" style="    width: -webkit-fill-available;flex-wrap: wrap;margin: 0 20px;justify-content: center;">
+                <div>
+                    <div id="sankeyPlotTitle"></div>
+                    <div class="visualization" id="sankeyPlotContainer">
+                        <div id="sankeyPlot"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+    </html>
